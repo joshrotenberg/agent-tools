@@ -63,9 +63,14 @@ The caller is responsible for the git lifecycle.
    - Language-specific: cargo fmt/clippy, go fmt/vet, npm lint, etc.
    - If no gates are specified in the prompt, run what's appropriate for the
      file types changed.
-4. **If validation passes:** `git add <changed files>` and `git commit -m
+4. **Before committing, ask:** did this run produce anything worth capturing
+   in CLAUDE.md? Categories worth capturing: a decision not obvious from the
+   task, an edge case future workers should know, a gap in a skill that caused
+   uncertainty (file via agent-feedback instead). The bar is clear: would a
+   fresh session benefit from finding this? Don't update for nothing.
+5. **If validation passes:** `git add <changed files>` and `git commit -m
    "<type>: <description>"` per conventional commit format.
-5. **Print:** `git log --oneline -1`, `git diff HEAD^ --stat`, and
+6. **Print:** `git log --oneline -1`, `git diff HEAD^ --stat`, and
    `git branch --show-current`.
 
 If validation fails: attempt to fix the issue (up to two tries). If still
