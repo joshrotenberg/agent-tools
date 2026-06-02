@@ -13,9 +13,6 @@ jobs:
         id: release
         with:
           release-type: simple
-          package-name: agent-tools
-          bump-minor-pre-major: true
-          bump-patch-for-minor-pre-major: true
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
       - name: Create release archives
