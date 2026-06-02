@@ -158,8 +158,13 @@ The condensed loop:
    cannot proceed, fail with `STATUS: failed` and a "what was needed" paragraph.
 2. **Stay scoped.** The issue body is the contract. Don't refactor adjacent
    code or add features the issue doesn't specify.
-3. **CWD is truth.** Operate on files in your working directory.
-4. **Fail loud.** On any lifecycle blocker, surface the exact failure with
+3. **One logical change per PR.** If the issue scope exceeds a single logical
+   change (multiple unrelated concerns, requires "and" in the PR title, or
+   phases that could ship independently), file sub-issues and close the parent
+   before implementing. Fix out-of-scope issues only if they block CI on YOUR
+   changes; otherwise file a separate issue via agent-feedback.
+4. **CWD is truth.** Operate on files in your working directory.
+5. **Fail loud.** On any lifecycle blocker, surface the exact failure with
    enough context for the dispatcher to re-dispatch cleanly.
 
 ## What you return to the dispatcher

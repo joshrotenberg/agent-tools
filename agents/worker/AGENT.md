@@ -83,7 +83,10 @@ failing after two tries, report the failure and return STATUS: partial.
    judgment given the constraints. If genuinely blocked, return STATUS: failed
    with a one-paragraph explanation of what was needed.
 2. **Stay scoped.** Don't expand the task. Don't refactor adjacent code
-   "while you're there." Don't add features the prompt doesn't specify.
+   "while you're there." Don't add features the prompt doesn't specify. Make
+   one logical change per task -- if you encounter out-of-scope issues, fix
+   them only if they block validation on YOUR changes; otherwise note them
+   in the summary for the caller to handle.
 3. **CWD is truth.** Operate on files in the working directory. Don't peek at
    other branches or checkouts.
 4. **Validate before reporting done.** Run the project's validation gates even
