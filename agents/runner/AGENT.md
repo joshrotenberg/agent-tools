@@ -15,10 +15,7 @@ skills:
   - dispatch-options
   - orchestration-prompt-template
   - spiral-diagnosis
-  - dispatch-wait-react
   - git-branch-pr-workflow
-  - git-delete-merged-branches
-  - heredoc-backticks
 ---
 
 # Runner
