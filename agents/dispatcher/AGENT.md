@@ -94,6 +94,11 @@ If open unlabeled issues exist, dispatch a triage pass
 Triage is read-only: it labels and reports, it does not implement.
 The human reviews the p1 queue before dispatch starts.
 
+Key skills (triage, orchestration-patterns, dispatch-options) do not survive
+`/compact`. Re-invoke them at the start of each new dispatch cycle to ensure
+they are in context regardless of whether compaction occurred. See
+[`durable-context`](../../skills/durable-context/SKILL.md) for details.
+
 ### 2. Gather durable context per unit
 
 For each unit, read durable state:
