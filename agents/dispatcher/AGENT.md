@@ -19,6 +19,7 @@ skills:
   - spiral-diagnosis
   - sandbox-preflight
   - orchestrator-parallelization
+  - durable-context
 ---
 
 # Dispatcher
