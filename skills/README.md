@@ -39,6 +39,12 @@ lives here.
 | [`runner-synchronous-lifecycle`](runner-synchronous-lifecycle/SKILL.md) | The runner fires its dispatch synchronously and only returns after the full lifecycle is complete |
 | [`release-audit-anchoring`](release-audit-anchoring/SKILL.md) | Release-audit work -- anchor analysis on `origin/main` not the working tip; cross-check published versions externally |
 
+### Review
+
+| Skill | When to use |
+|---|---|
+| [`pr-review`](pr-review/SKILL.md) | When reviewing a PR in agent-tools -- reads the diff and issue, checks conventions, approves+merges, approves+notes ordering, or requests changes+converts to draft |
+
 ### Git + tooling hygiene
 
 | Skill | When to use |
