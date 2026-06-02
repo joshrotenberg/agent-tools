@@ -48,6 +48,12 @@ lives here.
 | [`git-delete-merged-branches`](git-delete-merged-branches/SKILL.md) | After a PR merges, cleaning up the local branch |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
 
+### Meta
+
+| Skill | When to use |
+|---|---|
+| [`agent-feedback`](agent-feedback/SKILL.md) | When you notice something wrong or suboptimal in a skill or agent definition -- file an issue rather than silently proceeding |
+
 ## Installation
 
 From the repo root:
