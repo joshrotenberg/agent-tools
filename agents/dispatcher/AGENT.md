@@ -1,10 +1,11 @@
 ---
 name: dispatcher
 description: >-
-  Use when the unit of work needs scoping (backlog, multi-project, or ambiguous
-  directive). Gathers durable context, decides execution shape
-  (single/parallel/sequential runner), and fires. Skip for a single
-  well-defined task -- go straight to the runner.
+  Primary pipeline entry point. Run `claude --agent dispatcher` to kick off
+  automated work from your issue queue. Dispatcher reads open issues, decides
+  execution shape (single/parallel/sequential runner), fires runners, and each
+  runner dispatches workers that branch, edit, open PRs, watch CI, and merge.
+  Skip for a single well-defined task -- go straight to the runner instead.
 tools: Read, Bash, Task
 model: sonnet
 skills:
