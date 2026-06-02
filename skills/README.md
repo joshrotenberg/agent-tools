@@ -18,7 +18,7 @@ lives here.
 |---|---|
 | [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate). Pick the simplest shape that fits. |
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by component/category/priority, flag duplicates, close noise, surface the p1 queue before dispatch |
-| [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher discovers projects in the workspace (for multi-project units) |
+| [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher discovers projects in the workspace (for multi-project units); also documents the workspace-level CLAUDE.md gap (discovery doesn't cross project boundaries) + workarounds |
 
 ### Dispatch
 

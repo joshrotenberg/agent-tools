@@ -105,10 +105,37 @@ State that was true 30 minutes ago may not be true now (CI
 finished, a PR landed, a new issue opened). The survey is the
 ground truth; your conversation memory is not.
 
-## Optional: config file (deferred)
+## The workspace-level CLAUDE.md gap
 
-A workspace config at `~/.config/agent-tools/workspace.toml` could
-carry priority overrides, dormant flags, custom roots, etc. Not
-shipped in v1. Add when the filesystem walk becomes lossy (e.g.
-projects in non-standard locations, priority hints that the
-filesystem layout can't express).
+Claude Code's CLAUDE.md discovery walks UP within a single
+project's hierarchy -- it does not cross project boundaries. When
+the dispatcher fires a worker into a specific project (e.g. with a
+`-C /path/to/project` cwd), the spawned session loads only that
+project's CLAUDE.md. Any workspace-level context -- the layer that
+sits above individual projects -- is invisible to the worker.
+
+That workspace-level context might carry:
+
+- Cross-project conventions (shared commit format, release cadence)
+- Workspace-level skills or dispatch patterns
+- The project name + role mapping (which repo plays which part)
+- Cross-project blockers (project A waits on project B's release)
+
+**v1 recommendation: document the limitation; don't build a
+mechanism for it.** Two workarounds cover the real cases:
+
+1. **Push it down.** Put any cross-project convention that workers
+   need into each project's own CLAUDE.md. Duplication is the cost;
+   discovery-for-free is the payoff.
+2. **Pass it in the prompt.** Inject the relevant workspace context
+   explicitly via the constraints/context section of the
+   orchestration prompt template. The dispatcher already carries the
+   workspace map; hand the worker the slice it needs.
+
+**Possible future directions** (not commitments): a workspace
+config file at `~/.config/agent-tools/workspace.toml` carrying
+priority overrides, dormant flags, custom roots, and cross-project
+context the filesystem walk can't express; or an upstream
+claude-code feature that lets discovery cross a marked workspace
+boundary. Build either only when the filesystem walk and the two
+workarounds above visibly stop being enough.
