@@ -112,6 +112,14 @@ Use `subagent_type: "runner"` (Task tool) for dispatches. For same-repo
 Task dispatches that modify files, pass `isolation: "worktree"`. See
 [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
 
+Set `model` and `effort` on each dispatch based on issue labels:
+
+| label / type | model | effort |
+|---|---|---|
+| `p1`, `agents`, `fix` | `sonnet` | `high` |
+| `p2` (default) | `sonnet` | `medium` |
+| `p3`, `docs`, `chore` | `haiku` | `low` |
+
 Track each dispatched task. For spirals, see
 [`spiral-diagnosis`](../../skills/spiral-diagnosis/SKILL.md).
 
