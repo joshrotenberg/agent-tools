@@ -23,6 +23,54 @@ This is a personal customization layer. The patterns are
 general -- adopt or fork as you like -- but the curation is
 opinionated.
 
+## Agents
+
+| Agent | What it does | Invoke with |
+|---|---|---|
+| `dispatcher` | Scopes units of work, decides execution shape, fires runners | `@dispatcher work the backlog` |
+| `runner` | Implements one GitHub issue end-to-end (branch, draft PR, CI, merge) | `@runner implement #N` |
+| `reviewer` | Reviews a PR: approve+merge, request-changes+draft, or approve+note ordering | `@reviewer review #N` |
+| `worker` | Bounded code-change executor; reads context, edits files, commits | (dispatched by runner) |
+
+See `agents/README.md` for invocation details and when to skip the dispatcher and
+go straight to the runner.
+
+## Typical workflow
+
+1. User files a GitHub issue.
+2. `@runner implement #N` -- runner branches, opens draft PR (plan visible immediately).
+3. Runner dispatches worker to make file edits and commit.
+4. Runner pushes, marks PR ready, watches CI.
+5. CI green -- runner merges, deletes branch, closes issue.
+
+Durable state at each step: branch exists, then draft PR body holds the plan, then
+commits accumulate, then merged PR and closed issue.
+
+## Dispatcher
+
+Use the dispatcher when the unit of work needs scoping -- backlog work, multi-project
+coordination, or an ambiguous directive. For a single well-defined task, go straight
+to the runner.
+
+```
+@dispatcher work the backlog
+```
+
+The dispatcher reads open issues, decides execution shape (parallel, sequential, or
+a mix), and fires runners. Each runner runs the full lifecycle for its issue.
+
+## Feedback loop
+
+The `field-feedback` and `agent-feedback` skills file GitHub issues automatically
+when agents encounter problems during dispatch. `@dispatcher triage open issues`
+labels and prioritizes them. Runners work the queue. The loop closes.
+
+## Getting started on a new project
+
+1. `touch CLAUDE.md` -- marks the project for workspace survey.
+2. Write Overview, Architecture, and Current Status sections.
+3. `@dispatcher work the backlog` or `@runner implement #N`.
+
 ## Install
 
 ```bash
@@ -43,13 +91,10 @@ Options:
 
 ## Dispatch
 
-The agents are dispatch-agnostic. You can drive `runner` with:
+The agents are dispatch-agnostic. You can drive any agent with:
 
-- The Task tool (Claude Code native, simplest)
-- [`roba`](https://github.com/joshrotenberg/roba) -- a mechanical
-  CLI wrapper around `claude -p` (`roba --agent runner ...`)
+- The Task tool (Claude Code native, default)
 - `claude -p --agent runner` directly
-- Any other wrapper that takes an agent name and a prompt
 
 See `skills/dispatch-options` for the trade-off table.
 
