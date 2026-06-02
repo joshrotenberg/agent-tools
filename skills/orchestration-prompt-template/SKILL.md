@@ -205,6 +205,32 @@ substrate-specific verbs.
 not actually queue for auto-merge. Don't rely on it; use the
 sync pattern above.
 
+## Heredoc backticks
+
+When piping the PR body (or any markdown) into a `gh pr create` or
+`gh issue create` call via a single-quoted heredoc, use **literal
+backticks** -- not the backslash-escaped form.
+
+```bash
+gh pr create --title "..." --body "$(cat <<'EOF'
+## Context
+
+Use `--flag` inline and ```code fences``` directly.
+No backslashes needed.
+EOF
+)"
+```
+
+**Why:** a `<<'EOF'` heredoc already disables shell expansion. A
+backslash before a backtick passes through as the two-character
+sequence `\`` + `` ` ``. GitHub's markdown renderer then treats
+the backslash as an escape character, converting it to a literal
+backtick instead of a code-fence delimiter -- code blocks break
+and `#` inside the unclosed fence renders as H1.
+
+**Rule:** inside `<<'EOF'`, write everything literally: backticks,
+`$VAR`, fences. The shell won't touch any of it.
+
 ## Related
 
 - [`draft-pr-first`](../draft-pr-first/SKILL.md) -- the "open the
@@ -216,6 +242,3 @@ sync pattern above.
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md) --
   the "branch off main + PR" discipline the prompt template
   assumes.
-- [`heredoc-backticks`](../heredoc-backticks/SKILL.md) -- how to
-  format the PR body in a `gh pr create --body "$(cat <<'EOF' ...
-  EOF)"` call without breaking the markdown.

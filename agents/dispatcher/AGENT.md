@@ -18,7 +18,6 @@ skills:
   - spiral-diagnosis
   - sandbox-preflight
   - orchestrator-parallelization
-  - heredoc-backticks
 ---
 
 # Dispatcher
