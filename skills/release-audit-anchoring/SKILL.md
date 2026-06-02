@@ -1,6 +1,6 @@
 ---
 name: release-audit-anchoring
-description: For release-readiness or release-audit tasks, anchor analysis on origin/main (or the project's default branch), not the working branch tip. Surface branch divergence in the first paragraph of the report. Cross-check published versions against external sources, not just in-tree files.
+description: When the task involves release-readiness, release-audit, version analysis, or "is this ready to ship" -- apply before any analysis. Anchor on origin/main (not the working branch tip), surface branch divergence in the first paragraph, and cross-check published versions against external sources. Without this, a stale branch produces false blocking findings.
 ---
 
 # Release audit anchoring

@@ -1,6 +1,6 @@
 ---
 name: draft-pr-first
-description: Open a draft PR with the plan as the body BEFORE doing any work. The PR body is the plan, the commit stream is the work, and the PR exists as a visible, resumable work unit from minute zero.
+description: Before starting any dispatched or non-trivial work that will become a PR -- open the draft PR first, with the plan as the body. The PR body is the plan, the commit stream is the work, and the PR exists as a visible, resumable work unit from minute zero. Use this whenever the work crosses the "deserve a PR" threshold.
 ---
 
 # Draft PR first

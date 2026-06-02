@@ -1,6 +1,6 @@
 ---
 name: workspace-survey
-description: How the dispatcher discovers projects in the workspace, reads their state, and assembles a workspace-level picture. The filesystem layout IS the workspace map; no separate config required.
+description: When the dispatcher needs a workspace map -- at the start of any multi-project or scope-scoping invocation. Walk ~/Code/active/ for directories with both .git/ and CLAUDE.md, load each project's positioning and live GitHub state (open/draft PRs, issues, CI), and return a tight activity table. Re-survey on every invocation; do not rely on prior-session memory.
 ---
 
 # Workspace survey
