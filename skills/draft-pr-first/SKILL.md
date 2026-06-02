@@ -1,6 +1,6 @@
 ---
 name: draft-pr-first
-description: Open a draft PR with the plan as the body BEFORE doing any work. The PR body is the plan, the commit stream is the work, and the PR exists as a visible, resumable work unit from minute zero. The roba-specific composition of the general draft-PR-first pattern.
+description: Open a draft PR with the plan as the body BEFORE doing any work. The PR body is the plan, the commit stream is the work, and the PR exists as a visible, resumable work unit from minute zero.
 ---
 
 # Draft PR first
@@ -13,8 +13,7 @@ artifacts produced at the end.
 
 ## When to apply
 
-- Any work the dispatcher dispatches to roba (the case this skill
-  exists to codify)
+- Any dispatched work that will become a PR
 - Any non-trivial hand-edit that will become a PR
 - Multi-step refactors where intermediate state matters
 - Anything you want a second party (human or another agent) to be
@@ -38,9 +37,9 @@ artifacts produced at the end.
   spawned work inherits full project context without the
   dispatcher having to know specifics.
 
-## The roba-dispatched flow
+## The dispatch flow
 
-For an dispatcher firing roba on the user's behalf:
+For a dispatcher firing on the user's behalf:
 
 ```bash
 # 1. Branch + empty initial commit so a PR can exist
@@ -52,16 +51,18 @@ git commit --allow-empty -m "chore: start work on #<N>"
 git push -u origin <branch>
 gh pr create --draft \
     --title "<conventional commit subject> (closes #<N>)" \
-    --body "$(cat /tmp/roba-task-<N>.md)"
+    --body "$(cat /tmp/task-<N>.md)"
 # (or pass a separately-composed plan body if the prompt body
 # isn't shaped right for the PR.)
 
-# 3. Fire roba against the same branch (use the LOCAL checkout's
-# cwd, not the spawned worktree -- the dispatcher owns the
-# branch lifecycle)
-roba --fresh --full-auto -C <repo-path> -f /tmp/roba-task-<N>.md
+# 3. Fire the dispatch against the same branch (the dispatcher owns
+#    the branch lifecycle). Mechanism per dispatch-options:
+#
+#    Task tool:    Task(subagent_type: "runner", prompt: <full prompt>)
+#    Bash + roba:  roba --fresh --full-auto -C <repo-path> -f /tmp/task-<N>.md
+#    Bash + claude -p: claude -p --agent runner "$(cat /tmp/task-<N>.md)"
 
-# 4. When roba returns: push the commits it made
+# 4. When the dispatch returns: push the commits it made
 git push        # auto-extends the draft PR
 
 # 5. (optional) Verify the diff is sane before marking ready
@@ -113,8 +114,8 @@ that case.
 
 ## Plan body shape
 
-A good plan body for a draft PR mirrors the roba orchestration
-prompt:
+A good plan body for a draft PR mirrors the orchestration prompt
+template:
 
 - **Setup** -- branch, cwd, pre-conditions
 - **Context** -- 2-4 sentences on why this matters

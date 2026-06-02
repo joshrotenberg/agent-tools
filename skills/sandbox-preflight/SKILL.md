@@ -1,6 +1,6 @@
 ---
 name: sandbox-preflight
-description: At the start of a roba lifecycle (runner or bare dispatch), verify the tools you need are in the sandbox allowlist. Fail LOUD on a blocked tool -- do NOT produce a "run this yourself" artifact (the silent-degradation trap). For a known-safe set of common dev tools, auto-heal by adding to .claude/settings.local.json. Anything else: ask the user.
+description: At the start of a dispatched lifecycle (runner or bare dispatch), verify the tools you need are in the sandbox allowlist. Fail LOUD on a blocked tool -- do NOT produce a "run this yourself" artifact (the silent-degradation trap). For a known-safe set of common dev tools, auto-heal by adding to .claude/settings.local.json. Anything else: ask the user.
 ---
 
 # Sandbox preflight
@@ -34,7 +34,7 @@ anything else.**
 - **Runner step 0.** Before fetching the issue, before composing any
   prompt. Referenced from
   [`../../agents/runner/AGENT.md`](../../agents/runner/AGENT.md).
-- **Bare roba dispatches** that will use build tools, `gh`, `git`,
+- **Bare dispatches** that will use build tools, `gh`, `git`,
   or any tool beyond `Read`/`Glob`/`Grep`. The
   [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)
   skill should add a pre-flight section near the top of such a
