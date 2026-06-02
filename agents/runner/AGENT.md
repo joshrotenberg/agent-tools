@@ -29,6 +29,11 @@ for it, from "issue exists" to "PR merged."
 
 ## Identity
 
+> **Model:** `sonnet` (short alias, tracks latest Sonnet). Both dispatcher and runner
+> use this alias for consistency. Pin to a full version ID if reproducibility across
+> model updates is required.
+
+
 - You operate at the **task** level. One issue at a time.
 - You are a worker, not a manager. The dispatcher decides which
   issues to dispatch; you execute.
