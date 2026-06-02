@@ -1,27 +1,10 @@
 # agent-tools
 
+[![CI](https://github.com/joshrotenberg/agent-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/joshrotenberg/agent-tools/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/joshrotenberg/agent-tools)](https://github.com/joshrotenberg/agent-tools/releases)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
+
 My custom skills and subagents for working with Claude Code.
-
-## What's in here
-
-- **`skills/`** -- operational knowledge. Process discipline, git
-  workflow, dispatch patterns, sandbox preflight, release-audit
-  anchoring, and the rest of the patterns I've found load-bearing
-  across projects.
-- **`agents/`** -- subagent definitions. `runner` does one task
-  end-to-end; `dispatcher` gathers context, decides execution
-  shape, and fires runners (single, parallel, sequential, etc.).
-
-The shape: a **unit of work** is defined by durable state (issue,
-PR, project CLAUDE.md, code). The dispatcher reads that
-state, decides how to execute, and fires. The runner does one
-task end-to-end. Everything else is ephemeral -- conversations,
-agent context, dispatch sessions all read durable state on
-invocation and write durable state on return.
-
-This is a personal customization layer. The patterns are
-general -- adopt or fork as you like -- but the curation is
-opinionated.
 
 ## Entry point
 
@@ -41,6 +24,32 @@ Typical session:
 2. Run: `claude --agent dispatcher`
 3. Review merged PRs
 
+## Architecture
+
+```mermaid
+graph LR
+    Human((Human)) -->|files issues| GH[(GitHub Issues)]
+    Human -->|claude --agent dispatcher| D[Dispatcher]
+    D -->|reads queue| GH
+    D -->|dispatches| R[Runner]
+    R -->|opens draft PR| GH
+    R -->|dispatches| W[Worker]
+    W -->|edits files, commits| Repo[(Source)]
+    R -->|pushes, watches CI, merges| GH
+    R -->|dispatches| Rev[Reviewer]
+    Rev -->|approve + merge or request-changes| GH
+```
+
+## What's in here
+
+- **`skills/`** -- operational knowledge. Process discipline, git
+  workflow, dispatch patterns, sandbox preflight, release-audit
+  anchoring, and the rest of the patterns I've found load-bearing
+  across projects.
+- **`agents/`** -- subagent definitions. `runner` does one task
+  end-to-end; `dispatcher` gathers context, decides execution
+  shape, and fires runners (single, parallel, sequential, etc.).
+
 ## Agents
 
 | Agent | What it does | Invoke with |
@@ -55,9 +64,26 @@ go straight to the runner.
 
 ## Feedback loop
 
+```mermaid
+graph LR
+    Work[Work Sessions] -->|observes gaps| FF[field-feedback\nagent-feedback]
+    FF -->|files issues| Q[(Issue Queue)]
+    Q -->|triage labels| L[Labeled Queue]
+    L -->|dispatcher| Fixes[PRs + Merges]
+    Fixes -->|improves| Skills[Skills & Agents]
+    Skills -->|better| Work
+```
+
 The `field-feedback` and `agent-feedback` skills file GitHub issues automatically
 when agents encounter problems during dispatch. `@dispatcher triage open issues`
 labels and prioritizes them. Runners work the queue. The loop closes.
+
+## How it fits together
+
+- Skills provide operational knowledge loaded at dispatch time
+- Agents define roles (dispatcher, runner, worker, reviewer)
+- Durable state (GitHub issues, PRs, CLAUDE.md, code) is the substrate -- agents are ephemeral, state persists
+- The self-improving loop: use -> observe -> file -> fix -> repeat
 
 ## Getting started on a new project
 
