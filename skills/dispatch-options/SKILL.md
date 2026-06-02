@@ -1,6 +1,6 @@
 ---
 name: dispatch-options
-description: Trade-offs between the four common ways to dispatch a subagent (Task tool / Bash + roba / Bash + claude-wrapper / Bash + claude -p direct). Helps orchestrators and runners pick the right mechanism for a given job.
+description: When choosing how to dispatch a subagent -- consult this before firing any dispatch. Covers the four common mechanisms (Task tool / Bash + roba / Bash + claude-wrapper / Bash + claude -p direct) and when each fits: default to Task tool for in-project work, reach for Bash + roba when you need a different cwd, worktree isolation, or observability.
 ---
 
 # Dispatch options

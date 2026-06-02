@@ -1,6 +1,6 @@
 ---
 name: orchestration-prompt-template
-description: How to write the prompt and wrap the PR lifecycle when dispatching a runner. The dispatcher's value-add is the tight, well-formed prompt; the dispatch mechanism (Task / roba / etc.) is interchangeable per dispatch-options.
+description: When the dispatcher is about to fire a runner -- use this template to write the prompt and wrap the PR lifecycle. Apply before every dispatch: the prompt section covers setup, context, task, tool-call discipline, and steps; the PR-lifecycle pattern covers draft-PR-first through CI-watch and merge.
 ---
 
 # Orchestration prompt template

@@ -1,6 +1,6 @@
 ---
 name: orchestrator-parallelization
-description: When to fan out dispatches in parallel vs sequentially. The default is sequential. Parallelize only when different file surface, independent semantics, and predictable per-task pattern all hold. Different repos is the canonical parallel case; same-repo parallelism needs worktrees.
+description: When the dispatcher has N tasks to execute -- use this before fanning out to decide whether to run in parallel or sequentially. Default is sequential; parallelize only when all three conditions hold (different file surface, independent semantics, predictable pattern). Different repos is the canonical parallel case; same-repo parallel needs worktrees.
 ---
 
 # Parallelization heuristics

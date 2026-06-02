@@ -1,6 +1,6 @@
 ---
 name: orchestration-patterns
-description: How to think about units of work + execution shapes. A unit of work is defined by durable state (issue + PR + CLAUDE.md + code); the dispatcher picks an execution shape per unit (single runner / parallel / sequential / chained / audit + remediate). Pick the simplest shape that fits.
+description: When the dispatcher is scoping a unit of work or deciding how to execute it -- use this to define what the unit is and pick the right execution shape (single runner / parallel / sequential / chained / audit + remediate). Default to single runner; reach for other shapes only when the unit justifies the coordination cost.
 ---
 
 # Orchestration patterns
