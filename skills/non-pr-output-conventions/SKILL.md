@@ -27,19 +27,19 @@ Don't write to CLAUDE.md for answers a human won't search for later.
 
 ## Mechanics per destination
 
-**stdout / return text**
+### stdout / return text
 
 Just return it in the response. No file, no issue, no branch.
 Right for ephemeral answers: "explain how --fresh works," "what
 shipped this week?"
 
-**CLAUDE.md entry**
+### CLAUDE.md entry
 
 Use the existing brainstorm-sketches or decisions-log pattern from
 `orchestration-prompt-template`. Append to the relevant section;
 no commit needed (CLAUDE.md is typically untracked).
 
-**Issue comment**
+### Issue comment
 
 ```bash
 gh issue comment N --body "$(cat /tmp/<task-id>-findings.md)"
@@ -48,7 +48,7 @@ gh issue comment N --body "$(cat /tmp/<task-id>-findings.md)"
 Right for audit findings, diagnosis results, research summaries
 that belong to a tracking issue. Visible to all; searchable.
 
-**Findings file**
+### Findings file
 
 Write to `/tmp/<task-id>-findings.md`. Return the path in the
 response so the dispatcher can reference it in a follow-on prompt.
