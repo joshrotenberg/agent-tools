@@ -19,7 +19,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-MODEL="claude-3-5-haiku-20241022"
+MODEL="claude-3-haiku-20240307"
 API_URL="https://api.anthropic.com/v1/messages/count_tokens"
 
 # -- Validate prerequisites --------------------------------------------------
