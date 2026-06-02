@@ -78,7 +78,9 @@ count_tokens() {
         if [ "${API_WARNED:-}" != "1" ]; then
             printf 'WARN: API returned HTTP %s -- falling back to line-count estimates (~12 tokens/line)\n' "$http_code" >&2
             printf 'WARN: Response: %s\n' "$response" >&2
+            printf 'WARN: (subsequent API errors suppressed)\n' >&2
             API_WARNED=1
+            export API_WARNED
         fi
         local lines
         lines="$(wc -l < "$file")"
