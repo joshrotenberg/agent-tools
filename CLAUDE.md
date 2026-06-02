@@ -401,6 +401,7 @@ Monitor tool for tailing, Workflow tool for multi-agent pipelines, dynamic conte
 injection in skills, allowed-tools in SKILL.md frontmatter.
 
 **Open PRs for next session (merge in order to minimize conflicts):**
+
 - #19: fix/skill-descriptions (skill descriptions, independent)
 - #20: ci/markdownlint (CI, independent)
 - #23: fix/runner-permissions (runner AGENT.md)
@@ -411,11 +412,19 @@ injection in skills, allowed-tools in SKILL.md frontmatter.
 
 Runner AGENT.md is modified by PRs #23-#27 -- merge in order to minimize conflicts.
 
-**Open issues for next session:** #5 (closed by #23), #7 (closed by #24),
-#8 (closed by #19), #10 (closed by #20), #17 (closed by #26), #18 (closed by #25),
-#21 (agent spec research), #22 (closed by #27), #33-#37 (research findings backlog).
+**Open issues for next session:**
 
-## Working conventions
+- #5 (closed by #23)
+- #7 (closed by #24)
+- #8 (closed by #19)
+- #10 (closed by #20)
+- #17 (closed by #26)
+- #18 (closed by #25)
+- #21 (agent spec research)
+- #22 (closed by #27)
+- #33-#37 (research findings backlog)
+
+## Dispatch and install conventions
 
 ### Install cadence
 
