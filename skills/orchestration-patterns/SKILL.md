@@ -109,6 +109,11 @@ without re-running the audit.
 Right shape for release audits, security scans, dependency
 sweeps.
 
+**Triage-then-dispatch** is a variant: a read-only triage pass
+labels the open-issue queue by component, category, and priority
+(durable findings), then the dispatcher scopes runners against the
+labeled queue. See [`triage`](../triage/SKILL.md).
+
 ## Single-project vs multi-project units
 
 The dispatcher handles both. Single-project units stay in one
