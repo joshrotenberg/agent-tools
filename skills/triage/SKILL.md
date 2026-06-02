@@ -46,7 +46,30 @@ no code changes.
    gh issue edit N --add-label "skills,feat,p2"
    ```
 
-4. **Check for duplicates.** If a near-duplicate open issue exists,
+4. **Normalize the title.** Check whether the title has a conventional
+   commit prefix (`feat:`, `fix:`, `docs:`, `chore:`, `ci:`, `perf:`,
+   `refactor:`, `test:`). If not -- or if it uses a non-canonical prefix
+   like `research:` or `brainstorm:` -- determine the correct type from
+   the body and labels, then rename:
+
+   ```bash
+   gh issue edit N --title "type: normalized title"
+   ```
+
+   Mapping rules for non-canonical prefixes:
+
+   - `research:` → `docs:` (if the issue documents findings or a
+     known gap) or `chore:` (if it's internal housekeeping)
+   - `brainstorm:` → `docs:` (design sketches and deferred ideas)
+
+   If the correct prefix is ambiguous, do NOT rename. Leave a comment
+   instead:
+
+   ```bash
+   gh issue comment N --body "Title is missing a conventional commit prefix. Candidates: feat / docs / chore. Please rename when the type is clear."
+   ```
+
+5. **Check for duplicates.** If a near-duplicate open issue exists,
    comment linking them rather than silently relabeling:
 
    ```bash
@@ -55,14 +78,14 @@ no code changes.
 
    Leave both open; the human decides which to close.
 
-5. **Close obvious noise** -- test issues, empty bodies, or clearly
+6. **Close obvious noise** -- test issues, empty bodies, or clearly
    non-actionable items:
 
    ```bash
    gh issue close N --comment "Closing: empty body, not actionable. Reopen with detail if needed."
    ```
 
-6. **Emit a brief triage report**: N issues processed, breakdown by
+7. **Emit a brief triage report**: N issues processed, breakdown by
    priority, any duplicates flagged, any issues closed. Keep it
    terse -- the labels are the durable output; the report is a
    summary for the human.

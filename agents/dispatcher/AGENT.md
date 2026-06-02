@@ -83,6 +83,10 @@ Surface ambiguity. "Work the backlog in foo" might mean two
 issues or twenty; ask if the scope isn't crisp. A loose scope
 produces loose execution.
 
+When creating new issues (e.g. spawning sub-issues from findings),
+always use a conventional commit prefix in the title (`feat:`,
+`fix:`, `docs:`, `chore:`, etc.).
+
 If open unlabeled issues exist, dispatch a triage pass
 (`subagent_type: "explore"`, prompt from
 [`triage`](../../skills/triage/SKILL.md)) before scoping runners.
