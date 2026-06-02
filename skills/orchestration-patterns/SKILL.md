@@ -19,7 +19,7 @@ A self-contained slice of durable state. The pieces:
 |---|---|
 | **Input** | A GitHub issue (or a bundle of related issues), the directive interpreting it |
 | **Context** | The project's CLAUDE.md + the relevant code state + the open/draft PRs that matter |
-| **Output** | A merged PR (sometimes multiple), CLAUDE.md updates, possibly new issues spawned for follow-on work |
+| **Output** | PR shape: merged PR + CLAUDE.md updates + closed issues. Non-PR shape: structured text to a durable destination (stdout, CLAUDE.md entry, issue comment, findings file) + optionally new issues spawned for follow-on work |
 
 A unit isn't sized by line count or hours. It's sized by what
 the durable state says belongs together. "Implement #42" is a
@@ -39,6 +39,8 @@ For each unit, the dispatcher picks an **execution shape**:
 | **Sequential runners** | Order matters: A's output (in durable state) is B's input. | "Add the type in PR-A; implement against it in PR-B" |
 | **Chained agents** (design → impl → review) | Larger work; design quality matters; same-context conflation is a real risk | "Refactor the auth layer to support OIDC" (currently a future shape; build when justified) |
 | **Audit + remediate** | Read-only survey first; then per-finding runner dispatch | "Audit release-readiness across foo and bar; fix what's blocking" |
+| **Researcher** | Read-only directive produces an answer, report, or explanation -- no code change | "compare actix-web vs axum for HTTP server use" |
+| **Auditor** | Read-only directive produces structured findings; may spawn issues for actionable items | "security audit src/auth/", "why is test_foo failing?" |
 
 Default: single runner. Reach for the others only when the unit
 justifies the coordination cost.
@@ -113,6 +115,33 @@ sweeps.
 labels the open-issue queue by component, category, and priority
 (durable findings), then the dispatcher scopes runners against the
 labeled queue. See [`triage`](../triage/SKILL.md).
+
+### Researcher
+
+The read-only, text-output shape. The unit is a question, comparison,
+or status request. The dispatcher fires a `subagent_type: "explore"`
+Task dispatch (or researcher agent when available). Output goes to
+the destination per
+[`non-pr-output-conventions`](../non-pr-output-conventions/SKILL.md):
+stdout for ephemeral answers, issue comment or file for durable
+reports.
+
+No branch, no PR, no CI watch. The synchronous hold-open contract
+still applies: the dispatch must complete and deliver to the durable
+destination before the dispatcher returns.
+
+### Auditor
+
+The read-only, findings-output shape. The unit is an audit or
+diagnosis directive. Output is structured findings delivered to a
+durable destination per
+[`non-pr-output-conventions`](../non-pr-output-conventions/SKILL.md).
+Actionable findings above a threshold get filed as new issues; the
+dispatcher can immediately dispatch runners on them (the
+"audit + remediate" shape extended to include the non-PR audit phase
+explicitly).
+
+No branch, no PR. The synchronous hold-open contract applies.
 
 ## Single-project vs multi-project units
 

@@ -123,6 +123,18 @@ the shapes available include:
 | **Sequential runners** | Tasks with order dependencies (A's output is B's input via durable state) |
 | **Chained agents** (design → impl → review) | Future shape; build when single-runner visibly breaks. |
 | **Audit + remediate** | Survey first (read-only pass), then per-finding runner dispatch |
+| **Researcher** | Read-only directive produces an answer, report, or explanation -- no code change |
+| **Auditor** | Read-only directive produces structured findings; may spawn issues for actionable items |
+
+**Shape classification:** Does the directive produce a code change?
+
+- YES -- PR shape (single/parallel/sequential/chained/audit+remediate)
+- NO -- non-PR shape:
+  - Structured findings that may spawn follow-on work? YES -- auditor
+  - Answer, report, or explanation? YES -- researcher
+
+See [`non-pr-output-conventions`](../../skills/non-pr-output-conventions/SKILL.md)
+for output destination mechanics and the spawn-issue handback pattern.
 
 Most days: single runner. The other shapes are tools for the
 specific cases that justify them, not defaults to reach for.
