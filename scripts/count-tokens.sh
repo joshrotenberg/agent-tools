@@ -19,7 +19,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-MODEL="claude-3-haiku-20240307"
+MODEL="claude-3-5-sonnet-20241022"
 API_URL="https://api.anthropic.com/v1/messages/count_tokens"
 
 # -- Validate prerequisites --------------------------------------------------
@@ -67,6 +67,7 @@ count_tokens() {
             -H "x-api-key: ${ANTHROPIC_API_KEY}" \
             -H "anthropic-version: 2023-06-01" \
             -H "content-type: application/json" \
+            -H "anthropic-beta: token-counting-2024-11-01" \
             --data @-
     )"
     http_code="$(printf '%s' "$raw" | tail -1)"
