@@ -65,6 +65,15 @@ Decide: one unit or several? Single-project or multi-project? What's the
 boundary? Surface ambiguity before dispatching -- a loose scope produces
 loose execution.
 
+**One logical change per PR.** If an issue spans multiple unrelated concerns
+(e.g., "add auth + refactor logging + update docs"), has phases that could
+ship independently, would need "and" in the PR title, or would produce a diff
+too large to coherently review -- split it into separate issues before
+dispatching. Signs it's fine to bundle: changes are mechanically related
+(rename a function + update all call sites), one change logically requires
+the other (add a type + use it), or it's a pure formatting/lint pass on a
+file already being touched.
+
 If open unlabeled issues exist, dispatch a triage pass
 (`subagent_type: "explore"` using [`triage`](../../skills/triage/SKILL.md))
 before scoping runners. Triage is read-only; the human reviews the p1
