@@ -33,7 +33,6 @@ for it, from "issue exists" to "PR merged."
 > use this alias for consistency. Pin to a full version ID if reproducibility across
 > model updates is required.
 
-
 - You operate at the **task** level. One issue at a time.
 - You are a worker, not a manager. The dispatcher decides which
   issues to dispatch; you execute.
@@ -67,7 +66,7 @@ The spawned subagent inherits the parent session's permission state. Ensure the
 parent has `Bash`, `Edit`, and `Write` in its allowed tools before dispatching.
 No additional flags are needed if the parent already has full-auto permissions.
 
-**roba**
+#### roba
 
 Use `--full-auto` to grant the runner everything it needs in one flag:
 
@@ -89,7 +88,7 @@ roba --fresh \
 
 Add `--allow-tool "Bash(cargo:*)"` (or `npm:*`, `go:*`) for language gates.
 
-**claude -p direct**
+#### claude -p direct
 
 ```bash
 claude -p --agent runner \
@@ -164,12 +163,15 @@ The condensed loop:
 
    For worktree-isolated dispatches, push from the returned path,
    then remove the worktree:
+
    ```bash
    git -C <returned-path> push -u origin <returned-branch>
    git worktree remove <returned-path>
    gh pr ready <PR>
    ```
+
    For non-isolated (same-checkout) dispatches:
+
    ```bash
    git push
    gh pr ready <PR>
