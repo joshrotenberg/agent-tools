@@ -9,6 +9,7 @@ tools: Read, Bash, Task
 model: sonnet
 skills:
   - workspace-survey
+  - triage
   - orchestration-patterns
   - dispatch-options
   - dispatch-wait-react
@@ -81,6 +82,12 @@ Read the directive. Decide:
 Surface ambiguity. "Work the backlog in foo" might mean two
 issues or twenty; ask if the scope isn't crisp. A loose scope
 produces loose execution.
+
+If open unlabeled issues exist, dispatch a triage pass
+(`subagent_type: "explore"`, prompt from
+[`triage`](../../skills/triage/SKILL.md)) before scoping runners.
+Triage is read-only: it labels and reports, it does not implement.
+The human reviews the p1 queue before dispatch starts.
 
 ### 2. Gather durable context per unit
 
