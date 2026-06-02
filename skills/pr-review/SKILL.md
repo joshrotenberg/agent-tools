@@ -63,6 +63,30 @@ gh pr list --json number,headRefName,files --jq '
 If another open PR modifies a file this PR also modifies, approve but do NOT merge.
 Comment "LGTM; merge after #X (both modify <file>)."
 
+## Size labeling
+
+After reviewing, apply a size label based on files changed. Use `gh pr diff --stat`
+to count changed files, then apply the appropriate label:
+
+```bash
+FILES=$(gh pr diff $PR --stat | tail -1 | grep -oE "^[[:space:]]+[0-9]+" | tr -d ' ')
+if [ -z "$FILES" ]; then FILES=1; fi
+if [ "$FILES" -le 3 ]; then
+  gh pr edit $PR --add-label "size/small"
+elif [ "$FILES" -le 10 ]; then
+  gh pr edit $PR --add-label "size/medium"
+else
+  gh pr edit $PR --add-label "size/large"
+fi
+```
+
+Apply the `blocked` label when approving with an ordering dependency (in addition
+to the comment):
+
+```bash
+gh pr edit $PR --add-label "blocked"
+```
+
 ## Decision actions
 
 ```bash
@@ -72,6 +96,7 @@ gh pr merge $PR --squash --delete-branch
 
 # APPROVE, ordering dependency (checks pass, but conflicts expected)
 gh pr review $PR --approve --body "LGTM; merge after PR #X (both modify <file>)"
+gh pr edit $PR --add-label "blocked"
 # Do NOT merge
 
 # REQUEST CHANGES (issues found)
