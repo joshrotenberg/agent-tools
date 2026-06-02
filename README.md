@@ -89,6 +89,26 @@ Options:
   on non-TTY)
 - `--dry-run` -- print what would be copied; touch nothing
 
+## Install from a release
+
+To install without cloning the repo:
+
+```bash
+# Latest release
+gh release download --repo joshrotenberg/agent-tools \
+  --pattern "*.tar.gz" --dir /tmp/agent-tools
+cd /tmp/agent-tools && tar xzf *.tar.gz && ./install.sh
+
+# Specific version
+gh release download v0.2.0 --repo joshrotenberg/agent-tools \
+  --pattern "*.tar.gz" --dir /tmp/agent-tools
+cd /tmp/agent-tools && tar xzf *.tar.gz && ./install.sh
+```
+
+Releases are created automatically when `feat:`, `fix:`, or `docs:` commits
+land on main. See [releases](https://github.com/joshrotenberg/agent-tools/releases)
+for available versions.
+
 ## Dispatch
 
 The agents are dispatch-agnostic. You can drive any agent with:
