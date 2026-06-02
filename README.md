@@ -53,30 +53,6 @@ Typical session:
 See `agents/README.md` for invocation details and when to skip the dispatcher and
 go straight to the runner.
 
-## Typical workflow
-
-1. User files a GitHub issue.
-2. `@runner implement #N` -- runner branches, opens draft PR (plan visible immediately).
-3. Runner dispatches worker to make file edits and commit.
-4. Runner pushes, marks PR ready, watches CI.
-5. CI green -- runner merges, deletes branch, closes issue.
-
-Durable state at each step: branch exists, then draft PR body holds the plan, then
-commits accumulate, then merged PR and closed issue.
-
-## Dispatcher
-
-Use the dispatcher when the unit of work needs scoping -- backlog work, multi-project
-coordination, or an ambiguous directive. For a single well-defined task, go straight
-to the runner.
-
-```
-@dispatcher work the backlog
-```
-
-The dispatcher reads open issues, decides execution shape (parallel, sequential, or
-a mix), and fires runners. Each runner runs the full lifecycle for its issue.
-
 ## Feedback loop
 
 The `field-feedback` and `agent-feedback` skills file GitHub issues automatically
@@ -127,17 +103,6 @@ Releases are created automatically when `feat:`, `fix:`, or `docs:` commits
 land on main. See [releases](https://github.com/joshrotenberg/agent-tools/releases)
 for available versions.
 
-## Dispatch
+## License
 
-The agents are dispatch-agnostic. You can drive any agent with:
-
-- The Task tool (Claude Code native, default)
-- `claude -p --agent runner` directly
-
-See `skills/dispatch-options` for the trade-off table.
-
-## Status
-
-Active and changing. Skills get added or refined as I dogfood
-across projects; the dispatcher + runner agents have settled
-against the unit-of-work + execution-shape framing.
+Licensed under [MIT](LICENSE-MIT) or [Apache 2.0](LICENSE-APACHE), at your option.
