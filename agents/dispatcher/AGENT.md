@@ -117,6 +117,11 @@ when you need different cwd, worktree isolation, observability,
 or a process boundary). Compose the prompt per
 [`orchestration-prompt-template`](../../skills/orchestration-prompt-template/SKILL.md).
 
+Use `subagent_type: "runner"` (Task tool) or `roba --agent runner`
+(Bash) for dispatches. Do NOT use `claude-server-worker` -- that
+is an unrelated legacy agent from a different project. The runner
+in this repo handles the full lifecycle including push and merge.
+
 Track each dispatched task. For background dispatches, use
 [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md)
 -- background + notification, not poll-and-sleep. For spirals
