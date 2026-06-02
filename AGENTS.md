@@ -49,6 +49,12 @@ than reimplementing skill content inline. The body covers: identity, when
 to invoke vs skip, inputs/outputs, lifecycle loop, discipline rules,
 anti-patterns, and related agents. Target 130-200 lines per agent.
 
+## Required Secrets
+
+| Secret | Used by | Purpose |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | `token-budget.yml` | Calls `POST /v1/messages/count_tokens` to get exact token counts for all skills and agents. Needed only by the scheduled token-budget workflow; not required for CI. |
+
 ## Feedback
 
 If you notice something wrong or suboptimal in a skill or agent definition,
