@@ -66,35 +66,23 @@ The spawned subagent inherits the parent session's permission state. Ensure the
 parent has `Bash`, `Edit`, and `Write` in its allowed tools before dispatching.
 No additional flags are needed if the parent already has full-auto permissions.
 
-#### roba
+#### Bash-based dispatch
 
-Use `--full-auto` to grant the runner everything it needs in one flag:
-
-```bash
-roba --fresh --full-auto -C <repo-path> -f /tmp/task-N.md
-```
-
-If you need a narrower grant, specify each Bash scope explicitly:
-
-```bash
-roba --fresh \
-  --allow-tool "Bash(git:*)" \
-  --allow-tool "Bash(gh:*)" \
-  --allow-tool "Edit(*)" \
-  --allow-tool "Write(*)" \
-  --allow-tool "Read(*)" \
-  -C <repo-path> -f /tmp/task-N.md
-```
-
-Add `--allow-tool "Bash(cargo:*)"` (or `npm:*`, `go:*`) for language gates.
-
-#### claude -p direct
+For Bash-based dispatch (e.g. from a script or CI), use `claude -p` directly:
 
 ```bash
 claude -p --agent runner \
   --allowed-tools "Read,Glob,Grep,Edit,Write,Bash" \
   "implement #N in <repo-path>"
 ```
+
+If you use roba, `--full-auto` grants the runner everything it needs in one flag:
+
+```bash
+roba --fresh --full-auto -C <repo-path> -f /tmp/task-N.md
+```
+
+Add `--allow-tool "Bash(cargo:*)"` (or `npm:*`, `go:*`) for language gates.
 
 ### Narrowest-safe alternative
 

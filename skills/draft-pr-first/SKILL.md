@@ -6,7 +6,7 @@ description: Before starting any dispatched or non-trivial work that will become
 # Draft PR first
 
 When starting work that's substantial enough to deserve a PR --
-roba-dispatched or hand-edited -- **open the draft PR before the
+dispatched or hand-edited -- **open the draft PR before the
 work, not after.** The PR body holds the plan; the commit stream
 holds the execution; together they are the work itself, not
 artifacts produced at the end.
@@ -33,7 +33,7 @@ artifacts produced at the end.
 - **The substrate for multi-repo orchestration.** A single parent
   agent can fan tasks out across N repos and see the global state
   by listing draft PRs across each one. Each repo carries its own
-  `CLAUDE.md`, `skills/`, `.claude/agents/`, `roba.toml`, so the
+  `CLAUDE.md`, `skills/`, `.claude/agents/`, so the
   spawned work inherits full project context without the
   dispatcher having to know specifics.
 
@@ -58,8 +58,7 @@ gh pr create --draft \
 # 3. Fire the dispatch against the same branch (the dispatcher owns
 #    the branch lifecycle). Mechanism per dispatch-options:
 #
-#    Task tool:    Task(subagent_type: "runner", prompt: <full prompt>)
-#    Bash + roba:  roba --fresh --full-auto -C <repo-path> -f /tmp/task-<N>.md
+#    Task tool:      Task(subagent_type: "runner", prompt: <full prompt>)
 #    Bash + claude -p: claude -p --agent runner "$(cat /tmp/task-<N>.md)"
 
 # 4. When the dispatch returns: push the commits it made
@@ -111,8 +110,8 @@ intermediate state has a no-op commit. Acceptable because:
   empty commit doesn't reach main.
 - The alternative (open PR after first real commit) means the work
   starts invisible -- the dispatcher can't reference the PR
-  number when firing roba, and there's a window where the work is
-  in flight but unobservable.
+  number when firing the dispatch, and there's a window where the
+  work is in flight but unobservable.
 
 If the project's merge strategy is *not* squash-merge, the empty
 commit is more visible. Adjust to "small trivial change as initial

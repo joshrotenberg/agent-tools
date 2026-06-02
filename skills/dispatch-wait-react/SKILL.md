@@ -20,7 +20,7 @@ dispatches run, CI watches, etc. The "background + notification" pattern
 serves that.
 
 **The runner subagent is different.** A runner subagent invocation
-must complete the FULL lifecycle (fire roba, push, mark ready,
+must complete the FULL lifecycle (fire the dispatch, push, mark ready,
 watch CI, merge or surface) before returning to the dispatcher,
 because the runner's return signals "task done." If the runner
 backgrounds the dispatch and returns early, the lifecycle is
@@ -31,8 +31,7 @@ for the runner-specific discipline.
 
 ## When to apply (dispatcher)
 
-- Any dispatch you fire as a Bash command (roba / claude -p /
-  claude-wrapper, etc.)
+- Any dispatch you fire as a Bash command (claude -p or similar)
 - Any CI watch (`gh pr checks <PR> --watch`)
 - Any sub-agent invocation that runs long
 - Any other Bash command that takes >5 seconds and produces a
@@ -94,7 +93,7 @@ turn waiting and burns budget on the same context. The default
 should be: if it might take >5s, background it.
 
 ```
-Bash(command="roba --fresh --full-auto -C /path -f task.md", run_in_background=true)
+Bash(command="claude -p --agent runner --add-dir /path \"$(cat /tmp/task-N.md)\"", run_in_background=true)
 => Background job b7jv3db8o; output at /private/tmp/.../b7jv3db8o.output
 ```
 

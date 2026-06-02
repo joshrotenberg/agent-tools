@@ -27,7 +27,8 @@ overlap by construction.
   dispatcher's working tree is unaffected. Fan out N dispatches;
   wait for notifications; push each worktree's changes as
   notifications arrive, then remove the worktree. For Bash-based
-  dispatch, roba's `-w` flag is the equivalent.
+  dispatch, use `claude -p` with a separate worktree checkout
+  (or roba's `-w` if roba is installed).
 - Multiple Task dispatches (or `run_in_background=true` Bash calls)
   fire simultaneously.
 - **Cap concurrency at 3-5.** Beyond that, cognitive load and token

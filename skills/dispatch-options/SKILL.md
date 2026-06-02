@@ -1,6 +1,6 @@
 ---
 name: dispatch-options
-description: When choosing how to dispatch a subagent -- consult this before firing any dispatch. Covers the four common mechanisms (Task tool / Bash + roba / Bash + claude-wrapper / Bash + claude -p direct) and when each fits: default to Task tool for in-project work, reach for Bash + roba when you need a different cwd, worktree isolation, or observability.
+description: When choosing how to dispatch a subagent -- consult this before firing any dispatch. Covers the two primary mechanisms (Task tool / Bash + claude -p) and when each fits: default to Task tool for in-project work, reach for Bash + claude -p when you need a different cwd, process boundary, or long-running dispatch.
 ---
 
 # Dispatch options
@@ -8,14 +8,16 @@ description: When choosing how to dispatch a subagent -- consult this before fir
 There is no single right way to dispatch a subagent. Pick by what
 the dispatch actually needs.
 
-## The four options
+## The two options
 
 | option | how | what it gives you | what you give up |
 |---|---|---|---|
-| **Task tool** | `Task(subagent_type: "explore"\|"plan"\|"runner", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration. Pass `isolation: "worktree"` for same-repo branch + file work -- agent gets its own checkout, path and branch returned on completion. | No different cwd (without worktree), no observability handle, no scriptable exit code, no `--trace`, child uses parent's permission state |
-| **Bash + roba** | `Bash: roba --agent X -f /tmp/prompt.md` | Different cwd via `-C`, worktree isolation via `-w`, JSONL trace via `--trace`, typed exit codes, agent-ABI JSON envelope, process boundary | Roba installed, extra hop, slightly more setup per call |
-| **Bash + claude-wrapper** | `Bash: claude-wrapper --print --agent X ...` (or library call) | Direct claude wrapper, fine-grained control of permission shape, programmable from Rust | More verbose, less ergonomic than roba |
-| **Bash + claude -p direct** | `Bash: claude -p --agent X "..."` | Minimal -- no wrapper at all | No retry, no typed errors, no envelope, no observability, prompt visible in argv |
+| **Task tool** | `Task(subagent_type: "explore"\|"plan"\|"runner", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration. Pass `isolation: "worktree"` for same-repo branch + file work -- agent gets its own checkout, path and branch returned on completion. | No different cwd (without worktree), no scriptable exit code, child uses parent's permission state |
+| **Bash + claude -p** | `Bash: claude -p --agent X "..."` | Different cwd via `--add-dir` or `cd`, process boundary, survives session crash, backgroundable with `run_in_background` | No retry, no typed errors, prompt visible in argv |
+
+> If you use roba, `roba -w` is equivalent to `isolation: "worktree"` and
+> `roba --trace` provides a structured JSONL trace. These docs don't assume
+> roba is installed.
 
 ## When each fits
 
@@ -34,36 +36,17 @@ the dispatcher's working tree is unaffected. See the
 
 This is the normal in-session subagent path. Use it.
 
-**Reach for Bash + roba when:**
+**Reach for Bash + claude -p when:**
 
 - The dispatch needs to run IN A DIFFERENT CWD (e.g. dispatcher
   dispatching project-rooted orchestrators). Task tool can't do
-  this; only a separate process with `-C` (or `cd`) can.
-- You want observability: `--trace PATH` writes the spawned
-  session's JSONL events for later inspection (spiral diagnosis,
-  audit, replay). Roba's `-w` flag is the equivalent of
-  `isolation: "worktree"` for Bash-based dispatch.
-- The dispatch outcome needs to be machine-readable (typed exit
-  codes, versioned JSON envelope).
+  this; only a separate process with `cd` or `--add-dir` can.
+- The dispatch outcome needs to be observable outside Claude Code
+  (backgrounded via `run_in_background`, output file inspectable).
 - The dispatch will be invoked from outside Claude Code too (CI
   scripts, cron, other agents), and you want a stable contract.
 - The dispatch is long-running and you want it to survive your
   session compacting or restarting.
-
-**Reach for Bash + claude-wrapper when:**
-
-- You're scripting from Rust and want library-level control over
-  permissions, retry policy, model selection
-- Roba's surface doesn't expose what you need but the wrapper does
-
-**Reach for Bash + claude -p direct when:**
-
-- You want the absolute minimum surface, no dependencies
-- You're running a quick one-shot that doesn't need any of the
-  above
-
-Avoid for production dispatch loops -- the lack of typed exits and
-the argv-visible prompt make it a poor citizen.
 
 ## Task tool worktree isolation
 
@@ -165,6 +148,6 @@ prefer Bash-based dispatch even when cwd doesn't require it.
 ## When in doubt
 
 Default to Task tool (with `isolation: "worktree"` for file-
-modifying same-repo work), Bash + roba for cross-project or
-long-running work, Bash + claude -p only for quick one-shots.
-The three-way choice covers ~95% of real dispatch needs.
+modifying same-repo work). Reach for Bash + claude -p for
+cross-project, different-cwd, or long-running work.
+The two-option choice covers ~95% of real dispatch needs.
