@@ -74,15 +74,25 @@ count_tokens() {
     response="$(printf '%s' "$raw" | head -n -1)"
 
     if [ "$http_code" != "200" ]; then
-        printf 'ERROR: API returned HTTP %s for %s\nResponse: %s\n' "$http_code" "$file" "$response" >&2
-        exit 1
+        # API unavailable (quota, model access, key tier) -- fall back to line-count estimate
+        if [ "${API_WARNED:-}" != "1" ]; then
+            printf 'WARN: API returned HTTP %s -- falling back to line-count estimates (~12 tokens/line)\n' "$http_code" >&2
+            printf 'WARN: Response: %s\n' "$response" >&2
+            API_WARNED=1
+        fi
+        local lines
+        lines="$(wc -l < "$file")"
+        printf '%s' "$((lines * 12))"
+        return
     fi
 
     local tokens
     tokens="$(printf '%s' "$response" | jq '.input_tokens')"
     if [ -z "$tokens" ] || [ "$tokens" = "null" ]; then
-        printf 'ERROR: Unexpected API response for %s: %s\n' "$file" "$response" >&2
-        exit 1
+        local lines
+        lines="$(wc -l < "$file")"
+        printf '%s' "$((lines * 12))"
+        return
     fi
     printf '%s' "$tokens"
 }
