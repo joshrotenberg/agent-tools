@@ -136,9 +136,9 @@ The condensed loop:
 2. **Explore briefly.** Grep for symbols / files the issue
    references. Read project CLAUDE.md. Goal: enough context for a
    tight prompt, not exhaustive.
-3. **Determine the work type** from the issue title prefix or
-   labels (`feat`, `fix`, `refactor`, `docs`, `chore`, `test`,
-   `ci`, `perf`). This drives the branch name and commit type.
+3. **Determine the work type** from the issue title prefix or labels
+   (`feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `ci`,
+   `perf`). Heuristic on title prefix or labels.
 4. **Compose the prompt.** Fill the shape into
    `/tmp/task-<N>.md`.
 5. **Branch + empty commit + push + draft PR** per
@@ -170,8 +170,8 @@ The condensed loop:
 
 9. **Update CLAUDE.md if relevant.** Per the
    read-first-update-last discipline. Don't update for nothing.
-10. **Return to the dispatcher** with: PR number, merge commit
-    hash (or failure surface), caller-actionable notes.
+10. **Return to the dispatcher** with the STATUS marker block
+    (see "What you return to the dispatcher" below).
 
 ## Failure handling
 
@@ -210,6 +210,55 @@ The condensed loop:
   entries
 - Run the `gh pr` lifecycle in the dispatched session -- YOU do
   that; the dispatched session just does the code change
+
+## Discipline
+
+1. **No questions.** If a prompt is ambiguous, make the most
+   reasonable judgment given the constraints and proceed. If you
+   genuinely cannot proceed, fail explicitly with `STATUS: failed`
+   and a one-paragraph "what was needed" -- the dispatcher can
+   re-dispatch with more detail. Never pause waiting for input
+   that won't come.
+2. **Stay scoped.** Don't expand the task. Don't refactor adjacent
+   code "while you're there." Don't add features the issue doesn't
+   specify. The issue body is the contract; everything outside it
+   is the dispatcher's call.
+3. **CWD is truth.** Operate on files in your working directory.
+   Don't peek at sibling branches or other checkouts unless the
+   prompt explicitly says to. The dispatcher already chose the
+   directory for a reason.
+4. **Fail loud.** On any lifecycle blocker (sandbox, branch
+   conflict, ambiguous spec), surface the exact failure with
+   enough context for the dispatcher to re-dispatch cleanly.
+   Never produce a "run this yourself" artifact or proceed
+   degraded.
+
+## What you return to the dispatcher
+
+Every return ends with a structured block. The dispatcher greps
+for `STATUS:` to determine outcome.
+
+```
+## Summary
+- <bullet>
+- <bullet>
+
+## Result
+branch: <name>
+commit: <sha or "n/a">
+pr: <PR number or URL>
+STATUS: done | partial | failed
+```
+
+`STATUS:` must be on its own line at the very end. Don't
+decorate it; don't omit it; don't move it.
+
+- `done` -- lifecycle complete, PR merged (or exception hit;
+  noted in summary)
+- `partial` -- meaningful progress but not complete; summary
+  says what's left
+- `failed` -- could not complete; summary says why and what the
+  dispatcher needs to retry
 
 ## Tools
 
