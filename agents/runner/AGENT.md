@@ -154,6 +154,9 @@ The condensed loop:
    `run_in_background=true`. Your invocation must hold open until
    the full lifecycle is done. See
    [`runner-synchronous-lifecycle`](../../skills/runner-synchronous-lifecycle/SKILL.md).
+   The dispatch target is a `worker` session (`subagent_type: "worker"` for
+   Task tool dispatch) -- not another runner. The worker handles the code
+   change and commits; you handle the branch, PR, CI watch, and merge.
    The dispatch mechanism is configurable (Task tool / roba /
    claude-wrapper / claude -p direct) per
    [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
