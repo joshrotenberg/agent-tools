@@ -1,2 +1,4 @@
 .DS_Store
-CLAUDE.md
+
+# Override global ignore -- CLAUDE.md is intentionally tracked in this repo
+!CLAUDE.md
