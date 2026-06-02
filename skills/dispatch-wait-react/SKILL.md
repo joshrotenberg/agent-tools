@@ -1,6 +1,6 @@
 ---
 name: dispatch-wait-react
-description: How to coordinate with background tasks (dispatched sessions, CI watches, sub-agent dispatches) without polling or sleep-looping. Fire in background, wait for the harness notification, peek at in-flight output deliberately, surface stalled runs after a reasonable clock budget.
+description: How to coordinate with background tasks (dispatched sessions, CI watches, sub-agent dispatches) without polling or sleep-looping. Use Monitor for live streaming output; use run_in_background for fire-and-forget final-result cases. Wait for the harness notification, peek at in-flight output deliberately, surface stalled runs after a reasonable clock budget.
 ---
 
 # Dispatch, wait, react
@@ -38,9 +38,55 @@ for the runner-specific discipline.
 - Any other Bash command that takes >5 seconds and produces a
   result you'll act on
 
+## Choosing between Monitor and run_in_background
+
+Two mechanisms, different contracts:
+
+| mechanism | use when | what you get |
+|---|---|---|
+| `Monitor` tool | You want live output as it arrives (tail-and-react) | Each stdout line delivered as a notification; you react per line |
+| `Bash(run_in_background=true)` | You want fire-and-forget; only the final result matters | Task ID + output file; single notification on exit |
+
+**Use Monitor for:**
+
+- Tailing CI logs in real time
+- Watching a long build where you want to surface progress or
+  errors as they happen
+- Streaming sub-agent output live to the user
+- Any case where intermediate lines change what you do next
+
+**Use run_in_background for:**
+
+- Dispatched sessions where intermediate output isn't actionable
+  (you only care if it succeeded or failed)
+- `gh pr checks --watch` when you want a single "done" signal
+- Parallel fan-out where you want the notification fan-in pattern
+
+**Monitor availability constraint:** Monitor is NOT available when
+`DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+env vars are set. When those vars are set, fall back to
+`Bash(run_in_background=true)` and use the peek-at-output pattern
+(section 3 below) to observe progress.
+
 ## The shape
 
-### 1. Always fire with `Bash(run_in_background=true)`
+### 1a. Use `Monitor` when you want live streaming output
+
+```
+Monitor(command="gh run watch 12345 --log")
+# Each stdout line arrives as a notification; you react as they come.
+```
+
+The Monitor tool fires the command and notifies you once per stdout
+line. You can react to each line (surface status to the user,
+detect a failure mid-run, etc.) rather than waiting for the full
+run to complete.
+
+When Monitor is unavailable (telemetry disabled), use
+`Bash(run_in_background=true)` and peek at the output file
+deliberately (see section 3).
+
+### 1b. Use `Bash(run_in_background=true)` for fire-and-forget
 
 You get back a task ID + an output-file path. Do NOT fire long-
 running commands without `run_in_background`; that blocks your
@@ -153,6 +199,14 @@ This skill sits underneath several lifecycle skills + agents:
   free. The notification is automatic; trust it.
 - **Constant output-file polling.** Reading the output file every
   turn is polling-by-another-name. Peek deliberately.
+- **run_in_background for live-tailing.** If you want to surface
+  CI log lines, build output, or sub-agent progress as they happen,
+  use Monitor instead. run_in_background gives you one notification
+  at the end; Monitor gives you one per line.
+- **Monitor when telemetry is disabled.** Monitor is unavailable
+  when `DISABLE_TELEMETRY` or `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC`
+  is set. Don't assume Monitor is always present; check the env or
+  fall back to run_in_background.
 - **Silent indefinite waiting.** If a notification is taking too
   long, surface to the user with what you know. Don't sit on a
   stalled job in silence.
