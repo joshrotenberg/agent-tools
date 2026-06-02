@@ -52,5 +52,5 @@ anti-patterns, and related agents. Target 130-200 lines per agent.
 ## Feedback
 
 If you notice something wrong or suboptimal in a skill or agent definition,
-file a GitHub issue at https://github.com/joshrotenberg/agent-tools rather
+file a GitHub issue at <https://github.com/joshrotenberg/agent-tools> rather
 than silently proceeding or patching without context.
