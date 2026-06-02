@@ -55,9 +55,9 @@ When you DO return to the dispatcher:
   any caller-actionable notes (live-test follow-up, surfaced gaps
   in the issue spec, etc.). The PR is merged.
 - **Exception case:** report PR number, why the exception applies
-  (no CI configured, needs-review label, review:manual constraint,
-  critical/delicate label), and "PR #N ready; awaiting manual
-  merge."
+  (no CI configured, `needs-review` or `no-auto-merge` label on the PR,
+  review:manual constraint, critical/delicate label), and "PR #N ready;
+  awaiting manual merge."
 - **Failure case:** report what failed, where (dispatch run? CI?
   push conflict?), the failing job's URL if applicable, and your
   read on whether this is refireable vs needs human decision.
@@ -65,6 +65,26 @@ When you DO return to the dispatcher:
 The dispatcher's contract: "the runner returned" → "the lifecycle
 is complete." If you return earlier than that, you've broken the
 contract and the dispatcher will trust the wrong state.
+
+## Label-based exception cases
+
+Two PR labels signal the runner to skip auto-merge and return "awaiting manual
+merge" instead:
+
+- **`needs-review`** -- set by the dispatcher or issue author to require human
+  sign-off before merging.
+- **`no-auto-merge`** -- set by the runner (copied from the issue) or manually,
+  to signal that automated merging should be skipped regardless of CI status.
+
+Check for these before calling `gh pr merge`:
+
+```bash
+LABELS=$(gh pr view $PR --json labels --jq '[.labels[].name] | join(",")' 2>/dev/null || echo "")
+if echo "$LABELS" | grep -qE "needs-review|no-auto-merge"; then
+  echo "PR #$PR ready; awaiting manual merge (label: needs-review or no-auto-merge)"
+  # Do NOT merge
+fi
+```
 
 ## Related
 

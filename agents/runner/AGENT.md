@@ -138,6 +138,14 @@ The condensed loop:
    `/tmp/task-<N>.md`.
 5. **Branch + empty commit + push + draft PR** per
    [`draft-pr-first`](../../skills/draft-pr-first/SKILL.md).
+   After opening the draft PR, copy labels from the source issue to the PR:
+
+   ```bash
+   # Copy labels from the issue to the PR
+   gh issue view $ISSUE --json labels --jq '.labels[].name' | \
+     xargs -I{} gh pr edit $PR --add-label {}
+   ```
+
 6. **Fire the dispatch SYNCHRONOUSLY** -- never with
    `run_in_background=true`. Your invocation must hold open until
    the full lifecycle is done. See
@@ -187,6 +195,7 @@ The condensed loop:
    - No CI checks configured on the repo (`gh pr checks` returns
      "no checks")
    - Issue has a `needs-review` label
+   - PR has a `no-auto-merge` label
    - Dispatcher passed `review: manual` in constraints
    - The change is described as "critical" or "delicate" in the issue
 
