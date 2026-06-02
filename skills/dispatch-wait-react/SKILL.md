@@ -1,11 +1,11 @@
 ---
 name: dispatch-wait-react
-description: How to coordinate with background tasks (roba runs, CI watches, sub-agent dispatches) without polling or sleep-looping. Fire in background, wait for the harness notification, peek at in-flight output deliberately, surface stalled runs after a reasonable clock budget.
+description: How to coordinate with background tasks (dispatched sessions, CI watches, sub-agent dispatches) without polling or sleep-looping. Fire in background, wait for the harness notification, peek at in-flight output deliberately, surface stalled runs after a reasonable clock budget.
 ---
 
 # Dispatch, wait, react
 
-When you fire a long-running command -- a roba dispatch, a `gh pr
+When you fire a long-running command -- a dispatched session, a `gh pr
 checks --watch`, a sub-agent run -- the right coordination pattern
 is **background + notification, not poll-and-sleep.** This skill
 codifies the mechanism that turns "I fired something and now I'm
@@ -16,7 +16,7 @@ and act on completion."
 
 **Primarily the dispatcher** (the interactive session with the
 user). The dispatcher wants to stay responsive to the user while
-roba runs, CI watches, etc. The "background + notification" pattern
+dispatches run, CI watches, etc. The "background + notification" pattern
 serves that.
 
 **The runner subagent is different.** A runner subagent invocation
@@ -112,10 +112,10 @@ For each background task, have a rough sense of "too long":
 
 | task | rough budget | reaction at 2x budget |
 |---|---|---|
-| Small roba dispatch (doc edit, small flag add) | 2-4 min | peek output + jsonl for spiral signatures |
-| Medium roba dispatch (multi-file refactor, new module) | 5-10 min | same |
-| Large roba dispatch (substantial new feature) | 10-15 min | same |
-| `gh pr checks --watch` (modern roba CI) | 2-5 min | check PR state; maybe merged externally |
+| Small dispatch (doc edit, small flag add) | 2-4 min | peek output + jsonl for spiral signatures |
+| Medium dispatch (multi-file refactor, new module) | 5-10 min | same |
+| Large dispatch (substantial new feature) | 10-15 min | same |
+| `gh pr checks --watch` (CI watch) | 2-5 min | check PR state; maybe merged externally |
 | Sub-agent invocation | varies | depends on the sub-agent's scope |
 
 If the harness hasn't notified by 2x the rough budget, **peek
@@ -129,7 +129,7 @@ real hang or a notification miss, and the user should know.
 
 This skill sits underneath several lifecycle skills + agents:
 
-- [`draft-pr-first`](../draft-pr-first/SKILL.md) -- fire roba ->
+- [`draft-pr-first`](../draft-pr-first/SKILL.md) -- fire the dispatch ->
   wait -> push -> ready -> watch CI -> wait -> merge. Each "wait"
   is the pattern in this skill.
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md) --
