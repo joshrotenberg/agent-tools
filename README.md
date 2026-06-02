@@ -23,11 +23,28 @@ This is a personal customization layer. The patterns are
 general -- adopt or fork as you like -- but the curation is
 opinionated.
 
+## Entry point
+
+After install, the primary invocation is:
+
+```
+claude --agent dispatcher
+```
+
+Dispatcher reads your GitHub issue queue, decides execution shape, and fires
+runners. Runners dispatch workers that branch, edit files, open PRs, watch CI,
+and merge. The entire pipeline runs automatically.
+
+Typical session:
+1. File issues (describe what you want done)
+2. Run: `claude --agent dispatcher`
+3. Review merged PRs
+
 ## Agents
 
 | Agent | What it does | Invoke with |
 |---|---|---|
-| `dispatcher` | Scopes units of work, decides execution shape, fires runners | `@dispatcher work the backlog` |
+| `dispatcher` | Scopes units of work, decides execution shape, fires runners | `@dispatcher work the backlog` (in-session) or `claude --agent dispatcher` (CLI) |
 | `runner` | Implements one GitHub issue end-to-end (branch, draft PR, CI, merge) | `@runner implement #N` |
 | `reviewer` | Reviews a PR: approve+merge, request-changes+draft, or approve+note ordering | `@reviewer review #N` |
 | `worker` | Bounded code-change executor; reads context, edits files, commits | (dispatched by runner) |
