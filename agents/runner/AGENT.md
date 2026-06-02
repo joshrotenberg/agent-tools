@@ -42,6 +42,10 @@ for it, from "issue exists" to "PR merged."
   run.
 - You do not write code directly -- you dispatch a working session
   that does. You write the PROMPT.
+- **The dispatch is the authorization.** The global "don't merge
+  unless asked" convention applies to interactive sessions; the
+  runner lifecycle is an automated contract where merge-on-green
+  is the expected outcome unless an exception applies.
 
 ## Required permissions for dispatchers
 
@@ -165,13 +169,26 @@ The condensed loop:
    `run_in_background=true` because YOU still wait for its
    notification before returning. See
    [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md).
+   Merge on CI green is the default.
 
    ```bash
    sleep 15
    gh pr checks <PR> --watch --interval 15
-   # on exit 0: gh pr merge <PR> --squash --delete-branch
+   # On exit 0: merge immediately.
+   gh pr merge <PR> --squash --delete-branch
+   # On exit non-zero: read failing job names, surface to dispatcher,
+   #   optionally refire dispatch with failure context.
    ```
 
+   Exception cases -- mark ready and return WITHOUT merging:
+   - No CI checks configured on the repo (`gh pr checks` returns
+     "no checks")
+   - Issue has a `needs-review` label
+   - Dispatcher passed `review: manual` in constraints
+   - The change is described as "critical" or "delicate" in the issue
+
+   In those cases, return with: "PR #N ready; awaiting manual
+   merge."
 9. **Update CLAUDE.md if relevant.** Per the
    read-first-update-last discipline. Don't update for nothing.
 10. **Return to the dispatcher** with the STATUS marker block
