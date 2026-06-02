@@ -10,6 +10,7 @@ tools: Read, Glob, Grep, Edit, Write, Bash
 model: sonnet
 skills:
   - sandbox-preflight
+  - durable-context
 ---
 
 # Worker
