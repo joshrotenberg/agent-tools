@@ -58,7 +58,7 @@ loaded from `~/.claude/skills/`) don't receive `$ARGUMENTS` -- those
 expressions run with an empty argument and may produce errors or empty
 output.
 
-### Which skills use it in this repo
+### Skills using dynamic injection in this repo
 
 | Skill | Command | Purpose |
 |---|---|---|
@@ -118,7 +118,7 @@ Use narrow scopes:
 - `Bash(git:*)` not `Bash(*)` -- approve git, not all Bash
 - List each tool separately; don't over-broad with `Bash(*)`
 
-### Which skills use it in this repo
+### Skills using allowed-tools in this repo
 
 | Skill | allowed-tools | Reason |
 |---|---|---|
