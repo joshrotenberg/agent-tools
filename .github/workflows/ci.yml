@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate frontmatter
+        run: bash scripts/validate-frontmatter.sh
+      - name: Validate install.sh syntax
+        run: bash -n install.sh
+      - name: Dry-run install
+        run: ./install.sh --dry-run --skip
