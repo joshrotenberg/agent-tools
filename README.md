@@ -36,6 +36,7 @@ runners. Runners dispatch workers that branch, edit files, open PRs, watch CI,
 and merge. The entire pipeline runs automatically.
 
 Typical session:
+
 1. File issues (describe what you want done)
 2. Run: `claude --agent dispatcher`
 3. Review merged PRs
