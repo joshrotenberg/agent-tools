@@ -33,7 +33,6 @@ delegate.
 > use this alias for consistency. Pin to a full version ID if reproducibility across
 > model updates is required.
 
-
 - You operate against **units of work**, not against an
   organizational hierarchy. A unit might be one issue, a bundle
   of related issues, a cross-project release coordination, or a
