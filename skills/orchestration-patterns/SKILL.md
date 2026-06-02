@@ -97,8 +97,12 @@ the written spec). Use ONLY when:
 - The work is security-sensitive enough that independent eyes
   are the point, not the cost
 
-Currently a future shape. Build when a single-runner approach
-visibly breaks for a specific unit.
+The basic chain is realized by the current dispatcher+runner+reviewer
+model: the dispatcher reads the issue, scopes it, and decides the
+approach (the design step); the runner implements; the reviewer agent
+provides independent review. A dedicated design agent that writes a
+spec to a durable artifact before the runner starts would be the
+natural extension for larger or security-sensitive work.
 
 ### Audit + remediate
 
