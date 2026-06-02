@@ -24,8 +24,10 @@ Do NOT file for stylistic preferences or minor wording nits.
 
 File when either condition is true:
 
-- **(a) Divergence** -- you followed a skill's instructions and behavior was wrong or the outcome differed from what the skill described
-- **(b) Gap** -- a real situation arose that the skill doesn't cover and the omission caused uncertainty or a workaround
+- **(a) Divergence** -- you followed a skill's instructions and behavior was wrong or the outcome
+  differed from what the skill described
+- **(b) Gap** -- a real situation arose that the skill doesn't cover and the omission caused
+  uncertainty or a workaround
 
 If neither condition applies, continue without filing.
 
@@ -98,5 +100,7 @@ Include the issue URL in your return summary to the dispatcher or human.
 
 ## Related skills
 
-- [`runner-issue-authority`](../runner-issue-authority/SKILL.md) -- gh issue view as the authoritative source for task input
-- [`spiral-diagnosis`](../spiral-diagnosis/SKILL.md) -- when a dispatched session is stuck (a different kind of feedback loop)
+- [`runner-issue-authority`](../runner-issue-authority/SKILL.md) -- gh issue view as the authoritative
+  source for task input
+- [`spiral-diagnosis`](../spiral-diagnosis/SKILL.md) -- when a dispatched session is stuck
+  (a different kind of feedback loop)

@@ -12,8 +12,8 @@ My custom skills and subagents for working with Claude Code.
   end-to-end; `dispatcher` gathers context, decides execution
   shape, and fires runners (single, parallel, sequential, etc.).
 
-The shape: a **unit of work** is defined by durable state (issue
-+ PR + project CLAUDE.md + code). The dispatcher reads that
+The shape: a **unit of work** is defined by durable state (issue,
+PR, project CLAUDE.md, code). The dispatcher reads that
 state, decides how to execute, and fires. The runner does one
 task end-to-end. Everything else is ephemeral -- conversations,
 agent context, dispatch sessions all read durable state on
@@ -25,7 +25,7 @@ opinionated.
 
 ## Install
 
-```
+```bash
 ./install.sh
 ```
 

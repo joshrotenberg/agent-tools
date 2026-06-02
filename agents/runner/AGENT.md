@@ -80,19 +80,23 @@ The condensed loop:
    claude-wrapper / claude -p direct) per
    [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
 7. **On dispatch completion: push + ready** in your own session.
+
    ```bash
    git push
    gh pr ready <PR>
    ```
+
 8. **CI watch + merge.** The watch can use
    `run_in_background=true` because YOU still wait for its
    notification before returning. See
    [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md).
+
    ```bash
    sleep 15
    gh pr checks <PR> --watch --interval 15
    # on exit 0: gh pr merge <PR> --squash --delete-branch
    ```
+
 9. **Update CLAUDE.md if relevant.** Per the
    read-first-update-last discipline. Don't update for nothing.
 10. **Return to the dispatcher** with: PR number, merge commit
