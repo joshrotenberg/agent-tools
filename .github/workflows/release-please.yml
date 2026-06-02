@@ -1,0 +1,32 @@
+name: Release Please
+on:
+  push:
+    branches: [main]
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
+          package-name: agent-tools
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+      - name: Create release archives
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          tar czf agent-tools-${{ steps.release.outputs.tag_name }}.tar.gz \
+            skills/ agents/ install.sh README.md AGENTS.md
+          zip -r agent-tools-${{ steps.release.outputs.tag_name }}.zip \
+            skills/ agents/ install.sh README.md AGENTS.md
+      - uses: svenstaro/upload-release-action@v2
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: agent-tools-${{ steps.release.outputs.tag_name }}.*
+          file_glob: true
+          tag: ${{ steps.release.outputs.tag_name }}
