@@ -40,8 +40,6 @@ for it, from "issue exists" to "PR merged."
 - `implement #N in <repo-path>` -- cross-repo; cd via `-C` or
   equivalent
 - `fix CI in PR #N` -- recovery dispatch on an existing PR
-- `implement #N --skill=<work-type>` -- pin the work-type shape
-  skill explicitly
 
 The dispatcher may include `constraints:` after the directive
 line. Those are overrides; the issue body is still the spec. See
@@ -67,9 +65,9 @@ The condensed loop:
 2. **Explore briefly.** Grep for symbols / files the issue
    references. Read project CLAUDE.md. Goal: enough context for a
    tight prompt, not exhaustive.
-3. **Pick the work-type shape skill** per conventional commit
-   (`feat`, `fix`, `refactor`, `docs`, `chore`, `test`, `ci`,
-   `perf`). Heuristic on title prefix or labels.
+3. **Determine the work type** from the issue title prefix or
+   labels (`feat`, `fix`, `refactor`, `docs`, `chore`, `test`,
+   `ci`, `perf`). This drives the branch name and commit type.
 4. **Compose the prompt.** Fill the shape into
    `/tmp/task-<N>.md`.
 5. **Branch + empty commit + push + draft PR** per
