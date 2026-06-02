@@ -1,6 +1,7 @@
 ---
 name: git-branch-pr-workflow
 description: Before making any non-trivial code, docs, or config change -- create a feature branch first, then open a PR. Never commit directly to main. Apply by default before any edit; this is the baseline branch discipline that all other git skills build on.
+allowed-tools: Bash(git *) Bash(gh *)
 ---
 
 # Git branch + PR workflow

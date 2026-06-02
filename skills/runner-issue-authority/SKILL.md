@@ -65,6 +65,31 @@ If the dispatcher paraphrases the issue into the dispatch prompt:
 The cleanest contract: the issue body is in GitHub; the dispatcher
 gives you a pointer; you fetch.
 
+## Dynamic context injection
+
+Skills support a dynamic context injection syntax: a line beginning with `!`
+followed by a shell command in backticks is executed before Claude sees the
+skill content. The command output replaces that line.
+
+This means runner-issue-authority could be invoked as a slash command that
+auto-fetches the issue body as part of loading:
+
+```
+!`gh issue view $ARGUMENTS --json title,body,labels`
+```
+
+When a user runs `/runner-issue-authority 42`, Claude Code executes
+`gh issue view 42 --json title,body,labels` before processing the skill, and
+the live JSON output is injected into the skill content. The agent sees the
+issue title, body, and labels without a separate explicit fetch step.
+
+The key constraint: `$ARGUMENTS` is only populated when the skill is invoked
+as a slash command with an argument. Skills that are auto-loaded as session
+context (not slash-commanded) receive an empty `$ARGUMENTS` -- so the explicit
+`gh issue view <N>` fetch rule in this skill still applies in the auto-loaded
+case. Dynamic injection and the explicit-fetch rule are complementary, not
+alternatives.
+
 ## Related
 
 - [`draft-pr-first`](../draft-pr-first/SKILL.md) -- the lifecycle
