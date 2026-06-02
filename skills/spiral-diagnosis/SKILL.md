@@ -146,6 +146,31 @@ prefer the fresh-session flag unless the task genuinely benefits
 from a sandbox worktree (e.g. parallel dispatches that might
 touch the same files).
 
+## Resuming interrupted sessions
+
+If a Task tool subagent was interrupted mid-run (rate limit, network failure,
+session crash), you can continue it rather than re-dispatching from scratch:
+
+```
+Task(resume: "<agent-id>", prompt: "continue from where you left off")
+```
+
+Agent IDs are visible via `/tasks` in the Claude Code interface.
+
+When to resume vs re-dispatch:
+
+- **Resume** when the session state is still coherent -- the agent had made
+  partial progress (read files, staged a branch) and you want to pick up
+  from that point.
+- **Re-dispatch** when the session was spiraling (echo-flush spam, cascade
+  cancellations) or when you're unsure of the session's state. A fresh
+  dispatch with a well-formed prompt is safer than resuming a confused
+  session.
+
+Note: resuming is not the same as re-dispatching with a fresh prompt. The
+resumed session picks up from its prior context, so only resume when you
+know the session reached a stable mid-point.
+
 ## Related
 
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md) --

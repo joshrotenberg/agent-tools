@@ -12,7 +12,7 @@ the dispatch actually needs.
 
 | option | how | what it gives you | what you give up |
 |---|---|---|---|
-| **Task tool** | `Task(subagent_type: "X", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration. Pass `isolation: "worktree"` for same-repo branch + file work -- agent gets its own checkout, path and branch returned on completion. | No different cwd (without worktree), no observability handle, no scriptable exit code, no `--trace`, child uses parent's permission state |
+| **Task tool** | `Task(subagent_type: "explore"\|"plan"\|"runner", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration. Pass `isolation: "worktree"` for same-repo branch + file work -- agent gets its own checkout, path and branch returned on completion. | No different cwd (without worktree), no observability handle, no scriptable exit code, no `--trace`, child uses parent's permission state |
 | **Bash + roba** | `Bash: roba --agent X -f /tmp/prompt.md` | Different cwd via `-C`, worktree isolation via `-w`, JSONL trace via `--trace`, typed exit codes, agent-ABI JSON envelope, process boundary | Roba installed, extra hop, slightly more setup per call |
 | **Bash + claude-wrapper** | `Bash: claude-wrapper --print --agent X ...` (or library call) | Direct claude wrapper, fine-grained control of permission shape, programmable from Rust | More verbose, less ergonomic than roba |
 | **Bash + claude -p direct** | `Bash: claude -p --agent X "..."` | Minimal -- no wrapper at all | No retry, no typed errors, no envelope, no observability, prompt visible in argv |
@@ -91,6 +91,48 @@ The branch + empty commit + push + draft PR setup still happens
 in the dispatcher's main checkout BEFORE firing the isolated
 runner dispatch. Only the runner's file-modification work runs
 inside the worktree.
+
+## Task tool subagent_type values
+
+`subagent_type` controls which tools the spawned subagent can use.
+Known values:
+
+| type | tools available | when to use |
+|---|---|---|
+| `general-purpose` | all tools | default when no type specified |
+| `explore` | Glob, Grep, LS, Read, WebFetch, WebSearch (no Edit/Write/Bash) | dispatcher gather-context step; prevents accidental edits |
+| `plan` | all tools except Task, ExitPlanMode, Edit, Write, NotebookEdit | design-before-impl shapes |
+| `bash` | Bash only | scripted one-shots, CI steps |
+| `runner` / `dispatcher` | per the installed agent definition | this project's custom named agents under `~/.claude/agents/` |
+
+### Model override
+
+Pass `model: haiku | sonnet | opus` to override the model per dispatch:
+
+- `haiku` -- quick reads, exploration, mechanical tasks
+- `sonnet` -- implementation (default for most dispatches)
+- `opus` -- high-stakes design decisions, hard algorithmic problems
+
+### Effort hint
+
+Pass `effort: low | medium | high | xhigh | max` to hint at thinking budget:
+
+- `low` / `medium` -- exploration, mechanical changes, quick reads
+- `high` -- standard implementation (default)
+- `xhigh` / `max` -- hard algorithmic problems or complex design
+
+Example combining both:
+
+```
+Task(subagent_type: "explore", model: "haiku", effort: "low", prompt: "...")
+Task(subagent_type: "runner", model: "sonnet", effort: "high", prompt: "...")
+```
+
+### Context isolation
+
+Task tool subagents receive only what their prompt contains -- they have no
+access to the parent conversation history. Every piece of context needed must
+be in the prompt.
 
 ## A note on cwd
 
