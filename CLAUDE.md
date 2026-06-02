@@ -1,0 +1,427 @@
+# agent-tools
+
+Project context for Claude Code sessions. Read this before
+changing anything substantial. Global conventions live in
+`~/.claude/CLAUDE.md`; this file adds agent-tools-specific
+context.
+
+This file is the durable local design home: positioning,
+decisions, working conventions, pending work. Anything
+actionable that needs cross-session memory lives here.
+CLAUDE.md is intentionally untracked (in `.gitignore`).
+
+## What agent-tools is
+
+Personal customization layer for working with Claude Code:
+
+- **`skills/`** -- operational knowledge files that extend any
+  agent's context (process discipline, dispatch patterns,
+  sandbox preflight, release-audit anchoring, git workflow).
+- **`agents/`** -- two subagent definitions:
+  - `runner` -- executes one task end-to-end
+  - `dispatcher` -- gathers context, decides execution shape,
+    fires runners
+- **`install.sh`** -- idempotent copy into
+  `~/.claude/{skills,agents}/` for Claude Code auto-discovery.
+
+The repo is a curated convention -- one way to use Claude Code,
+not THE way. Skills and agent bodies are dispatch-agnostic; they
+work under the Task tool, [`roba`](https://github.com/joshrotenberg/roba),
+`claude -p` directly, or any wrapper.
+
+Repo: <https://github.com/joshrotenberg/agent-tools> (private).
+
+## The model (load-bearing)
+
+**Durable state is the substrate.** Issues, PRs, project
+CLAUDE.md files, code itself, the workspace filesystem layout.
+Everything that matters lives there.
+
+**Agents and conversations are ephemeral.** They read durable
+state on invocation, write durable state on return. A fresh
+session can re-read durable state and continue from where the
+previous one left off.
+
+**A unit of work** is defined by durable state, not by an
+arbitrary size limit. "Implement #42" is a unit. "Work the 4
+release-blocker issues for v0.2" is a unit. "Audit release
+readiness across foo and bar" is a unit. The boundary comes
+from what the issues + PRs + code say belongs together.
+
+**The dispatcher decides the execution shape per unit:**
+
+| shape | when |
+|---|---|
+| Single runner (default) | Most code-change work; well-defined task |
+| Parallel runners | Multiple independent tasks, different files |
+| Sequential runners | A's output (in durable state) is B's input |
+| Chained agents (design → impl → review) | Future shape; build when single-runner visibly breaks |
+| Audit + remediate | Survey first (read-only), then per-finding dispatch |
+
+The shape is a per-unit choice, NOT an architectural commitment.
+
+## The two roles
+
+**Runner** (task-level). Reads `gh issue view N`, composes prompt
+per [`orchestration-prompt-template`](skills/orchestration-prompt-template/SKILL.md),
+runs the draft-PR-first lifecycle synchronously (branch → draft
+PR → dispatch → push → ready → watch CI → merge). Returns when
+the lifecycle is complete.
+
+**Dispatcher** (scope-flexible). Takes a directive, scopes the
+unit(s) of work, gathers durable context, decides execution
+shape, fires. Doesn't do task-level work itself. Earns its keep
+when scoping or shape decisions are non-trivial; routine
+single-task work skips the dispatcher and goes straight to a
+runner.
+
+## Architecture / file layout
+
+```
+agent-tools/
+├── README.md                                  # repo-level framing
+├── CLAUDE.md                                  # this file (untracked)
+├── install.sh                                 # idempotent install
+├── .gitignore                                 # CLAUDE.md + .DS_Store
+├── agents/
+│   ├── README.md                              # the dispatcher + runner model
+│   ├── dispatcher/AGENT.md                    # the dispatcher role
+│   └── runner/AGENT.md                        # the runner role
+└── skills/
+    ├── README.md                              # categorized skill index
+    │
+    ├── # Orchestration model
+    ├── orchestration-patterns/                # units of work + execution shapes
+    ├── workspace-survey/                      # how dispatcher finds projects
+    │
+    ├── # Dispatch
+    ├── dispatch-options/                      # Task / roba / claude -p trade-offs
+    ├── dispatch-wait-react/                   # background + notification, not polling
+    ├── orchestrator-parallelization/          # fan-out heuristics
+    ├── orchestration-prompt-template/         # how to write the runner prompt
+    ├── spiral-diagnosis/                      # when a dispatched session hangs
+    │
+    ├── # Lifecycle
+    ├── draft-pr-first/                        # PR before work
+    ├── sandbox-preflight/                     # fail loud on blocked tools
+    ├── runner-issue-authority/                # gh issue view is authoritative
+    ├── runner-synchronous-lifecycle/          # runner holds open until PR is merged
+    ├── release-audit-anchoring/               # anchor on origin/main
+    │
+    └── # Git + tooling hygiene
+    ├── git-branch-pr-workflow/                # branch + PR discipline
+    ├── git-fix-pr-branching/                  # branch off main, not off open PR
+    ├── git-delete-merged-branches/            # cleanup after merge
+    └── heredoc-backticks/                     # gh issue/PR body formatting
+```
+
+15 skills + 2 agents + repo files. Skills are categorized in
+`skills/README.md` (visible there).
+
+## Decisions log
+
+### 2026-06-02 morning
+
+- **Split from roba** (roba #129 discussion). Agent-tools was
+  bundled into the roba binary via `roba skill install` /
+  `roba agent install`. Split out into a standalone repo
+  because:
+  - Roba should be a pure mechanical `claude -p` wrapper;
+    bundling tied the binary's release cadence to skill
+    curation.
+  - The skills are dispatch-agnostic and shouldn't be coupled
+    to one specific wrapper.
+  - "BYO skills + agents" is a cleaner pitch for roba; one
+    curated convention is a cleaner pitch for this repo.
+- **One-way relationship.** agent-tools may have a roba
+  dispatch option among others (per `dispatch-options`); roba
+  doesn't know about agent-tools.
+- **Migration path.** Skills + agents moved verbatim, then
+  reworked against the new model. roba's `skills/` and
+  `agents/` directories deleted in roba PR #130.
+
+### 2026-06-02 midday: three-level model attempted
+
+- Tried coordinator (workspace) → orchestrator (project) →
+  runner (task) hierarchy.
+- Wrote `coordinator/AGENT.md`, `orchestrator/AGENT.md`,
+  `runner/AGENT.md`, plus `coordinator-orchestrator-protocol`
+  skill, `workspace-survey` skill.
+- **Rejected** later the same session.
+
+### 2026-06-02 afternoon: reframed to dispatcher + runner
+
+- The three-level model conflated **role with scope** and
+  presumed long-running agents carrying cross-task state.
+  But state should live in durable substrate (issues, PRs,
+  CLAUDE.md, code), not in agents.
+- Reframed:
+  - **Dispatcher**: scope-flexible role. Same role handles one
+    task, one project's backlog, or multi-project work.
+  - **Runner**: task-level execution.
+  - **Execution shape** (single / parallel / sequential / chained
+    / audit + remediate): per-unit decision, not architectural.
+- Deleted `coordinator/`, `coordinator-orchestrator-protocol/`;
+  renamed `orchestrator/` → `dispatcher/`; rewrote
+  `orchestration-patterns/` around units + shapes.
+- This is the current shape.
+- **Why this reframe is the right shape:** because the substrate
+  IS the durable state. Roles describing levels of an
+  organization (workspace/project/task) make sense in a human org
+  where the levels carry distinct durable knowledge. Here the
+  knowledge is in the substrate, so the "levels" are really just
+  different ways of slicing the same substrate. One role
+  (dispatcher) handles all scopes; the shape decision is what
+  varies.
+
+### Naming conventions
+
+- `name:` field in frontmatter MUST match directory name.
+- Kebab-case for everything (`dispatch-options`, not
+  `dispatchOptions` or `dispatch_options`).
+- Skill names are noun-phrases describing what the skill is
+  about (`spiral-diagnosis`, `sandbox-preflight`,
+  `workspace-survey`).
+- Agent names are nouns describing the role (`runner`,
+  `dispatcher`).
+
+## Working conventions
+
+### Agent body structure
+
+Agents should be SLIM. The body covers:
+
+- Frontmatter (name, description, tools, model, skills list)
+- Identity (what role this is, what it doesn't do)
+- When to invoke vs skip
+- Inputs + outputs
+- The work loop (high-level, NOT procedural detail)
+- Discipline (5-7 rules max)
+- Anti-patterns
+- Related agents
+
+Procedural meat lives in skills (the `skills:` frontmatter
+list). The body shouldn't reimplement what a referenced skill
+already covers; it should reference and load.
+
+Target: 130-200 lines per agent.
+
+### Skill body structure
+
+Skills should be self-contained but cross-referenced. Each
+skill covers ONE thing well:
+
+- Frontmatter (name, description)
+- What this is about (1-3 sentences)
+- When to apply
+- The pattern / discipline / mechanism
+- Anti-patterns or common mistakes
+- Related skills
+
+Target: 50-200 lines per skill, depending on complexity.
+
+### Dispatch-agnostic phrasing
+
+Skill and agent bodies should NOT assume a specific dispatch
+mechanism. Use:
+
+- "the dispatched session" not "the spawned roba"
+- "the dispatch substrate" or "the wrapper" not "roba"
+- Examples can mention roba alongside Task tool and claude -p
+
+When roba-specific features matter (e.g. `--trace`), surface them
+as examples in the relevant skill (e.g. `spiral-diagnosis`
+mentions `--trace` as the roba example of a trace handle), but
+the skill should describe the general pattern + offer roba as
+one implementation.
+
+## Install + use loop
+
+```bash
+# Install (idempotent)
+cd ~/Code/active/agent-tools && ./install.sh
+
+# After install, any Claude Code session can spawn:
+# @dispatcher work the backlog in this project
+# @dispatcher work across foo and bar
+# @runner implement #N
+```
+
+For changes during development:
+
+```bash
+# Edit a skill or agent
+./install.sh --force      # overwrite without prompting
+```
+
+`install.sh` flags: `--to PATH`, `--force`, `--skip`, `--dry-run`.
+
+## Pending work / known gaps
+
+### Skills that still reference roba specifically
+
+Some skills (`spiral-diagnosis`, parts of `dispatch-options`,
+parts of `orchestration-prompt-template`) carry roba-specific
+examples or framing. Those are OK as long as roba is presented
+as ONE option among several, not THE option. If usage feedback
+suggests it reads as roba-centric, generalize further.
+
+### Chained execution shape (design → impl → review)
+
+Documented in `orchestration-patterns` as a future shape. Build
+when the single-runner approach visibly breaks for a specific
+unit of work. Tracked in roba issue #127 (the brainstorm); when
+this gets built, it likely produces new Layer 2 agents in
+agent-tools (`designer`, `implementer`, `reviewer`) plus a
+dispatcher update for the chained shape.
+
+### Audit + remediate execution shape
+
+Documented in `orchestration-patterns`. Worth building when a
+real audit task needs it (release audit, security sweep,
+dependency check). Probably a new skill describing the
+audit-output-to-runner-input handoff via durable state.
+
+### Workspace config file
+
+`workspace-survey` documents the filesystem-walk approach as
+v1, with a config file as a deferred option. Build when the
+filesystem walk gets lossy (projects in non-standard locations,
+priority hints that the filesystem can't express).
+
+### Dogfooding the dispatcher
+
+The dispatcher agent body hasn't been used in a real session yet
+(as of split-out). First real use will surface body-level issues
+(too prescriptive, too vague, missing edge cases). Expect a
+follow-up commit reworking the body after first real session.
+
+### Per-skill review pass
+
+After the split-out, every skill was renamed/rewritten quickly.
+Worth one careful read-through to catch any stale references,
+broken cross-links, or roba-isms that slipped through.
+
+## Relationship to roba
+
+- agent-tools `dispatch-options` skill lists `roba` as one
+  dispatch mechanism (alongside Task tool, claude-wrapper,
+  claude -p)
+- agent-tools agents can be driven via `roba --agent <name>`
+  (roba's `--agent NAME` flag is generic; not skill-bundle-
+  specific)
+- roba does NOT know about agent-tools. roba is purely
+  mechanical. Its README mentions BYO skills/agents and lists
+  agent-tools as one curated example (a one-line pointer).
+- Bumping one repo doesn't bump the other.
+
+## When in doubt
+
+- Check this file: decisions log + pending work cover most
+  "should we do X?" questions.
+- Check `skills/README.md` and `agents/README.md` for the
+  current shape of the library.
+- Check `git log --oneline | head -20` for recent direction.
+- For dispatch-mechanism questions, see `skills/dispatch-options/SKILL.md`.
+- For "what's a unit of work" or "what execution shape," see
+  `skills/orchestration-patterns/SKILL.md`.
+
+## Pre-commit / pre-push
+
+agent-tools has no Rust / no build / no test suite. The only
+gates worth running:
+
+- `bash -n install.sh` (syntax check on the install script)
+- `./install.sh --dry-run` (verify the walk works)
+- Manual: read any modified skill / agent body once for typos
+  and broken cross-links.
+
+There's no CI today. If usage justifies it, a minimal CI job
+could validate:
+
+- Every `SKILL.md` / `AGENT.md` has valid frontmatter
+- Every `[link](path)` resolves
+- Every `skills:` frontmatter list references real skills
+
+Not worth building yet.
+
+## Read first, update last
+
+Same discipline as roba's CLAUDE.md:
+
+- **Read first.** Claude Code auto-loads this on cwd match.
+- **Update last.** Before closing out work, ask: did this
+  produce something worth capturing? Categories:
+  - Decisions log entry (a settled choice)
+  - Pending work entry (new gap surfaced)
+  - Pattern that should become a skill (capture, then write
+    the skill in a follow-up)
+- **Don't update for nothing.** A small content edit doesn't
+  need a CLAUDE.md update. The bar: "would future-me want to
+  find this when grepping the durable design home?"
+
+### 2026-06-02 evening: first full dogfood session
+
+First real dispatcher session. Significant work done. Key decisions and lessons:
+
+**Dispatch-agnostic sweep (issues #1-#2, PRs #3-#4 merged).** Removed all
+roba-specific language from 5 skills and runner AGENT.md. Skills are now
+dispatch-agnostic as designed.
+
+**CI added (issues #6, #9-#11, #15, PRs #12-#16 merged).** GitHub Actions
+workflow, frontmatter validation script, markdownlint, AGENTS.md, smoke tests,
+agent-feedback skill. Pre-commit section below is now outdated -- CI handles it.
+
+**Worktree isolation: use `isolation: "worktree"` on all same-repo Agent
+dispatches.** The Task/Agent tool has this built in natively. No external tool
+required. Creates an isolated checkout; path+branch returned if agent makes
+changes; auto-cleaned if no changes. Roba `-w` is the Bash-dispatch equivalent.
+
+**`subagent_type: "runner"` runs the full lifecycle.** When dispatching via the
+Task tool with `subagent_type: "runner"`, the runner reads the issue, branches,
+opens a draft PR, dispatches a sub-session, pushes, watches CI, and merges. This
+is the CORRECT use. Don't use it as a simple worker (just-edit-files-and-commit)
+-- the installed runner will try to run the full lifecycle regardless of
+constraints. For simple worker tasks, use `claude-server-worker` or a dedicated
+worker agent until the runner is properly spec'd for both modes.
+
+**Install cadence: run `./install.sh --force` after each batch of merged PRs.**
+This keeps `~/.claude/agents/` and `~/.claude/skills/` in sync with the repo.
+Skipping it means subagents use stale definitions, which causes unexpected
+behavior (re-adding removed behaviors, wrong lifecycle). Dogfooding requires
+installed agents to match repo state.
+
+**Auto-merge on CI pass is the runner default (issue #17, PR #26 pending).** The
+dispatch is the authorization. The global "don't merge unless asked" convention
+applies to interactive sessions, not to the runner lifecycle.
+
+**Researcher findings filed as issues #33-#37.** New Claude Code capabilities
+to document: subagent_type taxonomy (explore, plan, bash), effort/memory fields,
+Monitor tool for tailing, Workflow tool for multi-agent pipelines, dynamic context
+injection in skills, allowed-tools in SKILL.md frontmatter.
+
+**Open PRs for next session (merge in order to minimize conflicts):**
+- #19: fix/skill-descriptions (skill descriptions, independent)
+- #20: ci/markdownlint (CI, independent)
+- #23: fix/runner-permissions (runner AGENT.md)
+- #24: fix/agent-metadata (runner + dispatcher AGENT.md -- check for .markdownlint.json duplicate)
+- #25: fix/lift-runner-behaviors (runner + dispatcher AGENT.md)
+- #26: feat/auto-merge-default (runner AGENT.md + skills)
+- #27: feat/worktree-default (runner + dispatcher AGENT.md + skills)
+
+Runner AGENT.md is modified by PRs #23-#27 -- merge in order to minimize conflicts.
+
+**Open issues for next session:** #5 (closed by #23), #7 (closed by #24),
+#8 (closed by #19), #10 (closed by #20), #17 (closed by #26), #18 (closed by #25),
+#21 (agent spec research), #22 (closed by #27), #33-#37 (research findings backlog).
+
+## Working conventions
+
+### Install cadence
+
+Run `./install.sh --force` after each batch of agent/skill PRs merges. The
+installed `~/.claude/agents/` and `~/.claude/skills/` must match the repo or
+dogfooding breaks -- subagents load stale definitions and reintroduce behaviors
+you explicitly removed.
+
+Rule of thumb: if you merged PRs, run install before dispatching.
