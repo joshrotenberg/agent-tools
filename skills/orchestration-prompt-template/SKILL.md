@@ -151,15 +151,26 @@ gh pr create --draft \
 # (or compose a separate human-facing plan body if the prompt
 # isn't shaped right for human reading)
 
-# 3. Fire the dispatch against the same checkout (mechanism per
-#    dispatch-options). Examples:
+# 3. Fire the dispatch (mechanism per dispatch-options).
+#    For same-repo work, use isolation: "worktree" so the runner
+#    gets its own checkout and the dispatcher's tree stays clean.
 #
-#    Task tool:    Task(subagent_type: "runner", prompt: <full prompt>)
-#    Bash + roba:  roba --fresh --full-auto -C <path> -f /tmp/task-<N>.md
-#    Bash + claude -p: claude -p --agent runner --add-dir <path> "$(cat /tmp/task-<N>.md)"
+#    Task tool (same-repo, default):
+#      Task(subagent_type: "runner", isolation: "worktree", prompt: ...)
+#      # => returns {path: "/tmp/wt-xxx", branch: "<branch>"} if changes made
+#
+#    Bash + roba (equivalent for Bash-based dispatch):
+#      roba --fresh --full-auto -w=<branch> -C <path> -f /tmp/task-<N>.md
+#
+#    Bash + claude -p:
+#      claude -p --agent runner --add-dir <path> "$(cat /tmp/task-<N>.md)"
 
-# 4. When the dispatch returns: push the commits it made
-git push        # auto-extends the open draft PR
+# 4. When the dispatch returns: push the commits it made.
+#    For worktree-isolated Task dispatches, push from the returned path:
+git -C <returned-path> push -u origin <returned-branch>
+git worktree remove <returned-path>
+#    For non-isolated dispatches (same-checkout):
+#      git push        # auto-extends the open draft PR
 
 # 5. Mark PR ready
 gh pr ready <pr-number>

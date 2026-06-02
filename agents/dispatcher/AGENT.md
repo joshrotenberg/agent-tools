@@ -122,14 +122,29 @@ specific cases that justify them, not defaults to reach for.
 
 Per [`dispatch-options`](../../skills/dispatch-options/SKILL.md),
 pick the dispatch mechanism (Task tool default; Bash + wrapper
-when you need different cwd, worktree isolation, observability,
-or a process boundary). Compose the prompt per
+when you need different cwd, observability, or a process boundary).
+Compose the prompt per
 [`orchestration-prompt-template`](../../skills/orchestration-prompt-template/SKILL.md).
 
 Use `subagent_type: "runner"` (Task tool) or `roba --agent runner`
 (Bash) for dispatches. Do NOT use `claude-server-worker` -- that
 is an unrelated legacy agent from a different project. The runner
 in this repo handles the full lifecycle including push and merge.
+
+For same-repo Task dispatches that create a branch and modify
+files, pass `isolation: "worktree"`. The runner gets its own
+checkout; your working tree stays clean. If the runner made
+changes, it returns the worktree path and branch -- push from
+that path, then remove the worktree:
+
+```bash
+git -C <returned-path> push -u origin <returned-branch>
+git worktree remove <returned-path>
+```
+
+Read-only dispatches and cross-repo dispatches do not need
+worktree isolation. For Bash-based dispatch (roba), use
+`-w=<branch>` as the equivalent.
 
 Track each dispatched task. For background dispatches, use
 [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md)
