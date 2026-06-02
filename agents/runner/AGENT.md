@@ -158,8 +158,18 @@ The condensed loop:
    The dispatch mechanism is configurable (Task tool / roba /
    claude-wrapper / claude -p direct) per
    [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
+   For same-repo work, use `isolation: "worktree"` on the Task
+   dispatch so the dispatched session gets its own checkout.
 7. **On dispatch completion: push + ready** in your own session.
 
+   For worktree-isolated dispatches, push from the returned path,
+   then remove the worktree:
+   ```bash
+   git -C <returned-path> push -u origin <returned-branch>
+   git worktree remove <returned-path>
+   gh pr ready <PR>
+   ```
+   For non-isolated (same-checkout) dispatches:
    ```bash
    git push
    gh pr ready <PR>

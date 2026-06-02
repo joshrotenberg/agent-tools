@@ -12,7 +12,7 @@ the dispatch actually needs.
 
 | option | how | what it gives you | what you give up |
 |---|---|---|---|
-| **Task tool** | `Task(subagent_type: "X", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration, no process boundary | No different cwd, no worktree, no observability handle, no scriptable exit code, no `--trace`, child uses parent's permission state |
+| **Task tool** | `Task(subagent_type: "X", prompt: "...")` | Same cwd, lowest overhead, native Claude Code integration. Pass `isolation: "worktree"` for same-repo branch + file work -- agent gets its own checkout, path and branch returned on completion. | No different cwd (without worktree), no observability handle, no scriptable exit code, no `--trace`, child uses parent's permission state |
 | **Bash + roba** | `Bash: roba --agent X -f /tmp/prompt.md` | Different cwd via `-C`, worktree isolation via `-w`, JSONL trace via `--trace`, typed exit codes, agent-ABI JSON envelope, process boundary | Roba installed, extra hop, slightly more setup per call |
 | **Bash + claude-wrapper** | `Bash: claude-wrapper --print --agent X ...` (or library call) | Direct claude wrapper, fine-grained control of permission shape, programmable from Rust | More verbose, less ergonomic than roba |
 | **Bash + claude -p direct** | `Bash: claude -p --agent X "..."` | Minimal -- no wrapper at all | No retry, no typed errors, no envelope, no observability, prompt visible in argv |
@@ -22,11 +22,15 @@ the dispatch actually needs.
 **Default to Task tool when:**
 
 - The work happens in the same cwd as your session
-- You don't need worktree isolation
 - The dispatch is brief (<5 min) and you'll be re-invoked on
   completion
 - You don't need to share the dispatch outcome with anything outside
   Claude Code
+
+For same-repo runner dispatches (branch + file changes), add
+`isolation: "worktree"`. The agent gets its own checkout;
+the dispatcher's working tree is unaffected. See the
+[worktree lifecycle pattern](#task-tool-worktree-isolation) below.
 
 This is the normal in-session subagent path. Use it.
 
@@ -35,11 +39,10 @@ This is the normal in-session subagent path. Use it.
 - The dispatch needs to run IN A DIFFERENT CWD (e.g. dispatcher
   dispatching project-rooted orchestrators). Task tool can't do
   this; only a separate process with `-C` (or `cd`) can.
-- You need worktree isolation (`-w` / `-w=NAME`) -- two dispatches
-  that might touch the same files.
 - You want observability: `--trace PATH` writes the spawned
   session's JSONL events for later inspection (spiral diagnosis,
-  audit, replay).
+  audit, replay). Roba's `-w` flag is the equivalent of
+  `isolation: "worktree"` for Bash-based dispatch.
 - The dispatch outcome needs to be machine-readable (typed exit
   codes, versioned JSON envelope).
 - The dispatch will be invoked from outside Claude Code too (CI
@@ -62,13 +65,40 @@ This is the normal in-session subagent path. Use it.
 Avoid for production dispatch loops -- the lack of typed exits and
 the argv-visible prompt make it a poor citizen.
 
+## Task tool worktree isolation
+
+For any same-repo Task dispatch that creates a branch and modifies
+files, use `isolation: "worktree"`. No external tool required --
+the Task tool provides this natively.
+
+```
+# Dispatch with worktree isolation (same-repo runner work)
+Task(subagent_type: "runner", isolation: "worktree", prompt: ...)
+# => if agent made changes, returns {path: "/tmp/wt-xxx", branch: "fix/whatever"}
+# => if agent made no changes, worktree is cleaned up automatically
+
+# Push from the returned worktree path
+git -C <returned-path> push -u origin <returned-branch>
+
+# Dispatcher removes the worktree after push
+git worktree remove <returned-path>
+```
+
+Cross-repo dispatches and read-only dispatches do not need
+worktree isolation -- there is no collision risk.
+
+The branch + empty commit + push + draft PR setup still happens
+in the dispatcher's main checkout BEFORE firing the isolated
+runner dispatch. Only the runner's file-modification work runs
+inside the worktree.
+
 ## A note on cwd
 
 The Task tool spawns a subagent in the **parent's cwd**. There's
-no way to change it. If the subagent must operate in a different
-directory (e.g. a project root different from your current
-working directory), you MUST use a Bash-based dispatch with `-C`
-or `cd`.
+no way to change it without worktree isolation. If the subagent
+must operate in a different directory (e.g. a project root
+different from your current working directory), you MUST use a
+Bash-based dispatch with `-C` or `cd`.
 
 This is the load-bearing reason the workspace dispatcher
 dispatches orchestrators via Bash, not via Task tool: each
@@ -92,7 +122,7 @@ prefer Bash-based dispatch even when cwd doesn't require it.
 
 ## When in doubt
 
-Default to Task tool for in-project work, Bash + roba for
-cross-project or long-running work, Bash + claude -p only for
-quick one-shots. The three-way choice covers ~95% of real
-dispatch needs.
+Default to Task tool (with `isolation: "worktree"` for file-
+modifying same-repo work), Bash + roba for cross-project or
+long-running work, Bash + claude -p only for quick one-shots.
+The three-way choice covers ~95% of real dispatch needs.
