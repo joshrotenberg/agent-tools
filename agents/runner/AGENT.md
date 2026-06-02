@@ -136,7 +136,7 @@ The condensed loop:
 - **CI red:** mechanical failures (fmt/lint) → refire. Genuine bugs or
   auth failures → hand back.
 - **Ambiguous issue body:** surface contradiction + 2-3 interpretations
-  + default recommendation. Don't guess.
+  and a default recommendation. Don't guess.
 
 ## Hand back when
 
