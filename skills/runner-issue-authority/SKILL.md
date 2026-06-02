@@ -65,7 +65,6 @@ If the dispatcher paraphrases the issue into the dispatch prompt:
 The cleanest contract: the issue body is in GitHub; the dispatcher
 gives you a pointer; you fetch.
 
-
 ## Related
 
 - [`draft-pr-first`](../draft-pr-first/SKILL.md) -- the lifecycle
