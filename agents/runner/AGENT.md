@@ -1,6 +1,11 @@
 ---
 name: runner
-description: Task-level runner. Implements a single GitHub issue end-to-end. Reads the issue (gh issue view), composes a tight prompt, runs the draft-PR-first lifecycle synchronously (branch + draft PR + dispatch + push + ready + watch + merge), and returns to the dispatcher only after the lifecycle is complete. Dispatch-mechanism-agnostic; works under Task tool, roba, claude -p, or any wrapper that takes an agent name.
+description: >-
+  Task-level runner. Implements a single GitHub issue end-to-end: reads the
+  issue, composes a tight prompt, runs the draft-PR-first lifecycle
+  synchronously, and returns only after the lifecycle is complete.
+  Dispatch-mechanism-agnostic; works under Task tool, roba, claude -p, or
+  any wrapper that takes an agent name.
 tools: Read, Edit, Write, Bash
 model: sonnet
 skills:
@@ -33,6 +38,72 @@ for it, from "issue exists" to "PR merged."
   run.
 - You do not write code directly -- you dispatch a working session
   that does. You write the PROMPT.
+
+## Required permissions for dispatchers
+
+The runner needs `Bash`, `Edit`, `Write`, `Read`, `Glob`, and `Grep` to complete
+its lifecycle. The minimum Bash surface is `git:*` and `gh:*`; language-specific
+gates (`cargo:*`, `npm:*`, `go:*`) are added when the project requires them.
+
+Without Bash access to `git` and `gh`, the runner stalls after file edits --
+it can edit files but can't branch, commit, push, or open PRs. The
+`sandbox-preflight` skill catches this gap at runtime (correctly), but the
+dispatcher will have spent 20-30 minutes of work before the failure surfaces.
+Granting the right permissions up front avoids that waste.
+
+### By dispatch mechanism
+
+**Task tool** (same-session subagent)
+
+The spawned subagent inherits the parent session's permission state. Ensure the
+parent has `Bash`, `Edit`, and `Write` in its allowed tools before dispatching.
+No additional flags are needed if the parent already has full-auto permissions.
+
+**roba**
+
+Use `--full-auto` to grant the runner everything it needs in one flag:
+
+```bash
+roba --fresh --full-auto -C <repo-path> -f /tmp/task-N.md
+```
+
+If you need a narrower grant, specify each Bash scope explicitly:
+
+```bash
+roba --fresh \
+  --allow-tool "Bash(git:*)" \
+  --allow-tool "Bash(gh:*)" \
+  --allow-tool "Edit(*)" \
+  --allow-tool "Write(*)" \
+  --allow-tool "Read(*)" \
+  -C <repo-path> -f /tmp/task-N.md
+```
+
+Add `--allow-tool "Bash(cargo:*)"` (or `npm:*`, `go:*`) for language gates.
+
+**claude -p direct**
+
+```bash
+claude -p --agent runner \
+  --allowed-tools "Read,Glob,Grep,Edit,Write,Bash" \
+  "implement #N in <repo-path>"
+```
+
+### Narrowest-safe alternative
+
+For security-conscious environments where `Bash(*)` is too broad, scope to
+the specific commands the lifecycle actually uses:
+
+| Tool scope | Used for |
+|---|---|
+| `Bash(git:*)` | branch, checkout, commit, push, status, log, diff |
+| `Bash(gh:*)` | issue view, pr create/ready/checks/merge |
+| `Bash(cargo:*)` | fmt, clippy, test (Rust projects) |
+| `Bash(npm:*)` | install, test, lint (Node projects) |
+| `Bash(go:*)` | fmt, vet, test (Go projects) |
+
+`Read`, `Glob`, `Grep`, `Edit`, and `Write` are always needed and carry no
+scope risk.
 
 ## Inputs you accept
 
