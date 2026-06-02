@@ -1,14 +1,14 @@
 ---
 name: runner-synchronous-lifecycle
-description: When the runner is about to fire a dispatch or return to the dispatcher -- hold open until the full lifecycle is done. Fire synchronously (no `run_in_background`); only return once the PR is pushed and CI is running. Use this discipline to prevent the orphaned-lifecycle failure mode where the dispatcher trusts a "complete" signal that isn't.
+description: The runner's invocation must hold open until the full lifecycle is done. Fire the dispatch SYNCHRONOUSLY (no `run_in_background`); your return-to-dispatcher signals "PR merged (or exception hit), lifecycle complete." Returning earlier orphans the work.
 ---
 
 # Runner synchronous discipline
 
 Your (the runner's) invocation must hold open until the full
 lifecycle is done. **Returning to the dispatcher signals "task
-complete: PR is pushed, CI is running (or done), ready for review."**
-Returning earlier orphans the work.
+complete: PR is merged (or an exception was hit -- see exception
+cases in runner AGENT.md)."** Returning earlier orphans the work.
 
 ## The anti-pattern this prevents
 
@@ -51,12 +51,16 @@ Original failure mode observed on the work machine (roba #104):
 
 When you DO return to the dispatcher:
 
-- **Success case:** report PR number, merge commit hash, any
-  caller-actionable notes (live-test follow-up, surfaced gaps in
-  the issue spec, etc.).
-- **Failure case:** report what failed, where (roba run? CI? push
-  conflict?), the failing job's URL if applicable, and your read on
-  whether this is refireable vs needs human decision.
+- **Success case (default):** report PR number, merge commit hash,
+  any caller-actionable notes (live-test follow-up, surfaced gaps
+  in the issue spec, etc.). The PR is merged.
+- **Exception case:** report PR number, why the exception applies
+  (no CI configured, needs-review label, review:manual constraint,
+  critical/delicate label), and "PR #N ready; awaiting manual
+  merge."
+- **Failure case:** report what failed, where (dispatch run? CI?
+  push conflict?), the failing job's URL if applicable, and your
+  read on whether this is refireable vs needs human decision.
 
 The dispatcher's contract: "the runner returned" → "the lifecycle
 is complete." If you return earlier than that, you've broken the

@@ -164,12 +164,17 @@ git push        # auto-extends the open draft PR
 # 5. Mark PR ready
 gh pr ready <pr-number>
 
-# 6. CI watch + merge on green
+# 6. CI watch + merge on green (default: merge immediately on exit 0)
 sleep 15        # let GitHub register the checks (dodges the race)
 gh pr checks <pr-number> --watch --interval 15
-
-# (in background -- the notification fires when CI completes)
-# On exit 0: gh pr merge <pr-number> --squash --delete-branch
+# On exit 0: merge immediately -- this is the default.
+gh pr merge <pr-number> --squash --delete-branch
+# Exception cases -- skip the merge and return "PR #N ready; awaiting
+# manual merge" instead:
+#   - No CI checks configured ("no checks" response from gh pr checks)
+#   - Issue has a needs-review label
+#   - Dispatcher passed review:manual in constraints
+#   - Change described as "critical" or "delicate" in the issue body
 # On exit non-zero: read the watch output for failing job names,
 #   surface failures, optionally fire the dispatch again with
 #   failure context ("fix the CI failures in PR #X; checkout the

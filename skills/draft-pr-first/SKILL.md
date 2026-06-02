@@ -69,10 +69,17 @@ git push        # auto-extends the draft PR
 # 6. Mark ready
 gh pr ready <pr-number>
 
-# 7. Standard CI watch + merge-on-green
+# 7. CI watch + merge on green (merge-on-green is the default)
 sleep 15        # let GitHub register the checks
 gh pr checks <pr-number> --watch --interval 15
+# On exit 0: merge immediately -- this is the default.
 gh pr merge <pr-number> --squash --delete-branch
+# Exception cases -- skip the merge and return "PR #N ready; awaiting
+# manual merge" instead:
+#   - No CI checks configured ("no checks" from gh pr checks)
+#   - Issue has a needs-review label
+#   - Dispatcher passed review:manual in constraints
+#   - Change described as "critical" or "delicate" in the issue body
 ```
 
 The empty initial commit gets squashed away on merge. The plan
