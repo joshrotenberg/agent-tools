@@ -18,6 +18,7 @@ lives here.
 |---|---|
 | [`durable-context`](durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
 | [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
+| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
 | [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by component/category/priority, flag duplicates, close noise, surface the p1 queue before dispatch |
 | [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher discovers projects in the workspace (for multi-project units); also documents the workspace-level CLAUDE.md gap (discovery doesn't cross project boundaries) + workarounds |

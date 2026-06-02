@@ -111,6 +111,11 @@ without re-running the audit.
 Right shape for release audits, security scans, dependency
 sweeps.
 
+For large-scale fan-out (50+ agents per run), the Workflow tool
+is the right mechanism -- it keeps the per-agent output in an
+isolated runtime instead of returning each result to context.
+See [`workflow-basics`](../workflow-basics/SKILL.md).
+
 **Triage-then-dispatch** is a variant: a read-only triage pass
 labels the open-issue queue by component, category, and priority
 (durable findings), then the dispatcher scopes runners against the
