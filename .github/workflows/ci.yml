@@ -22,7 +22,7 @@ jobs:
       - name: Lint markdown
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
-          globs: "**/*.md"
+          globs: "{skills,agents}/**/*.md"
   budget:
     runs-on: ubuntu-latest
     steps:
