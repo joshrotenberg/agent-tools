@@ -1,6 +1,7 @@
 ---
 name: pr-review
 description: When reviewing a PR in agent-tools -- reads the diff and issue, checks conventions, approves+merges, approves+notes ordering, or requests changes+converts to draft.
+allowed-tools: Bash(gh:*)
 ---
 
 # pr-review

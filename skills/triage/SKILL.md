@@ -1,9 +1,12 @@
 ---
 name: triage
 description: When the issue queue has open unlabeled issues -- run a read-only triage pass that labels each issue by component, category, and priority, flags duplicates, closes noise, and reports the p1 queue before runners are dispatched.
+allowed-tools: Bash(gh:*)
 ---
 
 # triage
+
+Current open issues: !`gh issue list --state open --json number,title,labels --jq 'map({number,title,labels:(.labels|map(.name))})'`
 
 The issue queue is the dispatcher's input. When issues land
 unlabeled, the dispatcher can't scope or prioritize without first
