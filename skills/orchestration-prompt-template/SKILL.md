@@ -17,8 +17,8 @@ This is a stacked-reliability contract:
 - **Top:** dispatcher that writes the prompt + wraps the PR
   lifecycle around the dispatch
 
-The dispatch substrate (Task tool / roba / claude-wrapper / claude
--p) is interchangeable per
+The dispatch substrate (Task tool / Bash + claude -p) is
+interchangeable per
 [`dispatch-options`](../dispatch-options/SKILL.md). The
 dispatcher's value-add is the prompt-writing layer plus the
 gh-CLI wrapping. Pick the dispatch mechanism after the prompt is
@@ -158,9 +158,6 @@ gh pr create --draft \
 #    Task tool (same-repo, default):
 #      Task(subagent_type: "runner", isolation: "worktree", prompt: ...)
 #      # => returns {path: "/tmp/wt-xxx", branch: "<branch>"} if changes made
-#
-#    Bash + roba (equivalent for Bash-based dispatch):
-#      roba --fresh --full-auto -w=<branch> -C <path> -f /tmp/task-<N>.md
 #
 #    Bash + claude -p:
 #      claude -p --agent runner --add-dir <path> "$(cat /tmp/task-<N>.md)"

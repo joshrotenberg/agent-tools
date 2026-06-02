@@ -84,7 +84,7 @@ A workspace survey returns a tight table:
 
 ```
 project              | path                                 | open PRs | draft PRs | open issues | CI state
-roba                 | ~/Code/active/rust/roba              | 0        | 0         | 12          | -
+my-tool              | ~/Code/active/rust/my-tool           | 0        | 0         | 12          | -
 agent-tools          | ~/Code/active/agent-tools            | 1        | 0         | 0           | green
 tower-mcp            | ~/Code/active/rust/tower-mcp         | 3        | 1         | 8           | 1 red
 claude-wrapper       | ~/Code/active/rust/claude-wrapper    | 0        | 0         | 4           | -
