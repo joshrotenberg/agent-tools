@@ -59,6 +59,7 @@ lives here.
 | Skill | When to use |
 |---|---|
 | [`agent-feedback`](agent-feedback/SKILL.md) | When you notice something wrong or suboptimal in a skill or agent definition -- file an issue rather than silently proceeding |
+| [`field-feedback`](field-feedback/SKILL.md) | When a dispatch-time issue surfaces -- wrapper bug, sandbox gap, unexpected behavior -- file a structured issue to close the feedback loop |
 
 ## Installation
 

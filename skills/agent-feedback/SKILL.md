@@ -100,6 +100,8 @@ Include the issue URL in your return summary to the dispatcher or human.
 
 ## Related skills
 
+- [`field-feedback`](../field-feedback/SKILL.md) -- for wrapper bugs, sandbox gaps, unexpected
+  dispatch behaviors, and findings that route to repos other than joshrotenberg/agent-tools
 - [`runner-issue-authority`](../runner-issue-authority/SKILL.md) -- gh issue view as the authoritative
   source for task input
 - [`spiral-diagnosis`](../spiral-diagnosis/SKILL.md) -- when a dispatched session is stuck
