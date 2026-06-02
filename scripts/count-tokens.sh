@@ -55,19 +55,27 @@ table_rows=()
 count_tokens() {
     local file="$1"
 
-    local response
-    response="$(
+    local raw http_code response
+    raw="$(
         jq -n \
             --arg model "$MODEL" \
             --rawfile content "$file" \
             '{model: $model, messages: [{role: "user", content: $content}]}' \
-        | curl --silent --fail \
+        | curl --silent \
+            -w "\n%{http_code}" \
             -X POST "$API_URL" \
             -H "x-api-key: ${ANTHROPIC_API_KEY}" \
             -H "anthropic-version: 2023-06-01" \
             -H "content-type: application/json" \
             --data @-
     )"
+    http_code="$(printf '%s' "$raw" | tail -1)"
+    response="$(printf '%s' "$raw" | head -n -1)"
+
+    if [ "$http_code" != "200" ]; then
+        printf 'ERROR: API returned HTTP %s for %s\nResponse: %s\n' "$http_code" "$file" "$response" >&2
+        exit 1
+    fi
 
     local tokens
     tokens="$(printf '%s' "$response" | jq '.input_tokens')"
