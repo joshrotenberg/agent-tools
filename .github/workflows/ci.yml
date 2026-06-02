@@ -23,3 +23,9 @@ jobs:
         uses: DavidAnson/markdownlint-cli2-action@v16
         with:
           globs: "**/*.md"
+  budget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check context budgets
+        run: bash scripts/check-context-budgets.sh
