@@ -1,6 +1,7 @@
 ---
 name: sandbox-preflight
 description: At the start of a dispatched lifecycle (runner or bare dispatch), verify the tools you need are in the sandbox allowlist. Fail LOUD on a blocked tool -- do NOT produce a "run this yourself" artifact (the silent-degradation trap). For a known-safe set of common dev tools, auto-heal by adding to .claude/settings.local.json. Anything else: ask the user.
+allowed-tools: Bash(git *) Bash(gh *)
 ---
 
 # Sandbox preflight
