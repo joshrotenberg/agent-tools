@@ -175,3 +175,5 @@ decorate it; don't omit it; don't move it.
 
 - [`../dispatcher/AGENT.md`](../dispatcher/AGENT.md) -- the
   manager that dispatches to you.
+- [`../worker/AGENT.md`](../worker/AGENT.md) -- the agent you
+  dispatch to execute code changes.
