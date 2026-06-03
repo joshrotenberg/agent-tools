@@ -55,7 +55,6 @@ lives here.
 |---|---|
 | [`git-branch-pr-workflow`](git-branch-pr-workflow/SKILL.md) | Any non-trivial work that becomes a PR |
 | [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
-| [`git-delete-merged-branches`](git-delete-merged-branches/SKILL.md) | After a PR merges, cleaning up the local branch |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
 
 ### Meta

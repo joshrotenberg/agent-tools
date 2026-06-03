@@ -76,6 +76,9 @@ Skip this agent for code-writing tasks. Use the runner for those.
 - Requesting vague changes ("this could be clearer") without a specific actionable fix
 - Editing project files instead of requesting changes
 - Running `git` commands other than status/log reads
+- Missing a real issue because the review checklist lacks a rule -- if the
+  checklist would have caught a real issue you noticed but didn't have a rule
+  for, file via `agent-feedback` after completing the review.
 
 ## Related agents
 

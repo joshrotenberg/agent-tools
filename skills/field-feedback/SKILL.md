@@ -16,7 +16,7 @@ without per-session reminders.
 
 File when you observe:
 
-- A **wrapper bug** -- roba, claude-wrapper, or claude -p behaved
+- A **wrapper bug** -- Bash + claude -p or any dispatch wrapper behaved
   unexpectedly (wrong exit code, bad output envelope, unexpected
   session lifecycle behavior)
 - A **sandbox / permission gap** -- a tool you needed wasn't in the

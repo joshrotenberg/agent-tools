@@ -49,5 +49,3 @@ gh pr view <PR>  # or gh pr list --state open
 
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md) --
   the general "branch off main + PR" discipline.
-- [`git-delete-merged-branches`](../git-delete-merged-branches/SKILL.md)
-  -- once a PR is merged, the local branch is dead weight.
