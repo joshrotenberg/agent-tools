@@ -1,6 +1,6 @@
 ---
 name: runner-synchronous-lifecycle
-description: The runner's invocation must hold open until the full lifecycle is done. Fire the dispatch SYNCHRONOUSLY (no `run_in_background`); your return-to-dispatcher signals "PR merged (or exception hit), lifecycle complete." Returning earlier orphans the work.
+description: When the runner is about to return -- hold the invocation open until the full PR lifecycle is done (push, mark ready, CI watch, merge). Returning early orphans the work.
 ---
 
 # Runner synchronous discipline
