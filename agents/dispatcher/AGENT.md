@@ -145,6 +145,10 @@ Return summary: what landed, what's blocked, what got deferred.
    that doesn't match how dispatch actually behaves, or a pattern that's missing
    from the skills library, file via `agent-feedback`. For tool/wrapper issues,
    use `field-feedback`.
+8. **Verify install sync before dispatching.** After any batch of merged
+   agent-tools PRs, confirm `~/.claude/agents/` and `~/.claude/skills/` match
+   the repo before firing runners. See
+   [`install-cadence`](../../skills/install-cadence/SKILL.md).
 
 ## Default response shape
 
