@@ -26,6 +26,10 @@ unclosed block becomes an H1.
 Caught on roba 2026-05-27 after a screenshot showed issue #1's
 schema block rendered as broken text.
 
+## When to apply
+
+Whenever piping markdown body text into a `gh pr create`, `gh issue create`, or any `gh` command via a single-quoted heredoc.
+
 ## How to apply
 
 In a `<<'EOF'` heredoc, write fences as:

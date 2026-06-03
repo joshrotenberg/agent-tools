@@ -232,6 +232,12 @@ and `#` inside the unclosed fence renders as H1.
 **Rule:** inside `<<'EOF'`, write everything literally: backticks,
 `$VAR`, fences. The shell won't touch any of it.
 
+## Anti-patterns
+
+- Relying on `gh pr merge --auto` -- it silently exits 0 when `allow_auto_merge: false` is set; use the sync watch pattern.
+- Pasting the full issue body into the dispatch prompt -- give the runner the issue number and let it self-fetch.
+- Skipping the sandbox preflight step -- blocked tools degrade silently instead of aborting loudly.
+
 ## Related
 
 - [`draft-pr-first`](../draft-pr-first/SKILL.md) -- the "open the

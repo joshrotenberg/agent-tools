@@ -8,6 +8,10 @@ description: When dispatched with an issue number, the runner's authoritative so
 When dispatched with an issue number, **`gh issue view <N>` is your
 authoritative source for what the task is.** This is non-negotiable.
 
+## When to apply
+
+Whenever the runner is dispatched with an issue number -- apply immediately, before composing the prompt.
+
 ## Rules
 
 - **Always fetch first.** Your first action when dispatched with an

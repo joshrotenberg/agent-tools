@@ -141,6 +141,12 @@ Design every dispatch so a cold restart loses nothing:
 - Blockers are filed as issues, not held in context.
 - The next agent reads durable state and continues -- no handoff conversation needed.
 
+## Anti-patterns
+
+- Using MEMORY.md as a team-visible store -- it is machine-local only and invisible to teammates and remote agents.
+- Leaving decisions in conversation context instead of externalizing to CLAUDE.md or a GitHub issue before the session ends.
+- Not externalizing state before session ends -- a cold restart cannot pick up what was never written to durable state.
+
 ## Related
 
 - [`orchestration-patterns`](../orchestration-patterns/SKILL.md) -- the full model
