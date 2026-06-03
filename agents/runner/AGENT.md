@@ -177,3 +177,5 @@ decorate it; don't omit it; don't move it.
   manager that dispatches to you.
 - [`../worker/AGENT.md`](../worker/AGENT.md) -- the agent you
   dispatch to execute code changes.
+- [`../../skills/runner-vs-worker/SKILL.md`](../../skills/runner-vs-worker/SKILL.md)
+  -- decision boundary between runner and worker dispatch; failure mode of using runner as worker.
