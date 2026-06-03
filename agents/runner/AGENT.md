@@ -124,6 +124,14 @@ The condensed loop:
    `review: manual` constraint, or change described as "critical/delicate."
 
 9. **Update CLAUDE.md if relevant.** Don't update for nothing.
+
+**Before returning:** if you encountered a skill instruction that didn't match
+reality, a dispatch issue, a missing pattern, or anything a future agent would
+benefit from knowing -- file an issue via `agent-feedback` (skill/agent definition
+gaps in this repo) or `field-feedback` (dispatch-time observations, tool issues,
+unexpected behavior). One issue per observation. Continue your task; don't wait
+for it to resolve.
+
 10. **Return to the dispatcher** with the STATUS marker block.
 
 ## Failure handling
