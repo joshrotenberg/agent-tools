@@ -146,10 +146,9 @@ Act based on the exit code:
 - **0 / completed cleanly** -- proceed with the next step in your
   lifecycle (push commits, mark PR ready, merge, etc).
 - **Non-zero / failed** -- read the output file, decide refire vs
-  hand-back per
-  [`../spiral-diagnosis/SKILL.md`](../spiral-diagnosis/SKILL.md)
-  (for roba runs) or the specific failure modes section of your
-  agent's body (for other tools).
+  hand-back. For diagnosing a stuck or spiraling dispatch, see
+  [`../spiral-diagnosis/SKILL.md`](../spiral-diagnosis/SKILL.md).
+  For agent-specific failure modes, see the relevant agent body.
 
 ### 5. Have a clock budget
 
