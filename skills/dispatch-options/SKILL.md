@@ -29,9 +29,10 @@ the dispatch actually needs.
 - You don't need to share the dispatch outcome with anything outside
   Claude Code
 
-For same-repo runner dispatches (branch + file changes), add
-`isolation: "worktree"`. The agent gets its own checkout;
-the dispatcher's working tree is unaffected. See the
+For same-repo runner dispatches, `isolation: "worktree"` is REQUIRED --
+not optional. Without it, concurrent dispatches contaminate each other's
+branches silently. The agent gets its own checkout; the dispatcher's
+working tree is unaffected. See the
 [worktree lifecycle pattern](#task-tool-worktree-isolation) below.
 
 This is the normal in-session subagent path. Use it.

@@ -109,8 +109,9 @@ Most days: single runner.
 
 Compose the prompt per
 [`orchestration-prompt-template`](../../skills/orchestration-prompt-template/SKILL.md).
-Use `subagent_type: "runner"` (Task tool) for dispatches. For same-repo
-Task dispatches that modify files, pass `isolation: "worktree"`. See
+Use `subagent_type: "runner"` (Task tool) for dispatches. ALWAYS use
+`isolation: "worktree"` for runner dispatches -- without it, concurrent
+dispatches contaminate each other's branches. See
 [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
 
 **Background vs foreground:** When a directive is self-contained -- the result
