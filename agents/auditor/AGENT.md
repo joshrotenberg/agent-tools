@@ -87,6 +87,7 @@ that first-principles reasoning misses entirely. Always fetch when provided.
 ### 2. Evaluate
 
 Compare actual state against the rubric. Identify both:
+
 - **Gaps** -- things the rubric requires that are absent or incomplete
 - **Confirmations** -- things the rubric requires that are genuinely present
 
@@ -97,6 +98,7 @@ by a narrower checklist?
 ### 3. Triage
 
 Decide issue grouping and priority. Grouping calibration:
+
 - Too granular (1 issue per missing command): noise, hard to prioritize
 - Too coarse (1 issue per domain): loses actionability; runners can't pick up
 - Right level: 1 issue per logical work unit a runner can implement in one PR
@@ -105,18 +107,19 @@ Apply priority from the rubric's heuristics, not judgment.
 
 ### 4. File
 
-For each finding, before calling `gh issue create`:
+For each finding, run a pre-flight duplicate check first:
 
-1. Run a pre-flight duplicate check:
-   ```bash
-   gh issue list --search "<keywords from the finding title>" --repo <repo>
-   ```
-2. If a matching issue exists, note it as "already tracked" and skip.
-3. If no match, file with a structured body:
-   - **Current state** -- what the code actually does today
-   - **Desired state** -- what it should do per the rubric
-   - **Code example** -- concrete example showing the improvement (where applicable)
-   - **Implementation notes** -- files to touch, approach
+```bash
+gh issue list --search "<keywords from the finding title>" --repo <repo>
+```
+
+If a matching issue exists, note it as "already tracked" and skip. If no
+match, file with a structured body:
+
+- **Current state** -- what the code actually does today
+- **Desired state** -- what it should do per the rubric
+- **Code example** -- concrete example showing the improvement (where applicable)
+- **Implementation notes** -- files to touch, approach
 
 The pre-flight check is essential when running parallel auditors on the same
 repo -- it prevents noise without requiring a post-reconciliation pass.
