@@ -151,3 +151,31 @@ Default to Task tool (with `isolation: "worktree"` for file-
 modifying same-repo work). Reach for Bash + claude -p for
 cross-project, different-cwd, or long-running work.
 The two-option choice covers ~95% of real dispatch needs.
+
+## Anti-patterns
+
+- **Task tool without worktree isolation for same-repo file changes.**
+  File collisions with the dispatcher's working tree result. Any
+  dispatch that creates a branch and modifies files in the same repo
+  must pass `isolation: "worktree"`.
+- **Bash + claude -p for brief in-project dispatches.** The Task tool
+  is lower overhead and has better error handling for in-session
+  subagent work. Reach for Bash + claude -p only when you need a
+  different cwd, a process boundary, or long-running survivability.
+- **Foreground long-running Bash dispatches.** A long-running
+  `claude -p` call run in the foreground blocks your session and
+  produces no output until it exits. Always use `run_in_background`
+  for dispatches expected to run more than a few seconds; see
+  [`dispatch-wait-react`](../dispatch-wait-react/SKILL.md) for the
+  coordination pattern.
+
+## Related
+
+- [`orchestration-patterns`](../orchestration-patterns/SKILL.md) --
+  pick the execution shape before picking the dispatch mechanism;
+  the shape determines which option fits.
+- [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)
+  -- how to compose the prompt for the chosen dispatch mechanism.
+- [`dispatch-wait-react`](../dispatch-wait-react/SKILL.md) --
+  coordinating with the dispatched session after it fires, including
+  the background + notification pattern for long-running dispatches.
