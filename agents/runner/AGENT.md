@@ -15,7 +15,9 @@ skills:
   - dispatch-options
   - orchestration-prompt-template
   - spiral-diagnosis
+  - durable-context
   - git-branch-pr-workflow
+  - git-fix-pr-branching
 ---
 
 # Runner

@@ -56,7 +56,5 @@ trailers.
 
 - [`git-fix-pr-branching`](../git-fix-pr-branching/SKILL.md) -- how
   to handle fixes when a PR is open vs merged.
-- [`git-delete-merged-branches`](../git-delete-merged-branches/SKILL.md)
-  -- the cleanup default after a merge.
 - [`heredoc-backticks`](../heredoc-backticks/SKILL.md) -- formatting
   the PR body without breaking the markdown.

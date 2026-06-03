@@ -20,6 +20,7 @@ skills:
   - sandbox-preflight
   - orchestrator-parallelization
   - durable-context
+  - non-pr-output-conventions
 ---
 
 # Dispatcher

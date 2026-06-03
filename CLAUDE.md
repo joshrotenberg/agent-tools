@@ -111,7 +111,6 @@ agent-tools/
     └── # Git + tooling hygiene
     ├── git-branch-pr-workflow/                # branch + PR discipline
     ├── git-fix-pr-branching/                  # branch off main, not off open PR
-    ├── git-delete-merged-branches/            # cleanup after merge
     └── heredoc-backticks/                     # gh issue/PR body formatting
 ```
 
