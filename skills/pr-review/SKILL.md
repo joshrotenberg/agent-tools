@@ -37,7 +37,7 @@ the checklist below, check for ordering conflicts, then take exactly one action.
 
 - Under 500 lines
 - Covers ONE topic (not bundled concerns)
-- Cross-links (`[text](../skill/SKILL.md)`) resolve to real files
+- Cross-links (e.g. `../skill-name/SKILL.md`) resolve to real files
 
 ### Agent body quality
 
