@@ -169,6 +169,10 @@ EOF
 )"
 ```
 
+Add relevant labels beyond `field-feedback` to match the component and severity.
+Available labels: `skills`, `agents`, `ci`, `docs`, `fix`, `feat`, `p1`, `p2`, `p3`.
+Example: `--label "field-feedback,skills,fix,p2"` for a skill definition gap of moderate severity.
+
 ## Labels
 
 - Always include `field-feedback`
