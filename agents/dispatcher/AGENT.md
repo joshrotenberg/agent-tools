@@ -113,6 +113,14 @@ Use `subagent_type: "runner"` (Task tool) for dispatches. For same-repo
 Task dispatches that modify files, pass `isolation: "worktree"`. See
 [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
 
+**Background vs foreground:** When a directive is self-contained -- the result
+doesn't feed the next dispatch and you don't need it to answer the user -- fire
+with `run_in_background: true`. Most single-issue runner dispatches qualify.
+When you dispatch in background, acknowledge it immediately:
+"Kicked off runner for #N in background -- ask anything while it runs."
+Use foreground only when you need the runner's result to decide what to do next
+(e.g. sequential runners where A's output is B's input).
+
 Set `model` and `effort` on each dispatch based on issue labels:
 
 | label / type | model | effort |
