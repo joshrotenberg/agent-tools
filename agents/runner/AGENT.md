@@ -97,8 +97,15 @@ The condensed loop:
    ```
 
 6. **Fire the dispatch SYNCHRONOUSLY** -- never with
-   `run_in_background=true`. Dispatch target is a `worker` session;
-   use `isolation: "worktree"` for same-repo work. See
+   `run_in_background=true`. Dispatch target is a `worker` session.
+   When using Bash + claude -p, pass `-C $(pwd)` so the worker
+   operates in the runner's worktree directory, not the main checkout:
+
+   ```bash
+   claude -p --agent worker -C $(pwd) "$(cat /tmp/task-N.md)"
+   ```
+
+   When using Task tool dispatch, use `isolation: "worktree"`. See
    [`runner-synchronous-lifecycle`](../../skills/runner-synchronous-lifecycle/SKILL.md)
    and [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
 7. **On dispatch completion: push + ready.**
