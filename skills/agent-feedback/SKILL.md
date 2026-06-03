@@ -75,6 +75,10 @@ EOF
 )"
 ```
 
+Add relevant labels with `--label` to match the severity and component of the observation.
+Available labels: `skills`, `agents`, `ci`, `docs`, `fix`, `feat`, `field-feedback`, `p1`, `p2`, `p3`.
+Example: `--label "skills,fix,p2"` for a skill bug of moderate severity.
+
 Check for duplicates before filing:
 
 ```bash
