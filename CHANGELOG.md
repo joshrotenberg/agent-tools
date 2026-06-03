@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/joshrotenberg/agent-tools/compare/v0.3.0...v0.3.1) (2026-06-03)
+
+
+### Bug Fixes
+
+* add Elixir and Java/Kotlin language coverage to skills (closes [#134](https://github.com/joshrotenberg/agent-tools/issues/134)) ([#135](https://github.com/joshrotenberg/agent-tools/issues/135)) ([0bd7b89](https://github.com/joshrotenberg/agent-tools/commit/0bd7b89303b2eff2bf731409fd04a41acdfa5bf1))
+* skill preload audit -- add 3 missing, remove 1 obsolete (closes [#130](https://github.com/joshrotenberg/agent-tools/issues/130)) ([#131](https://github.com/joshrotenberg/agent-tools/issues/131)) ([0dd15ec](https://github.com/joshrotenberg/agent-tools/commit/0dd15ecfbbce97c1b28743dfcd9386f59d2b40ee))
+
 ## [0.3.0](https://github.com/joshrotenberg/agent-tools/compare/v0.2.0...v0.3.0) (2026-06-02)
 
 
