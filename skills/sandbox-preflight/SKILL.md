@@ -126,6 +126,12 @@ auto-heal them; surface the need and wait.
 - **Pre-flight aborts:** emit the ABORT message above; do NOT proceed
   with the rest of the lifecycle.
 
+## Anti-patterns
+
+- Producing "run this yourself" artifacts when a tool is blocked -- the dispatcher gets a fake "complete" signal.
+- Silently degrading to a partial run when a needed tool is missing from the allowlist -- abort loudly instead.
+- Auto-healing tools outside the known-safe list (docker, kubectl, terraform) -- these require explicit user consent.
+
 ## Related
 
 - [`runner-synchronous-lifecycle`](../runner-synchronous-lifecycle/SKILL.md)

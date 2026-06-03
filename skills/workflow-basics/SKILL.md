@@ -82,6 +82,13 @@ fan out web searches and source fetches across many agents,
 cross-check claims adversarially, then synthesize a single cited
 report. It demonstrates fan-out -> verify -> synthesize end to end.
 
+## Anti-patterns
+
+- Using Workflow for single-runner tasks -- one issue, one PR, one runner; a workflow script is pure overhead here.
+- Writing I/O in the orchestration script -- the script has no direct I/O; delegate filesystem and shell work to agents.
+- Assuming each agent's output returns to context -- only the final synthesized answer
+  does; intermediates stay in the runtime.
+
 ## Related
 
 - [`orchestration-patterns`](../orchestration-patterns/SKILL.md) --

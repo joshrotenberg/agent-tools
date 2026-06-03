@@ -148,6 +148,12 @@ claude executes it). Sometimes you want both, slightly different.
 For any work that crosses the "deserve a PR" threshold, draft-PR-
 first is the default.
 
+## Anti-patterns
+
+- Opening the PR after the work is done -- the plan is no longer visible in flight and unobservable during execution.
+- Writing the plan into task files instead of the PR body -- the plan pollutes the source tree and gets squash-merged away.
+- Leaving a draft PR in draft state indefinitely -- it never gets marked ready and stays invisible to CI and merge gates.
+
 ## Related
 
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)

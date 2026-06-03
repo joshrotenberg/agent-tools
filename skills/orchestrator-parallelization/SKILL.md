@@ -56,6 +56,12 @@ Parallel = N× tokens per round. Honest tradeoff. Worth it when
 wall-clock matters (multi-repo work where the human's blocked); not
 worth it for casual backlog grinding.
 
+## Anti-patterns
+
+- Parallelizing tasks that touch the same files -- results in merge-conflict hell and costs more than sequential execution.
+- Fanning out beyond 5 concurrent dispatches -- cognitive load and token cost outpace wall-clock savings above that cap.
+- Fanning out before verifying task independence -- if B references A's result, parallelizing produces wrong output.
+
 ## Related
 
 - [`dispatch-options`](../dispatch-options/SKILL.md) -- the

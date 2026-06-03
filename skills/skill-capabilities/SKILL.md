@@ -144,6 +144,12 @@ grep -r "allowed-tools" skills/*/SKILL.md
 grep -r "!\`" skills/*/SKILL.md
 ```
 
+## Anti-patterns
+
+- Adding `allowed-tools` to skills describing agent-run commands -- it only affects dynamic injection, not agent Bash.
+- Using `Bash(*)` as an over-broad scope when `Bash(gh:*)` or `Bash(git:*)` would suffice -- prefer narrow scopes.
+- Adding dynamic injection to pure-reference skills -- live state at load time may be stale by the time the skill is used.
+
 ## Related
 
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)

@@ -143,6 +143,12 @@ Good:
 The user immediately sees the audit is hitting the right baseline and
 that the apparent "version chaos" was just a stale side branch.
 
+## Anti-patterns
+
+- Auditing the working branch tip instead of `origin/main` -- produces false blocking findings on stale content.
+- Reporting version skew as "chaos" without cross-checking the registry -- misses release-plz in-tree bumps ahead of publish.
+- Opening the audit with findings rather than branch divergence -- the user can't redirect before reading stale analysis.
+
 ## Related
 
 - [`sandbox-preflight`](../sandbox-preflight/SKILL.md) -- the other

@@ -31,6 +31,10 @@ because its branch still carried PR #24's original (pre-squash)
 commit. Rebasing the fix branch onto main resolved it by dropping
 the duplicate.
 
+## When to apply
+
+When you have a bug, typo, or small change to make against a PR that is currently open OR was just merged.
+
 ## How to apply
 
 Before branching to fix a freshly opened PR, check the PR's state:

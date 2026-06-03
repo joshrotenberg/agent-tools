@@ -204,6 +204,12 @@ The dispatcher agent earns its keep when:
 For the routine case (one issue, one runner, one PR), the
 dispatcher adds ceremony.
 
+## Anti-patterns
+
+- Coupling runners via agent memory instead of durable state -- agents are transient; coordination must go through the substrate.
+- Multi-repo runners spanning repositories in one dispatch -- cross-repo work is multiple runners, not one per repo.
+- Conflating design and implementation when same-context review misses things -- use the chained shape or split the unit.
+
 ## Related
 
 - [`workspace-survey`](../workspace-survey/SKILL.md) -- how the
