@@ -48,6 +48,14 @@ This is the normal in-session subagent path. Use it.
 - The dispatch is long-running and you want it to survive your
   session compacting or restarting.
 
+For worker sub-dispatch from within a runner's worktree, use
+`cd <worktree-path> && claude -p` (or `claude -p` from a shell
+already `cd`'d into the worktree) rather than
+`cd <main-checkout> && claude -p`. Anchoring the worker to the
+runner's worktree path prevents it from inheriting the main
+checkout's branch state; omitting this causes commits to land on
+whatever branch the main checkout happens to be on.
+
 ## Task tool worktree isolation
 
 For any same-repo Task dispatch that creates a branch and modifies
@@ -168,6 +176,12 @@ The two-option choice covers ~95% of real dispatch needs.
   for dispatches expected to run more than a few seconds; see
   [`dispatch-wait-react`](../dispatch-wait-react/SKILL.md) for the
   coordination pattern.
+- **Bash worker dispatch without anchoring to the runner's worktree.**
+  `cd <main-checkout> && claude -p` causes the worker to inherit
+  the main checkout's branch state. Commits land on whatever branch
+  the main checkout happens to be on -- not the runner's intended
+  branch. Always `cd` into the runner's dedicated worktree path
+  before firing the worker.
 
 ## Related
 
