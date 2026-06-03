@@ -48,6 +48,14 @@ git show origin/main:Cargo.toml | grep version
 git show origin/main:CHANGELOG.md | head -30
 ```
 
+For other ecosystems, anchor on the equivalent manifest the same way:
+
+```bash
+git show origin/main:mix.exs | grep version
+git show origin/main:pom.xml | grep '<version>'
+git show origin/main:build.gradle | grep version
+```
+
 The working tree may be in a stale or in-progress state; `origin/main`
 is the ground truth for "what ships."
 
@@ -84,6 +92,11 @@ Cross-check against an external source of truth:
   - Rust: `cargo search <crate>`
   - Python: `pip index versions <pkg>`
   - Node: `npm view <pkg> versions`
+  - Elixir/Hex: `mix hex.info <package>` or
+    `curl https://hex.pm/api/packages/<package> | jq '.releases[0].version'`
+  - Java/Maven Central:
+    `curl "https://search.maven.org/solrsearch/select?q=g:<group>+AND+a:<artifact>&rows=1&wt=json" | jq '.response.docs[0].latestVersion'`
+  - Kotlin/Gradle: same Maven Central source as Java
 - GitHub releases / tags:
   `gh release list --limit 5` or
   `git tag -l --sort=-v:refname | head -5`

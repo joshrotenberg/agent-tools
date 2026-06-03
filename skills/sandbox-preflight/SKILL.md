@@ -59,6 +59,9 @@ Plus project-detected tools, keyed off files in the repo root:
 | `pyproject.toml` / `setup.py` | `pip`, `uv`, `maturin` (whichever the project references) |
 | `package.json` | `npm` (and `pnpm` / `yarn` if its lockfile is present) |
 | `go.mod` | `go` |
+| `mix.exs` | `mix` |
+| `pom.xml` | `mvn` |
+| `build.gradle` / `build.gradle.kts` | `gradle` |
 | `Makefile` / `build.sh` | `make` / `bash` |
 
 Check each by attempting a no-op version probe -- `<tool> --version`
@@ -100,6 +103,9 @@ aborting:
 - `pip`, `uv`, `maturin` (when `pyproject.toml` / `setup.py` is
   present)
 - `go` (when `go.mod` is present)
+- `mix` (when `mix.exs` is present)
+- `mvn` (when `pom.xml` is present)
+- `gradle` (when `build.gradle` or `build.gradle.kts` is present)
 - `make`, `bash`, `sh` (always -- they're the universal build glue)
 
 Self-healing is a **contained** action: it writes a single allowlist
