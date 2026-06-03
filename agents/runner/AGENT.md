@@ -82,11 +82,11 @@ Load them, follow them. The condensed loop:
 
 6. **Fire the dispatch SYNCHRONOUSLY** -- never with
    `run_in_background=true`. Dispatch target is a `worker` session.
-   When using Bash + claude -p, pass `-C $(pwd)` so the worker
-   operates in the runner's worktree, not the main checkout:
+   When using Bash + claude -p, cd into the runner's worktree first
+   so the worker operates there, not in the main checkout:
 
    ```bash
-   claude -p --agent worker -C $(pwd) "$(cat /tmp/task-N.md)"
+   cd $(pwd) && claude -p --agent worker "$(cat /tmp/task-N.md)"
    ```
 
    For Task tool dispatch, use `isolation: "worktree"`. See
