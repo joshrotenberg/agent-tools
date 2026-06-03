@@ -137,3 +137,5 @@ STATUS: done | partial | failed
 - [`../dispatcher/AGENT.md`](../dispatcher/AGENT.md) -- the scope-flexible
   manager that may also dispatch you for simple code-change subtasks within
   a larger unit of work.
+- [`../../skills/runner-vs-worker/SKILL.md`](../../skills/runner-vs-worker/SKILL.md)
+  -- when to use runner vs worker and what goes wrong if you confuse them.
