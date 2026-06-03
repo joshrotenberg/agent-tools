@@ -120,6 +120,9 @@ is the right mechanism -- it keeps the per-agent output in an
 isolated runtime instead of returning each result to context.
 See [`workflow-basics`](../workflow-basics/SKILL.md).
 
+For the dispatcher-side mechanics of reading finding-issues and deciding parallel vs sequential
+runner dispatch, see [`audit-remediate-handoff`](../audit-remediate-handoff/SKILL.md).
+
 **Triage-then-dispatch** is a variant: a read-only triage pass
 labels the open-issue queue by component, category, and priority
 (durable findings), then the dispatcher scopes runners against the

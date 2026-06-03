@@ -114,3 +114,5 @@ tracker -- note them so the domain owner can file if appropriate.
   an audit produces a backlog; implements the filed issues
 - [`skills/orchestration-patterns/SKILL.md`](../../skills/orchestration-patterns/SKILL.md)
   -- "audit + remediate" is the execution shape this agent enables
+- [`skills/audit-remediate-handoff/SKILL.md`](../../skills/audit-remediate-handoff/SKILL.md)
+  -- how the dispatcher picks up filed findings and fires per-finding runners
