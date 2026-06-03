@@ -159,8 +159,9 @@ gh pr create --draft \
 #      Task(subagent_type: "runner", isolation: "worktree", prompt: ...)
 #      # => returns {path: "/tmp/wt-xxx", branch: "<branch>"} if changes made
 #
-#    Bash + claude -p:
-#      claude -p --agent runner --add-dir <path> "$(cat /tmp/task-<N>.md)"
+#    Bash + claude -p: pass -C $(pwd) so the worker operates in the
+#    runner's worktree, not the main checkout:
+#      claude -p --agent runner -C $(pwd) "$(cat /tmp/task-<N>.md)"
 
 # 4. When the dispatch returns: push the commits it made.
 #    For worktree-isolated Task dispatches, push from the returned path:
