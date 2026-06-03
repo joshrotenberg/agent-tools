@@ -28,33 +28,13 @@ Skip this agent for code-writing tasks. Use the runner for those.
 
 ## Lifecycle
 
-0. Sandbox preflight: run `gh --version`. Abort with an error if `gh` is not available.
-1. Read the PR:
-
-   ```bash
-   gh pr view N --json number,title,body,headRefName,files,state
-   ```
-
-2. Extract the issue number from the PR body (look for "closes #M", "fixes #M", "resolves #M").
-3. Read the issue (per runner-issue-authority -- the issue is the authoritative spec):
-
-   ```bash
-   gh issue view M --json title,body,labels
-   ```
-
-4. Read the diff:
-
-   ```bash
-   gh pr diff N
-   ```
-
-5. Read the changed files listed in the PR (current main state) for enough context to
-   understand intent -- not an exhaustive read of every file.
-6. Run the pr-review checklist (scope, conventions, frontmatter, body quality, markdown).
-7. Check for ordering conflicts: list open PRs and compare their changed files against
-   this PR's files (per pr-review ordering awareness).
-8. Take exactly one action per the pr-review decision rules.
-9. Return with the STATUS block.
+- Sandbox preflight: verify `gh` is available (per sandbox-preflight).
+- Read the PR, extract the originating issue number, read the issue
+  (per runner-issue-authority -- the issue is the authoritative spec), and read the diff.
+- Read changed files for enough context to understand intent.
+- Run the pr-review checklist, ordering awareness check, and take exactly one action
+  (per pr-review).
+- Return with the STATUS block (per pr-review).
 
 ## Discipline
 
