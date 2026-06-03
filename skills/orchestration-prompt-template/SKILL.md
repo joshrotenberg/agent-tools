@@ -120,6 +120,8 @@ The full read-CLAUDE.md-first / update-CLAUDE.md-last discipline:
 - Do NOT touch main after step 1.
 - Do NOT run gh pr create.
 - <task-specific do-nots>
+- Style references must be marked ONLY -- e.g. "Read skills/foo/SKILL.md for
+  style reference ONLY; do not copy its content."
 ```
 
 ## PR-lifecycle pattern (draft-PR-first, sync-watch-then-merge)
@@ -237,6 +239,7 @@ and `#` inside the unclosed fence renders as H1.
 - Relying on `gh pr merge --auto` -- it silently exits 0 when `allow_auto_merge: false` is set; use the sync watch pattern.
 - Pasting the full issue body into the dispatch prompt -- give the runner the issue number and let it self-fetch.
 - Skipping the sandbox preflight step -- blocked tools degrade silently instead of aborting loudly.
+- Providing style references without an ONLY qualifier -- the worker may copy the reference file wholesale into the new file and spiral trying to fix it; always say "read [file] for style reference ONLY -- do not copy its content."
 
 ## Related
 
