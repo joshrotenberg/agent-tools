@@ -53,6 +53,7 @@ work, going straight to the runner skips ceremony.
 | [`runner`](runner/AGENT.md) | One task: implement one issue end-to-end | "implement #N" (direct or via dispatcher) |
 | [`dispatcher`](dispatcher/AGENT.md) | One or many units of work; one or many projects | "work the backlog in foo", "work across foo and bar", "audit release readiness" |
 | [`worker`](worker/AGENT.md) | One bounded code-change task; no lifecycle | Dispatched by runner or dispatcher to make file edits, validate, and commit |
+| [`auditor`](auditor/AGENT.md) | One codebase audit against a rubric | "audit <domain> in <repo>", dispatched by dispatcher for audit+remediate shape |
 
 ## Installation
 
