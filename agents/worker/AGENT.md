@@ -64,15 +64,27 @@ The caller is responsible for the git lifecycle.
    - Language-specific: cargo fmt/clippy, go fmt/vet, npm lint, etc.
    - If no gates are specified in the prompt, run what's appropriate for the
      file types changed.
-4. **Before committing, ask:** did this run produce anything worth capturing?
+4. **Pre-commit scope check.** Before committing, verify every changed file
+   was in scope per the task description.
+   - Run `git diff --name-only HEAD` (or `git status --short`) to list all
+     modified files.
+   - For each file: confirm it was explicitly mentioned or clearly implied by
+     the task. If it was not, revert it: `git checkout -- <file>`.
+   - Note any reverted files in the STATUS summary as:
+     `reverted out-of-scope changes: <files>`
+   - Exception: if an out-of-scope change is a clearly valid related fix (not
+     just incidental cleanup), do NOT include it silently and do NOT revert it
+     silently. Note it in the summary and suggest a separate issue via
+     `agent-feedback`. Then revert it from this commit.
+5. **Before committing, ask:** did this run produce anything worth capturing?
    - A decision not obvious from the task -- update CLAUDE.md decisions log
    - An edge case future workers should know -- update CLAUDE.md or file via `agent-feedback`
    - A skill instruction that didn't match what actually happened -- file via `agent-feedback`
    - A dispatch/tool issue (permission gap, unexpected behavior, missing pattern) -- file via `field-feedback`
    The bar: would a fresh session benefit from finding this? Don't update for nothing.
-5. **If validation passes:** `git add <changed files>` and `git commit -m
+6. **If validation passes:** `git add <changed files>` and `git commit -m
    "<type>: <description>"` per conventional commit format.
-6. **Print:** `git log --oneline -1`, `git diff HEAD^ --stat`, and
+7. **Print:** `git log --oneline -1`, `git diff HEAD^ --stat`, and
    `git branch --show-current`.
 
 If validation fails: attempt to fix the issue (up to two tries). If still
