@@ -50,14 +50,23 @@ File only when one of these applies.
 
 ## Target repo routing
 
-Pick the target based on where the bug or gap lives:
+Pick the target based on **which component is misbehaving**, not which dispatch
+mechanism you were using:
 
 | Observation | Target repo |
 |---|---|
-| Wrapper behavior, CLI flags, session lifecycle, exit codes | joshrotenberg/roba |
+| roba wrapper behavior, CLI flags, session lifecycle, exit codes | joshrotenberg/roba |
+| Task tool behavior (how Claude Code's Task tool itself works) | Claude Code issue tracker |
+| `claude -p` CLI behavior (exit codes, output envelope, session lifecycle) | Claude Code issue tracker |
 | Skill missing, skill/agent body wrong, cross-link broken | joshrotenberg/agent-tools |
+| Skill/agent definition caused the problem (regardless of dispatch mechanism) | joshrotenberg/agent-tools |
 | Project CLAUDE.md wrong, project CI failures, project-specific gaps | that project's repo |
 | Unclear | default to joshrotenberg/agent-tools; note in the body which repo might be more appropriate |
+
+The key distinction: if the **dispatch mechanism itself** (roba, `claude -p`, Task
+tool) is the bug, route to that tool's tracker. If the **skill or agent definition**
+caused the problem regardless of how the session was dispatched, route to
+`joshrotenberg/agent-tools`.
 
 ## Privacy discipline
 
@@ -86,7 +95,7 @@ you have; omit fields you don't.
 - model: claude-sonnet-4-5
 - os: darwin 24.x
 - task: implement #42 in /path/to/repo  (issue number or task file name, not content)
-- session-id: <from roba dispatch-start stderr if available>
+- session-id: <mechanism-dependent: roba stderr, Task tool /tasks UI, or N/A for claude -p>
 - exit-code: 1
 - error-envelope: <wrapper error output if any, redacted of project content>
 ```
@@ -102,8 +111,8 @@ Use `fix:` for incorrect or unexpected behavior. Use `feat:` for
 missing coverage or a new capability gap.
 
 Component is the relevant area: `roba/session-lifecycle`,
-`sandbox-preflight`, `spiral-diagnosis`, `dispatch-options`,
-`field-feedback`, etc.
+`task-tool/worktree`, `claude-p/exit-code`, `sandbox-preflight`,
+`spiral-diagnosis`, `dispatch-options`, `field-feedback`, etc.
 
 Examples:
 
@@ -111,6 +120,8 @@ Examples:
 fix: roba/session-lifecycle -- exit code 1 on clean run when output contains warnings
 feat: sandbox-preflight -- no guidance for npm workspaces when package.json is nested
 fix: spiral-diagnosis -- session-id not available from Task tool dispatch
+fix: task-tool/worktree -- isolation: "worktree" returns empty path on clean-run dispatch
+fix: claude-p/exit-code -- claude -p exits 0 when dispatched session hits rate limit
 ```
 
 ## Required body sections
