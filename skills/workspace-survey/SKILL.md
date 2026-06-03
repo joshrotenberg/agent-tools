@@ -10,6 +10,12 @@ build one from durable state (the filesystem + GitHub) every time,
 without depending on a separate config file or in-conversation
 memory.
 
+## When to apply
+
+- At the start of any dispatcher invocation that may span multiple projects.
+- When the directive is "work across foo and bar" or similar multi-project scope.
+- Skip for single-project invocations where the cwd is already the target project.
+
 ## Discovery: the filesystem IS the map
 
 A "project" is any directory that has BOTH:
@@ -139,3 +145,9 @@ context the filesystem walk can't express; or an upstream
 claude-code feature that lets discovery cross a marked workspace
 boundary. Build either only when the filesystem walk and the two
 workarounds above visibly stop being enough.
+
+## Related
+
+- [`orchestration-patterns`](../orchestration-patterns/SKILL.md) -- the unit-of-work model the survey feeds into
+- [`dispatch-options`](../dispatch-options/SKILL.md) -- how to dispatch runners for each project discovered
+- [`durable-context`](../durable-context/SKILL.md) -- why re-survey rather than relying on memory
