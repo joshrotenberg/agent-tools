@@ -9,6 +9,7 @@ model: sonnet
 skills:
   - sandbox-preflight
   - durable-context
+  - audit-protocol
 ---
 
 # auditor
@@ -48,88 +49,20 @@ A well-formed auditor prompt specifies:
 
 ## Rubric format
 
-Agents dispatching auditors must provide a structured rubric. A vague rubric
-produces vague, low-value issues. Required sections:
-
-```markdown
-## Rubric
-
-### What "complete" looks like
-<Description of the fully-realized end state for this domain>
-
-### Priority heuristics
-- `priority: high`: <conditions -- e.g. "gaps that cause silent data loss or cascading failures">
-- `priority: medium`: <conditions>
-- `priority: low`: <conditions>
-
-### What to skip
-<Explicit out-of-scope items for this audit domain>
-
-### Cross-cutting question
-Are there concerns that span multiple areas and would be missed by a narrower checklist?
-```
-
-Priority heuristics belong in the rubric, not in agent judgment. When the rubric
-says "`priority: high` for gaps that can cause silent data loss," the auditor
-applies that rule; without it, priority becomes a guess.
+A well-formed rubric has four required sections: "What complete looks like",
+"Priority heuristics", "What to skip", and "Cross-cutting question". A vague
+rubric produces vague, low-value issues. See the
+[`audit-protocol`](../../skills/audit-protocol/SKILL.md) skill for the full
+rubric template and why each section is required.
 
 ## Execution contract
 
-Five phases, in order:
-
-### 1. Orient
-
-Read all files listed in `files_to_read` before drawing any conclusions. If
-`external_refs` are provided, fetch them now. External references make coverage
-audits dramatically more accurate -- an external commands reference reveals gaps
-that first-principles reasoning misses entirely. Always fetch when provided.
-
-### 2. Evaluate
-
-Compare actual state against the rubric. Identify both:
-
-- **Gaps** -- things the rubric requires that are absent or incomplete
-- **Confirmations** -- things the rubric requires that are genuinely present
-
-Both matter. Confirmed-good findings prevent re-auditing. Pose the
-cross-cutting question: are there issues that span areas and would be missed
-by a narrower checklist?
-
-### 3. Triage
-
-Decide issue grouping and priority. Grouping calibration:
-
-- Too granular (1 issue per missing command): noise, hard to prioritize
-- Too coarse (1 issue per domain): loses actionability; runners can't pick up
-- Right level: 1 issue per logical work unit a runner can implement in one PR
-
-Apply priority from the rubric's heuristics, not judgment.
-
-### 4. File
-
-For each finding, run a pre-flight duplicate check first:
-
-```bash
-gh issue list --search "<keywords from the finding title>" --repo <repo>
-```
-
-If a matching issue exists, note it as "already tracked" and skip. If no
-match, file with a structured body:
-
-- **Current state** -- what the code actually does today
-- **Desired state** -- what it should do per the rubric
-- **Code example** -- concrete example showing the improvement (where applicable)
-- **Implementation notes** -- files to touch, approach
-
-The pre-flight check is essential when running parallel auditors on the same
-repo -- it prevents noise without requiring a post-reconciliation pass.
-
-In `dry_run` mode: print the issue draft (title, labels, body) but do NOT
-call `gh issue create`.
-
-### 5. Report
-
-See Output contract below.
+Five phases in order: Orient, Evaluate, Triage, File, Report. The full
+contract -- including the duplicate-check discipline in File and the report
+shape in Report -- is defined in the
+[`audit-protocol`](../../skills/audit-protocol/SKILL.md) skill. Follow it
+exactly; skipping phases (especially the pre-flight duplicate check before
+filing) produces noise.
 
 ## Output contract
 
