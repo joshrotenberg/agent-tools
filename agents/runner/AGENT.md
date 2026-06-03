@@ -132,7 +132,7 @@ gaps in this repo) or `field-feedback` (dispatch-time observations, tool issues,
 unexpected behavior). One issue per observation. Continue your task; don't wait
 for it to resolve.
 
-10. **Return to the dispatcher** with the STATUS marker block.
+1. **Return to the dispatcher** with the STATUS marker block.
 
 ## Failure handling
 
