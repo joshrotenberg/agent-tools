@@ -95,7 +95,12 @@ Cross-check against an external source of truth:
   - Elixir/Hex: `mix hex.info <package>` or
     `curl https://hex.pm/api/packages/<package> | jq '.releases[0].version'`
   - Java/Maven Central:
-    `curl "https://search.maven.org/solrsearch/select?q=g:<group>+AND+a:<artifact>&rows=1&wt=json" | jq '.response.docs[0].latestVersion'`
+
+    ```bash
+    curl "https://search.maven.org/solrsearch/select?q=g:<group>+AND+a:<artifact>&rows=1&wt=json" \
+      | jq '.response.docs[0].latestVersion'
+    ```
+
   - Kotlin/Gradle: same Maven Central source as Java
 - GitHub releases / tags:
   `gh release list --limit 5` or

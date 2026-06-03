@@ -69,7 +69,8 @@ no code changes.
    instead:
 
    ```bash
-   gh issue comment N --body "Title is missing a conventional commit prefix. Candidates: feat / docs / chore. Please rename when the type is clear."
+   gh issue comment N --body \
+     "Title is missing a conventional commit prefix. Candidates: feat / docs / chore. Please rename when the type is clear."
    ```
 
 5. **Check for duplicates.** If a near-duplicate open issue exists,
