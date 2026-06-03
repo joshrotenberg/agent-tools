@@ -1,11 +1,9 @@
 ---
 name: dispatcher
 description: >-
-  Primary pipeline entry point. Run `claude --agent dispatcher` to kick off
-  automated work from your issue queue. Dispatcher reads open issues, decides
-  execution shape (single/parallel/sequential runner), fires runners, and each
-  runner dispatches workers that branch, edit, open PRs, watch CI, and merge.
-  Skip for a single well-defined task -- go straight to the runner instead.
+  Use when you need to scope and dispatch tasks from an issue queue -- reads
+  open issues, decides execution shape, fires runners. Skip for a single
+  well-defined task; go straight to the runner instead.
 tools: Read, Bash, Task
 model: sonnet
 skills:
@@ -15,9 +13,7 @@ skills:
   - dispatch-options
   - dispatch-wait-react
   - orchestration-prompt-template
-  - draft-pr-first
   - spiral-diagnosis
-  - sandbox-preflight
   - orchestrator-parallelization
   - durable-context
   - non-pr-output-conventions
@@ -168,5 +164,7 @@ Then dispatch. Then reconcile. Then report.
 
 ## Related
 
-- [`../runner/AGENT.md`](../runner/AGENT.md) -- the task-level
-  execution surface you dispatch to.
+- [`../runner/AGENT.md`](../runner/AGENT.md) -- task-level execution for code-change issues
+- [`../worker/AGENT.md`](../worker/AGENT.md) -- bounded code-change worker for simple subtasks
+- [`../auditor/AGENT.md`](../auditor/AGENT.md) -- read-only survey agent for audit+remediate shape
+- [`../reviewer/AGENT.md`](../reviewer/AGENT.md) -- PR review agent for sequential review shape
