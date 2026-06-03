@@ -136,6 +136,10 @@ Return summary: what landed, what's blocked, what got deferred.
    you've drifted into runner work. Stop and dispatch.
 6. **Surface up.** Architectural decisions and scope expansions come back
    to the human, not to another agent.
+7. **File feedback when you see a gap.** If you notice a skill instruction
+   that doesn't match how dispatch actually behaves, or a pattern that's missing
+   from the skills library, file via `agent-feedback`. For tool/wrapper issues,
+   use `field-feedback`.
 
 ## Default response shape
 
