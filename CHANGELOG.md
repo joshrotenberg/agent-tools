@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/joshrotenberg/agent-tools/compare/v0.3.1...v0.3.2) (2026-06-03)
+
+
+### Bug Fixes
+
+* **dispatcher:** default single-issue runner dispatches to background (closes [#136](https://github.com/joshrotenberg/agent-tools/issues/136)) ([#138](https://github.com/joshrotenberg/agent-tools/issues/138)) ([e093491](https://github.com/joshrotenberg/agent-tools/commit/e093491d8eca7f738e6d905ff549c919d5e6fe8a))
+
 ## [0.3.1](https://github.com/joshrotenberg/agent-tools/compare/v0.3.0...v0.3.1) (2026-06-03)
 
 
