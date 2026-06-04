@@ -2,6 +2,7 @@
 # validate-frontmatter.sh -- check SKILL.md and AGENT.md files for spec compliance.
 #
 # Rules per file:
+#   0. Frontmatter parses as valid YAML (real parse via PyYAML or Ruby)
 #   1. YAML frontmatter is present (file starts with --- on line 1)
 #   2. name: field is present and non-empty
 #   3. name: value matches parent directory name exactly
@@ -15,6 +16,28 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 checked=0
 passed=0
 failed=0
+
+# A real YAML parse catches invalid frontmatter the regex checks miss (e.g. an
+# unquoted ": " in a description, which drops all metadata at load time). Uses
+# PyYAML if present, else Ruby's stdlib psych -- no install needed, and both are
+# present on ubuntu-latest CI. Skipped with a warning only if neither is found.
+yaml_parser=""
+if python3 -c "import yaml" 2>/dev/null; then
+    yaml_parser="python"
+elif command -v ruby >/dev/null 2>&1; then
+    yaml_parser="ruby"
+else
+    echo "WARN: no YAML parser (python3+PyYAML or ruby) -- skipping YAML-syntax check."
+fi
+
+# Reads a YAML document on stdin; exits non-zero if it does not parse.
+yaml_parses() {
+    case "$yaml_parser" in
+        python) python3 -c "import sys, yaml; yaml.safe_load(sys.stdin.read())" ;;
+        ruby)   ruby -ryaml -e "YAML.safe_load(STDIN.read)" ;;
+        *)      return 0 ;;
+    esac
+}
 
 check_file() {
     local file="$1"
@@ -30,6 +53,11 @@ check_file() {
         # Extract the frontmatter block (between the first and second ---)
         local fm
         fm="$(awk '/^---$/{if(found){exit}else{found=1;next}} found{print}' "$file")"
+
+        # 0. Frontmatter must parse as valid YAML (real parse, not just regex)
+        if ! printf '%s\n' "$fm" | yaml_parses 2>/dev/null; then
+            errors+=("  [yaml] frontmatter is not valid YAML (parse failed)")
+        fi
 
         # 2. name: field present and non-empty
         local name_line
