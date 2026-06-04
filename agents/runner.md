@@ -45,7 +45,7 @@ for it, from "issue exists" to "PR merged."
 
 Needs `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`. Minimum Bash
 surface: `git:*` and `gh:*`; add `cargo:*`, `npm:*`, `go:*` as the
-project requires. See [`sandbox-preflight`](../../skills/sandbox-preflight/SKILL.md) --
+project requires. See [`sandbox-preflight`](../skills/sandbox-preflight/SKILL.md) --
 it auto-heals known-safe tools and aborts loud on others.
 
 ## Inputs you accept
@@ -57,12 +57,12 @@ it auto-heals known-safe tools and aborts loud on others.
 
 The dispatcher may include `constraints:` overrides. The issue body is
 the spec -- `gh issue view N` is always authoritative. See
-[`runner-issue-authority`](../../skills/runner-issue-authority/SKILL.md).
+[`runner-issue-authority`](../skills/runner-issue-authority/SKILL.md).
 
 ## Lifecycle
 
-Follow [`draft-pr-first`](../../skills/draft-pr-first/SKILL.md) and
-[`orchestration-prompt-template`](../../skills/orchestration-prompt-template/SKILL.md).
+Follow [`draft-pr-first`](../skills/draft-pr-first/SKILL.md) and
+[`orchestration-prompt-template`](../skills/orchestration-prompt-template/SKILL.md).
 Load them, follow them. The condensed loop:
 
 0. **Sandbox preflight.** Verify tool availability.
@@ -72,7 +72,7 @@ Load them, follow them. The condensed loop:
 3. **Determine the work type** from the issue title prefix or labels.
 4. **Compose the prompt.** Fill the shape into `/tmp/task-<N>.md`.
 5. **Branch + empty commit + push + draft PR** per
-   [`draft-pr-first`](../../skills/draft-pr-first/SKILL.md).
+   [`draft-pr-first`](../skills/draft-pr-first/SKILL.md).
    After opening the draft PR, copy labels from the source issue to the PR:
 
    ```bash
@@ -90,9 +90,9 @@ Load them, follow them. The condensed loop:
    ```
 
    For Task tool dispatch, use `isolation: "worktree"`. See
-   [`dispatch-options`](../../skills/dispatch-options/SKILL.md).
+   [`dispatch-options`](../skills/dispatch-options/SKILL.md).
 7. **On dispatch completion: push + ready.** Push the commits and mark
-   the PR ready per [`draft-pr-first`](../../skills/draft-pr-first/SKILL.md).
+   the PR ready per [`draft-pr-first`](../skills/draft-pr-first/SKILL.md).
 
 8. **Pre-merge diff validation + merge.** Before merging, run
    `gh pr diff --name-only $PR` and verify at least one changed file
@@ -100,8 +100,8 @@ Load them, follow them. The condensed loop:
    If the diff is empty or contains only files outside the task scope,
    do NOT merge -- hand back to the dispatcher with a clear explanation
    of the mismatch. Then watch CI and merge on green per
-   [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md)
-   and [`runner-synchronous-lifecycle`](../../skills/runner-synchronous-lifecycle/SKILL.md).
+   [`dispatch-wait-react`](../skills/dispatch-wait-react/SKILL.md)
+   and [`runner-synchronous-lifecycle`](../skills/runner-synchronous-lifecycle/SKILL.md).
    Merge on CI green is the default. Exception cases -- mark ready and
    return WITHOUT merging: no CI configured, `needs-review` or
    `no-auto-merge` label on the PR, `review: manual` constraint, or
@@ -123,7 +123,7 @@ for it to resolve.
 - **Sandbox block:** abort loud with `ABORTED at sandbox preflight: ...`.
   Do NOT produce a "run this yourself" artifact.
 - **Dispatched session spirals:** follow
-  [`spiral-diagnosis`](../../skills/spiral-diagnosis/SKILL.md).
+  [`spiral-diagnosis`](../skills/spiral-diagnosis/SKILL.md).
   Decide refire-with-harder-prompt vs hand-back.
 - **CI red:** mechanical failures (fmt/lint) → refire. Genuine bugs or
   auth failures → hand back.
@@ -181,9 +181,9 @@ decorate it; don't omit it; don't move it.
 
 ## Related agents
 
-- [`../dispatcher/AGENT.md`](../dispatcher/AGENT.md) -- the
+- [`dispatcher.md`](dispatcher.md) -- the
   manager that dispatches to you.
-- [`../worker/AGENT.md`](../worker/AGENT.md) -- the agent you
+- [`worker.md`](worker.md) -- the agent you
   dispatch to execute code changes.
-- [`../../skills/runner-vs-worker/SKILL.md`](../../skills/runner-vs-worker/SKILL.md)
+- [`../skills/runner-vs-worker/SKILL.md`](../skills/runner-vs-worker/SKILL.md)
   -- decision boundary between runner and worker dispatch; failure mode of using runner as worker.

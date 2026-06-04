@@ -16,12 +16,14 @@ any wrapper.
 
 - `skills/<name>/SKILL.md` -- operational knowledge files; loaded into agent
   context by name via frontmatter `skills:` list
-- `agents/<name>/AGENT.md` -- subagent definitions (`dispatcher`, `runner`)
+- `agents/<name>.md` -- subagent definitions (`dispatcher`, `runner`, `worker`,
+  `auditor`, `reviewer`)
 
 ## Naming conventions
 
 - Kebab-case for all directory and file names
-- `name:` frontmatter field must match the directory name exactly
+- `name:` frontmatter field must match the skill directory name / agent file
+  name exactly
 - Skill names: noun-phrases describing what the skill is about
   (`spiral-diagnosis`, `sandbox-preflight`, not `diagnoseSpirale`)
 - Agent names: role nouns (`runner`, `dispatcher`)
@@ -33,7 +35,7 @@ any wrapper.
 - All skill and agent body language must be dispatch-agnostic; roba is one
   dispatch option among several, not the assumed mechanism
 - Read `CLAUDE.md` decisions log before changing anything substantial
-  (CLAUDE.md is untracked but present locally after clone + setup)
+  (CLAUDE.md is tracked in this repo)
 
 ## Skill body discipline
 

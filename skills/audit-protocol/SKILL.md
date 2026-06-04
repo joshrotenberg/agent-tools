@@ -139,11 +139,11 @@ Return a structured report with three sections:
 
 ## Related
 
-- [`agents/auditor/AGENT.md`](../../agents/auditor/AGENT.md) -- the agent that
+- [`agents/auditor.md`](../../agents/auditor.md) -- the agent that
   executes this protocol; the audit-protocol skill is a required preload for it
 - [`skills/triage/SKILL.md`](../triage/SKILL.md) -- triage labels and prioritizes
   existing issues; audit-protocol produces new ones
 - [`skills/orchestration-patterns/SKILL.md`](../orchestration-patterns/SKILL.md)
   -- "audit + remediate" is the execution shape that uses the auditor
-- [`agents/runner/AGENT.md`](../../agents/runner/AGENT.md) -- the natural next step
+- [`agents/runner.md`](../../agents/runner.md) -- the natural next step
   after an audit produces a backlog; implements the filed issues

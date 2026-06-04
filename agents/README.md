@@ -50,10 +50,11 @@ work, going straight to the runner skips ceremony.
 
 | Agent | Scope | When to invoke |
 |---|---|---|
-| [`runner`](runner/AGENT.md) | One task: implement one issue end-to-end | "implement #N" (direct or via dispatcher) |
-| [`dispatcher`](dispatcher/AGENT.md) | One or many units of work; one or many projects | "work the backlog in foo", "work across foo and bar", "audit release readiness" |
-| [`worker`](worker/AGENT.md) | One bounded code-change task; no lifecycle | Dispatched by runner or dispatcher to make file edits, validate, and commit |
-| [`auditor`](auditor/AGENT.md) | One codebase audit against a rubric | "audit <domain> in <repo>", dispatched by dispatcher for audit+remediate shape |
+| [`runner`](runner.md) | One task: implement one issue end-to-end | "implement #N" (direct or via dispatcher) |
+| [`dispatcher`](dispatcher.md) | One or many units of work; one or many projects | "work the backlog in foo", "work across foo and bar", "audit release readiness" |
+| [`worker`](worker.md) | One bounded code-change task; no lifecycle | Dispatched by runner or dispatcher to make file edits, validate, and commit |
+| [`auditor`](auditor.md) | One codebase audit against a rubric | "audit <domain> in <repo>", dispatched by dispatcher for audit+remediate shape |
+| [`reviewer`](reviewer.md) | One PR: review, then merge or request changes | "review PR #N", or dispatched by dispatcher for the review shape |
 
 ## Installation
 
@@ -85,7 +86,8 @@ trade-off table.
 
 ## Format
 
-Each agent is a directory containing `AGENT.md`:
+Each agent is a flat `<name>.md` file (the `name:` field must match the
+file name):
 
 ```
 ---

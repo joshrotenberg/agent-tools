@@ -48,54 +48,74 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 DEST_SKILLS="$DEST_BASE/skills"
 DEST_AGENTS="$DEST_BASE/agents"
 
-install_kind() {
-    local src_dir="$1"
+# Install one entry (a skill directory or an agent .md file) into dest_dir,
+# honoring FORCE / SKIP / DRY_RUN.
+install_entry() {
+    local entry="$1"
     local dest_dir="$2"
     local kind_label="$3"
+    local name target action
+    name="$(basename "$entry")"
+    target="$dest_dir/$name"
 
+    if [[ -e "$target" ]]; then
+        if [[ $FORCE -eq 1 ]]; then
+            action="overwrite"
+        elif [[ $SKIP -eq 1 ]]; then
+            action="skip"
+        elif [[ -t 0 ]]; then
+            read -r -p "$kind_label '$name' exists. Overwrite? [y/N] " ans
+            case "$ans" in
+                y|Y|yes) action="overwrite" ;;
+                *)       action="skip" ;;
+            esac
+        else
+            action="skip"
+        fi
+    else
+        action="install"
+    fi
+
+    case "$action" in
+        install|overwrite)
+            if [[ $DRY_RUN -eq 1 ]]; then
+                echo "would $action $kind_label/$name -> $target"
+            else
+                rm -rf "$target"
+                cp -R "$entry" "$target"
+                echo "$action $kind_label/$name -> $target"
+            fi
+            ;;
+        skip)
+            echo "skip $kind_label/$name (already present)"
+            ;;
+    esac
+}
+
+# Skills are directories: skills/<name>/SKILL.md
+install_skills() {
+    local src_dir="$1" dest_dir="$2"
     [[ -d "$src_dir" ]] || return 0
     mkdir -p "$dest_dir"
-
     for entry in "$src_dir"/*/; do
         [[ -d "$entry" ]] || continue
-        local name
-        name="$(basename "$entry")"
-        local target="$dest_dir/$name"
-
-        if [[ -e "$target" ]]; then
-            if [[ $FORCE -eq 1 ]]; then
-                action="overwrite"
-            elif [[ $SKIP -eq 1 ]]; then
-                action="skip"
-            elif [[ -t 0 ]]; then
-                read -r -p "$kind_label '$name' exists. Overwrite? [y/N] " ans
-                case "$ans" in
-                    y|Y|yes) action="overwrite" ;;
-                    *)       action="skip" ;;
-                esac
-            else
-                action="skip"
-            fi
-        else
-            action="install"
-        fi
-
-        case "$action" in
-            install|overwrite)
-                if [[ $DRY_RUN -eq 1 ]]; then
-                    echo "would $action $kind_label/$name -> $target"
-                else
-                    rm -rf "$target"
-                    cp -R "$entry" "$target"
-                    echo "$action $kind_label/$name -> $target"
-                fi
-                ;;
-            skip)
-                echo "skip $kind_label/$name (already present)"
-                ;;
-        esac
+        install_entry "$entry" "$dest_dir" skill
     done
 }
 
-install_kind "$REPO_ROOT/skills" "$DEST_SKILLS" skill
-install_kind "$REPO_ROOT/agents" "$DEST_AGENTS" agent
+# Agents are flat files: agents/<name>.md (README.md is not an agent).
+install_agents() {
+    local src_dir="$1" dest_dir="$2"
+    [[ -d "$src_dir" ]] || return 0
+    mkdir -p "$dest_dir"
+    for entry in "$src_dir"/*.md; do
+        [[ -f "$entry" ]] || continue
+        if [[ "$(basename "$entry")" == "README.md" ]]; then
+            continue
+        fi
+        install_entry "$entry" "$dest_dir" agent
+    done
+}
+
+install_skills "$REPO_ROOT/skills" "$DEST_SKILLS"
+install_agents "$REPO_ROOT/agents" "$DEST_AGENTS"

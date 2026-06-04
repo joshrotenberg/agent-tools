@@ -62,7 +62,7 @@ Skip this agent for code-writing tasks. Use the runner for those.
 
 ## Related agents
 
-- [`runner`](../runner/AGENT.md) -- executes code-change tasks end-to-end; use for
+- [`runner`](runner.md) -- executes code-change tasks end-to-end; use for
   implementing issues, not reviewing PRs
-- [`dispatcher`](../dispatcher/AGENT.md) -- scopes units of work and decides execution
+- [`dispatcher`](dispatcher.md) -- scopes units of work and decides execution
   shape; may invoke the reviewer as part of a sequential shape

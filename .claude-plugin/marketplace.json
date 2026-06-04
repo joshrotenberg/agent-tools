@@ -1,0 +1,13 @@
+{
+  "name": "agent-tools",
+  "owner": {
+    "name": "Josh Rotenberg"
+  },
+  "plugins": [
+    {
+      "name": "agent-tools",
+      "source": "./",
+      "description": "Dispatcher/runner orchestration agents and operational skills."
+    }
+  ]
+}

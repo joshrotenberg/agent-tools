@@ -106,10 +106,10 @@ Rules:
 
 ## Related
 
-- [`../../agents/runner/AGENT.md`](../../agents/runner/AGENT.md) -- the
+- [`../../agents/runner.md`](../../agents/runner.md) -- the
   full-lifecycle agent: reads issues, creates PRs, dispatches worker,
   watches CI, merges.
-- [`../../agents/worker/AGENT.md`](../../agents/worker/AGENT.md) -- the
+- [`../../agents/worker.md`](../../agents/worker.md) -- the
   file-change agent: edits files, validates, commits, stops.
 - [`../dispatch-options/SKILL.md`](../dispatch-options/SKILL.md) -- choosing
   the dispatch mechanism (Task tool vs Bash + claude -p) after you have
