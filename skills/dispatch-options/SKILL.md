@@ -1,6 +1,11 @@
 ---
 name: dispatch-options
-description: When choosing how to dispatch a subagent -- consult this before firing any dispatch. Covers the two primary mechanisms (Task tool / Bash + claude -p) and when each fits: default to Task tool for in-project work, reach for Bash + claude -p when you need a different cwd, process boundary, or long-running dispatch.
+description: >-
+  When choosing how to dispatch a subagent -- consult this before firing
+  any dispatch. Covers the two primary mechanisms (Task tool / Bash +
+  claude -p) and when each fits: default to Task tool for in-project work,
+  reach for Bash + claude -p when you need a different cwd, process
+  boundary, or long-running dispatch.
 ---
 
 # Dispatch options

@@ -1,5 +1,6 @@
 {
   "name": "agent-tools",
+  "description": "Curated dispatcher/runner orchestration agents and operational skills for Claude Code.",
   "owner": {
     "name": "Josh Rotenberg"
   },

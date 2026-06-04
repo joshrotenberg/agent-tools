@@ -146,6 +146,16 @@ agent-tools/
 
 ## Decisions log
 
+### 2026-06-04: packaged as a Claude Code plugin
+
+- Distributed as a plugin (#202/#203): agents flattened to canonical
+  `<name>.md`, `.claude-plugin/{plugin.json,marketplace.json}` added, repo
+  is its own marketplace. Plugin is the primary install (CLI + desktop);
+  `install.sh` retained for the `~/.claude/` copy path.
+- Surfaced + fixed a latent bug: 6 components had invalid YAML `description`
+  frontmatter (unquoted `: `) that the loose `validate-frontmatter.sh` missed
+  but `claude plugin validate` caught. Converted to `>-` block scalars.
+
 ### 2026-06-02 morning
 
 - **Split from roba** (roba #129 discussion). Agent-tools was
@@ -263,20 +273,28 @@ one implementation.
 
 ## Install + use loop
 
+agent-tools is a plugin; the repo is its own marketplace. Primary path:
+
+```
+/plugin marketplace add joshrotenberg/agent-tools
+/plugin install agent-tools@agent-tools     # components namespaced agent-tools:*
+```
+
+Or copy into `~/.claude/` (unnamespaced; `claude --agent dispatcher` works):
+
 ```bash
-# Install (idempotent)
 cd ~/Code/active/agent-tools && ./install.sh
 
 # After install, any Claude Code session can spawn:
 # @dispatcher work the backlog in this project
-# @dispatcher work across foo and bar
 # @runner implement #N
 ```
 
 For changes during development:
 
 ```bash
-# Edit a skill or agent
+claude --plugin-dir .     # load the plugin for a session; reload after edits
+# -- or, for the ~/.claude copy path --
 ./install.sh --force      # overwrite without prompting
 ```
 

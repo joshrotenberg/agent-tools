@@ -1,6 +1,9 @@
 ---
 name: reviewer
-description: Use when reviewing a PR in agent-tools -- reads the diff and originating issue, checks conventions, and takes one action: approve+merge, approve+note ordering, or request-changes+convert-to-draft.
+description: >-
+  Use when reviewing a PR in agent-tools -- reads the diff and originating
+  issue, checks conventions, and takes one action: approve+merge,
+  approve+note ordering, or request-changes+convert-to-draft.
 tools: Read, Glob, Grep, Bash
 model: sonnet
 skills:

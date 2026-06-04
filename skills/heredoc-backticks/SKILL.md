@@ -1,6 +1,9 @@
 ---
 name: heredoc-backticks
-description: When piping markdown into `gh issue create --body "$(cat <<'EOF' ... EOF)"` (or any single-quoted heredoc), use literal backticks. Do NOT escape them -- escapes survive into the output and break the markdown.
+description: >-
+  When piping markdown into `gh issue create --body "$(cat <<'EOF' ...
+  EOF)"` (or any single-quoted heredoc), use literal backticks. Do NOT
+  escape them -- escapes survive into the output and break the markdown.
 ---
 
 # Heredoc backticks
