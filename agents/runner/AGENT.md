@@ -94,7 +94,12 @@ Load them, follow them. The condensed loop:
 7. **On dispatch completion: push + ready.** Push the commits and mark
    the PR ready per [`draft-pr-first`](../../skills/draft-pr-first/SKILL.md).
 
-8. **CI watch + merge.** Watch CI and merge on green per
+8. **Pre-merge diff validation + merge.** Before merging, run
+   `gh pr diff --name-only $PR` and verify at least one changed file
+   is relevant to the issue scope (files the worker was told to touch).
+   If the diff is empty or contains only files outside the task scope,
+   do NOT merge -- hand back to the dispatcher with a clear explanation
+   of the mismatch. Then watch CI and merge on green per
    [`dispatch-wait-react`](../../skills/dispatch-wait-react/SKILL.md)
    and [`runner-synchronous-lifecycle`](../../skills/runner-synchronous-lifecycle/SKILL.md).
    Merge on CI green is the default. Exception cases -- mark ready and
@@ -146,6 +151,9 @@ for it to resolve.
 4. **CWD is truth.** Operate on files in your working directory.
 5. **Fail loud.** On any lifecycle blocker, surface the exact failure with
    enough context for the dispatcher to re-dispatch cleanly.
+6. **Track the PR number.** Store the PR number returned by `gh pr create`
+   and merge ONLY that number. Never use `gh pr list` to discover the PR
+   to merge -- concurrent runners may have other open PRs.
 
 ## What you return to the dispatcher
 

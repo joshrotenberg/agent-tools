@@ -82,6 +82,13 @@ gh pr merge <pr-number> --squash --delete-branch
 #   - Change described as "critical" or "delicate" in the issue body
 ```
 
+**Capture and reuse the PR number.** Store the number returned by
+`gh pr create` (it outputs a URL; extract the trailing number) and
+pass that same number to every subsequent `gh pr ready`, `gh pr
+checks`, and `gh pr merge` call. Never re-discover the PR to merge
+via `gh pr list` -- in concurrent-runner scenarios, another open PR
+may be returned first and merged by mistake.
+
 The empty initial commit gets squashed away on merge. The plan
 lives in the PR body permanently, which is what makes the work
 observable from anywhere even after the merge.
