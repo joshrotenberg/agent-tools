@@ -8,7 +8,9 @@ context.
 This file is the durable local design home: positioning,
 decisions, working conventions, pending work. Anything
 actionable that needs cross-session memory lives here.
-CLAUDE.md is intentionally untracked (in `.gitignore`).
+CLAUDE.md is intentionally tracked in this repo (committed
+in #50); a `!CLAUDE.md` line in `.gitignore` overrides the
+global ignore.
 
 ## What agent-tools is
 
@@ -17,10 +19,13 @@ Personal customization layer for working with Claude Code:
 - **`skills/`** -- operational knowledge files that extend any
   agent's context (process discipline, dispatch patterns,
   sandbox preflight, release-audit anchoring, git workflow).
-- **`agents/`** -- two subagent definitions:
-  - `runner` -- executes one task end-to-end
+- **`agents/`** -- five subagent definitions:
   - `dispatcher` -- gathers context, decides execution shape,
     fires runners
+  - `runner` -- executes one task end-to-end
+  - `worker` -- bounded code-change task; no lifecycle
+  - `auditor` -- read-only codebase audit against a rubric
+  - `reviewer` -- reviews a PR; merges or requests changes
 - **`install.sh`** -- idempotent copy into
   `~/.claude/{skills,agents}/` for Claude Code auto-discovery.
 
@@ -80,19 +85,28 @@ runner.
 ```
 agent-tools/
 ├── README.md                                  # repo-level framing
-├── CLAUDE.md                                  # this file (untracked)
+├── CLAUDE.md                                  # this file (tracked)
 ├── install.sh                                 # idempotent install
-├── .gitignore                                 # CLAUDE.md + .DS_Store
+├── .gitignore                                 # .DS_Store + !CLAUDE.md override
 ├── agents/
 │   ├── README.md                              # the dispatcher + runner model
-│   ├── dispatcher/AGENT.md                    # the dispatcher role
-│   └── runner/AGENT.md                        # the runner role
+│   ├── dispatcher/AGENT.md                    # scopes the unit, decides shape, fires
+│   ├── runner/AGENT.md                        # one task end-to-end (issue → PR → merged)
+│   ├── worker/AGENT.md                        # bounded code-change task; no lifecycle
+│   ├── auditor/AGENT.md                       # read-only audit against a rubric
+│   └── reviewer/AGENT.md                      # review a PR; merge or request changes
 └── skills/
     ├── README.md                              # categorized skill index
     │
     ├── # Orchestration model
+    ├── durable-context/                       # what state survives a session
     ├── orchestration-patterns/                # units of work + execution shapes
+    ├── workflow-basics/                       # Workflow tool vs Task tool (50+)
+    ├── non-pr-output-conventions/             # where non-PR output lands
+    ├── triage/                                # label the open-issue queue
     ├── workspace-survey/                      # how dispatcher finds projects
+    ├── audit-protocol/                        # rubric + 5-phase auditor contract
+    ├── audit-remediate-handoff/               # findings → per-finding runners
     │
     ├── # Dispatch
     ├── dispatch-options/                      # Task / roba / claude -p trade-offs
@@ -100,6 +114,7 @@ agent-tools/
     ├── orchestrator-parallelization/          # fan-out heuristics
     ├── orchestration-prompt-template/         # how to write the runner prompt
     ├── spiral-diagnosis/                      # when a dispatched session hangs
+    ├── runner-vs-worker/                      # dispatch a runner or a worker?
     │
     ├── # Lifecycle
     ├── draft-pr-first/                        # PR before work
@@ -108,13 +123,22 @@ agent-tools/
     ├── runner-synchronous-lifecycle/          # runner holds open until PR is merged
     ├── release-audit-anchoring/               # anchor on origin/main
     │
-    └── # Git + tooling hygiene
+    ├── # Review
+    ├── pr-review/                             # review a PR in agent-tools
+    │
+    ├── # Git + tooling hygiene
     ├── git-branch-pr-workflow/                # branch + PR discipline
     ├── git-fix-pr-branching/                  # branch off main, not off open PR
-    └── heredoc-backticks/                     # gh issue/PR body formatting
+    ├── heredoc-backticks/                     # gh issue/PR body formatting
+    │
+    └── # Meta
+    ├── agent-feedback/                        # file an issue on a bad skill/agent
+    ├── field-feedback/                        # file a dispatch-time issue
+    ├── skill-capabilities/                    # allowed-tools + dynamic injection
+    └── install-cadence/                       # re-install after merged PRs
 ```
 
-15 skills + 2 agents + repo files. Skills are categorized in
+27 skills + 5 agents + repo files. Skills are categorized in
 `skills/README.md` (visible there).
 
 ## Decisions log
@@ -313,6 +337,48 @@ broken cross-links, or roba-isms that slipped through.
   mechanical. Its README mentions BYO skills/agents and lists
   agent-tools as one curated example (a one-line pointer).
 - Bumping one repo doesn't bump the other.
+
+## Desktop app
+
+agent-tools was built against the `claude` CLI. The desktop
+app (and claude.ai/code) is the same engine sharing the same
+`~/.claude/` config home, so most of it ports unchanged. The
+split (2026-06-04):
+
+**Ports clean.** Skills (same `~/.claude/skills/` discovery),
+settings.json / hooks / permissions, and the Task-tool dispatch
+family (`dispatcher → runner → worker`, `auditor`, `reviewer`,
+with `isolation: "worktree"`). Single-project `dispatcher →
+runner` work is at parity.
+
+**Exceptions (verify per machine).**
+
+- **Bash subprocess dispatch.** `roba` / `claude -p` dispatch
+  (roba-orchestrator, roba-runner, `dispatch-via-bash`, the Bash
+  branch of `dispatch-options`) needs those binaries on PATH. A
+  GUI launch may not inherit your shell PATH (the macOS Dock
+  gotcha). Check in a desktop Bash cell: `which claude roba gh`.
+  Fix by launching `open -a Claude` from a terminal, or pin
+  PATH/env in `.claude/settings.json`.
+- **Cross-project `workspace-survey`.** Desktop scopes file
+  access to the open project folder(s); walking `~/Code/active/`
+  needs those dirs added. Single-project dispatching is fine.
+
+**Starting the dispatcher.** The dispatcher is a *driver* -- it
+fires runners via `Task`, so it's meant to BE the top-level
+session, not a spawned leaf. CLI: `claude --agent dispatcher`
+pins the session to it (it "just uses it by default"). Desktop
+has no launch flag, so load the persona into the top-level
+session instead: `@agents/dispatcher` pulls the AGENT.md inline,
+or bake it into a project CLAUDE.md. Don't spawn the dispatcher
+as a subagent -- that pushes its runner-spawning a level deeper;
+the spawned-subagent form is for leaf agents like the runner.
+
+Unverified: whether the desktop `@`-picker lists agents
+installed as `~/.claude/agents/<name>/AGENT.md` (subdir form)
+vs the canonical flat `<name>.md`. If it doesn't, the inline
+path-reference and natural-language delegation still resolve
+them.
 
 ## When in doubt
 
