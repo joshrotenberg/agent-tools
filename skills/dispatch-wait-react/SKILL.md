@@ -26,7 +26,7 @@ because the runner's return signals "task done." If the runner
 backgrounds the dispatch and returns early, the lifecycle is
 orphaned. The runner should fire its dispatch **synchronously** (no
 `run_in_background`) and only return once the lifecycle is done.
-See [`../../agents/runner/AGENT.md`](../../agents/runner/AGENT.md)
+See [`../../agents/runner.md`](../../agents/runner.md)
 for the runner-specific discipline.
 
 ## When to apply (dispatcher)
@@ -180,7 +180,7 @@ This skill sits underneath several lifecycle skills + agents:
   the PR-lifecycle pattern that includes `gh pr checks --watch` in
   background. Same wait shape.
 - The dispatcher agent's parallelization heuristics
-  ([`../../agents/dispatcher/AGENT.md`](../../agents/dispatcher/AGENT.md))
+  ([`../../agents/dispatcher.md`](../../agents/dispatcher.md))
   -- fire N background tasks; the notification fan-in handles
   which finishes first. **Wait for ANY notification**, then
   handle that one job, then go back to waiting.

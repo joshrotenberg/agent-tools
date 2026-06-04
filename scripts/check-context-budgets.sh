@@ -106,7 +106,7 @@ while IFS= read -r -d '' file; do
     else
         print_result "OK" "${rel}: ${lines} body lines"
     fi
-done < <(find "$REPO_ROOT/agents" -name "AGENT.md" -print0 | sort -z)
+done < <(find "$REPO_ROOT/agents" -maxdepth 1 -name "*.md" ! -name "README.md" -print0 | sort -z)
 
 # -- 3. Per-agent preload total ----------------------------------------------
 
@@ -116,7 +116,7 @@ PRELOAD_ERROR=2100   # ~25k tokens
 TOKENS_PER_LINE=12
 
 while IFS= read -r -d '' agent_file; do
-    agent_name="$(basename "$(dirname "$agent_file")")"
+    agent_name="$(basename "$agent_file" .md)"
 
     # Read the skills list
     skill_names=()
@@ -148,7 +148,7 @@ while IFS= read -r -d '' agent_file; do
     else
         print_result "OK" "agents/${agent_name} preload total: ~${total_tokens} tokens / ${total_body_lines} lines"
     fi
-done < <(find "$REPO_ROOT/agents" -name "AGENT.md" -print0 | sort -z)
+done < <(find "$REPO_ROOT/agents" -maxdepth 1 -name "*.md" ! -name "README.md" -print0 | sort -z)
 
 # -- Summary -----------------------------------------------------------------
 

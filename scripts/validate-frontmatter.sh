@@ -18,11 +18,8 @@ failed=0
 
 check_file() {
     local file="$1"
+    local expected_name="$2"
     local errors=()
-
-    # Derive the expected name from the parent directory
-    local dir
-    dir="$(basename "$(dirname "$file")")"
 
     # 1. Frontmatter must be present (line 1 must be exactly ---)
     local first_line
@@ -45,9 +42,9 @@ check_file() {
             if [ -z "$name_value" ]; then
                 errors+=("  [name] field is present but empty")
             else
-                # 3. name: must match parent directory
-                if [ "$name_value" != "$dir" ]; then
-                    errors+=("  [name] value '${name_value}' does not match directory name '${dir}'")
+                # 3. name: must match expected (skill dir name / agent file stem)
+                if [ "$name_value" != "$expected_name" ]; then
+                    errors+=("  [name] value '${name_value}' does not match expected name '${expected_name}'")
                 fi
             fi
         fi
@@ -89,12 +86,12 @@ check_file() {
 
 # Collect files
 while IFS= read -r -d '' file; do
-    check_file "$file"
+    check_file "$file" "$(basename "$(dirname "$file")")"
 done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 | sort -z)
 
 while IFS= read -r -d '' file; do
-    check_file "$file"
-done < <(find "$REPO_ROOT/agents" -name "AGENT.md" -print0 | sort -z)
+    check_file "$file" "$(basename "$file" .md)"
+done < <(find "$REPO_ROOT/agents" -maxdepth 1 -name "*.md" ! -name "README.md" -print0 | sort -z)
 
 printf '\n%d files checked, %d passed, %d failed.\n' "$checked" "$passed" "$failed"
 

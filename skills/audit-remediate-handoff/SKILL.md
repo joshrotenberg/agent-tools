@@ -53,7 +53,7 @@ The handoff is a durable-state handoff, not an in-memory one:
 ## Recommended finding-issue format
 
 The auditor's "File" phase (see
-[`agents/auditor/AGENT.md`](../../agents/auditor/AGENT.md)) writes finding-issues
+[`agents/auditor.md`](../../agents/auditor.md)) writes finding-issues
 with the following body shape. Runners must be able to consume the issue directly
 without additional context:
 
@@ -170,7 +170,7 @@ findings if the codebase changed. Read the issue; do not re-audit.
 
 - [`orchestration-patterns`](../orchestration-patterns/SKILL.md) -- the
   audit + remediate shape in the broader execution shape table
-- [`agents/auditor/AGENT.md`](../../agents/auditor/AGENT.md) -- the agent that
+- [`agents/auditor.md`](../../agents/auditor.md) -- the agent that
   files findings; its "File" phase defines the issue body format this skill
   consumes
 - [`non-pr-output-conventions`](../non-pr-output-conventions/SKILL.md) -- output

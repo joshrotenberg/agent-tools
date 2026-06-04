@@ -72,24 +72,24 @@ the other (add a type + use it), or it's a pure formatting/lint pass on a
 file already being touched.
 
 If open unlabeled issues exist, dispatch a triage pass
-(`subagent_type: "explore"` using [`triage`](../../skills/triage/SKILL.md))
+(`subagent_type: "explore"` using [`triage`](../skills/triage/SKILL.md))
 before scoping runners. Triage is read-only; the human reviews the p1
 queue before dispatch starts.
 
 Key skills (triage, orchestration-patterns, dispatch-options) do not survive
 `/compact`. Re-invoke them at the start of each new dispatch cycle to ensure
 they are in context regardless of whether compaction occurred. See
-[`durable-context`](../../skills/durable-context/SKILL.md) for details.
+[`durable-context`](../skills/durable-context/SKILL.md) for details.
 
 ### 2. Gather durable context per unit
 
 Read: `gh issue view N`, `gh pr list`, the project's CLAUDE.md, cross-project
-surveys via [`workspace-survey`](../../skills/workspace-survey/SKILL.md).
+surveys via [`workspace-survey`](../skills/workspace-survey/SKILL.md).
 You're gathering context, not doing work.
 
 ### 3. Decide the execution shape
 
-Per [`orchestration-patterns`](../../skills/orchestration-patterns/SKILL.md):
+Per [`orchestration-patterns`](../skills/orchestration-patterns/SKILL.md):
 
 | shape | when |
 | --- | --- |
@@ -104,10 +104,10 @@ Most days: single runner.
 ### 4. Fire + reconcile
 
 Compose the prompt per
-[`orchestration-prompt-template`](../../skills/orchestration-prompt-template/SKILL.md).
+[`orchestration-prompt-template`](../skills/orchestration-prompt-template/SKILL.md).
 Use `subagent_type: "runner"` (Task tool) for dispatches. For same-repo
 Task dispatches that modify files, pass `isolation: "worktree"`. See
-[`dispatch-options`](../../skills/dispatch-options/SKILL.md).
+[`dispatch-options`](../skills/dispatch-options/SKILL.md).
 
 **Background vs foreground:** When a directive is self-contained -- the result
 doesn't feed the next dispatch and you don't need it to answer the user -- fire
@@ -126,7 +126,7 @@ Set `model` and `effort` on each dispatch based on issue labels:
 | `p3`, `docs`, `chore` | `haiku` | `low` |
 
 Track each dispatched task. For spirals, see
-[`spiral-diagnosis`](../../skills/spiral-diagnosis/SKILL.md).
+[`spiral-diagnosis`](../skills/spiral-diagnosis/SKILL.md).
 
 Return summary: what landed, what's blocked, what got deferred.
 
@@ -148,7 +148,7 @@ Return summary: what landed, what's blocked, what got deferred.
 8. **Verify install sync before dispatching.** After any batch of merged
    agent-tools PRs, confirm `~/.claude/agents/` and `~/.claude/skills/` match
    the repo before firing runners. See
-   [`install-cadence`](../../skills/install-cadence/SKILL.md).
+   [`install-cadence`](../skills/install-cadence/SKILL.md).
 
 ## Default response shape
 
@@ -168,7 +168,7 @@ Then dispatch. Then reconcile. Then report.
 
 ## Related
 
-- [`../runner/AGENT.md`](../runner/AGENT.md) -- task-level execution for code-change issues
-- [`../worker/AGENT.md`](../worker/AGENT.md) -- bounded code-change worker for simple subtasks
-- [`../auditor/AGENT.md`](../auditor/AGENT.md) -- read-only survey agent for audit+remediate shape
-- [`../reviewer/AGENT.md`](../reviewer/AGENT.md) -- PR review agent for sequential review shape
+- [`runner.md`](runner.md) -- task-level execution for code-change issues
+- [`worker.md`](worker.md) -- bounded code-change worker for simple subtasks
+- [`auditor.md`](auditor.md) -- read-only survey agent for audit+remediate shape
+- [`reviewer.md`](reviewer.md) -- PR review agent for sequential review shape

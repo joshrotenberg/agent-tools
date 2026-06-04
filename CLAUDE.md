@@ -87,14 +87,17 @@ agent-tools/
 ├── README.md                                  # repo-level framing
 ├── CLAUDE.md                                  # this file (tracked)
 ├── install.sh                                 # idempotent install
+├── .claude-plugin/
+│   ├── plugin.json                            # plugin manifest
+│   └── marketplace.json                       # self-marketplace catalog
 ├── .gitignore                                 # .DS_Store + !CLAUDE.md override
 ├── agents/
 │   ├── README.md                              # the dispatcher + runner model
-│   ├── dispatcher/AGENT.md                    # scopes the unit, decides shape, fires
-│   ├── runner/AGENT.md                        # one task end-to-end (issue → PR → merged)
-│   ├── worker/AGENT.md                        # bounded code-change task; no lifecycle
-│   ├── auditor/AGENT.md                       # read-only audit against a rubric
-│   └── reviewer/AGENT.md                      # review a PR; merge or request changes
+│   ├── dispatcher.md                          # scopes the unit, decides shape, fires
+│   ├── runner.md                              # one task end-to-end (issue → PR → merged)
+│   ├── worker.md                              # bounded code-change task; no lifecycle
+│   ├── auditor.md                             # read-only audit against a rubric
+│   └── reviewer.md                            # review a PR; merge or request changes
 └── skills/
     ├── README.md                              # categorized skill index
     │
@@ -369,16 +372,16 @@ fires runners via `Task`, so it's meant to BE the top-level
 session, not a spawned leaf. CLI: `claude --agent dispatcher`
 pins the session to it (it "just uses it by default"). Desktop
 has no launch flag, so load the persona into the top-level
-session instead: `@agents/dispatcher` pulls the AGENT.md inline,
+session instead: `@agents/dispatcher.md` pulls the file inline,
 or bake it into a project CLAUDE.md. Don't spawn the dispatcher
 as a subagent -- that pushes its runner-spawning a level deeper;
 the spawned-subagent form is for leaf agents like the runner.
 
-Unverified: whether the desktop `@`-picker lists agents
-installed as `~/.claude/agents/<name>/AGENT.md` (subdir form)
-vs the canonical flat `<name>.md`. If it doesn't, the inline
-path-reference and natural-language delegation still resolve
-them.
+Agents are now canonical flat `<name>.md` files (#202) -- the
+form Claude Code documents and the `@`-picker expects -- which
+should settle the desktop autocomplete question we couldn't
+confirm earlier. The inline path-reference (`@agents/<name>.md`)
+and natural-language delegation resolve them regardless.
 
 ## When in doubt
 

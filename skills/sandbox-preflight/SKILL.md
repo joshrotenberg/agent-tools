@@ -34,7 +34,7 @@ anything else.**
 
 - **Runner step 0.** Before fetching the issue, before composing any
   prompt. Referenced from
-  [`../../agents/runner/AGENT.md`](../../agents/runner/AGENT.md).
+  [`../../agents/runner.md`](../../agents/runner.md).
 - **Bare dispatches** that will use build tools, `gh`, `git`,
   or any tool beyond `Read`/`Glob`/`Grep`. The
   [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)
