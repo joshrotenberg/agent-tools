@@ -67,14 +67,19 @@ lives here.
 
 ## Installation
 
-From the repo root:
+These skills ship with the agent-tools plugin (see the
+[root README](../README.md#install)):
+
+```
+/plugin marketplace add joshrotenberg/agent-tools
+/plugin install agent-tools@agent-tools
+```
+
+Or copy them into `~/.claude/skills/` from the repo root:
 
 ```bash
 ./install.sh
 ```
-
-Copies all skills to `~/.claude/skills/`. See the root README for
-options.
 
 You can also read the files directly from this directory.
 

@@ -8,6 +8,15 @@ any wrapper.
 
 ## Install
 
+As a Claude Code plugin (CLI + desktop; the repo is its own marketplace):
+
+```
+/plugin marketplace add joshrotenberg/agent-tools
+/plugin install agent-tools@agent-tools
+```
+
+Or copy into `~/.claude/` directly:
+
 ```bash
 ./install.sh   # see README for --force, --dry-run, --to, --skip options
 ```

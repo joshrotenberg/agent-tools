@@ -58,6 +58,7 @@ graph LR
 | `runner` | Implements one GitHub issue end-to-end (branch, draft PR, CI, merge) | `@runner implement #N` |
 | `reviewer` | Reviews a PR: approve+merge, request-changes+draft, or approve+note ordering | `@reviewer review #N` |
 | `worker` | Bounded code-change executor; reads context, edits files, commits | (dispatched by runner) |
+| `auditor` | Read-only audit of a codebase against a rubric; files findings as issues | `@auditor audit <domain>`, or dispatched for audit+remediate |
 
 See `agents/README.md` for invocation details and when to skip the dispatcher and
 go straight to the runner.
@@ -93,12 +94,33 @@ labels and prioritizes them. Runners work the queue. The loop closes.
 
 ## Install
 
+agent-tools ships as a Claude Code plugin, and the repo is its own
+marketplace. This works in both the CLI and the desktop app:
+
+```
+/plugin marketplace add joshrotenberg/agent-tools
+/plugin install agent-tools@agent-tools
+```
+
+Plugin components are namespaced under `agent-tools:` -- the dispatcher is
+`agent-tools:dispatcher`, skills invoke as `/agent-tools:<skill>`. Pull
+updates later with `/plugin marketplace update`.
+
+For local development (edit + reload, nothing installed):
+
+```
+claude --plugin-dir /path/to/agent-tools   # reload after edits
+```
+
+### Alternative: copy into ~/.claude
+
+`install.sh` copies `skills/*` into `~/.claude/skills/` and `agents/*` into
+`~/.claude/agents/`, where Claude Code auto-discovers them. Components are
+unnamespaced this way, so `claude --agent dispatcher` works directly.
+
 ```bash
 ./install.sh
 ```
-
-Copies `skills/*` into `~/.claude/skills/` and `agents/*` into
-`~/.claude/agents/`, where Claude Code auto-discovers them.
 
 Options:
 

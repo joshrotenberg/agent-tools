@@ -58,14 +58,21 @@ work, going straight to the runner skips ceremony.
 
 ## Installation
 
-From the repo root:
+These agents ship with the agent-tools plugin (see the
+[root README](../README.md#install)):
+
+```
+/plugin marketplace add joshrotenberg/agent-tools
+/plugin install agent-tools@agent-tools
+```
+
+Or copy them into `~/.claude/agents/` from the repo root:
 
 ```bash
 ./install.sh
 ```
 
-Copies all agents to `~/.claude/agents/`. See the root README
-for options (`--to`, `--force`, `--skip`, `--dry-run`).
+See the root README for options (`--to`, `--force`, `--skip`, `--dry-run`).
 
 After install, any Claude Code session can spawn:
 

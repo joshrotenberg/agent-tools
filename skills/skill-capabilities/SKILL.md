@@ -1,6 +1,11 @@
 ---
 name: skill-capabilities
-description: When authoring a new skill or updating an existing one -- reference this for the two advanced frontmatter capabilities: dynamic context injection via `!`command`` syntax and `allowed-tools` for pre-approving tool use. Apply selectively; both features add overhead and should only appear where they genuinely help.
+description: >-
+  When authoring a new skill or updating an existing one -- reference this
+  for the two advanced frontmatter capabilities: dynamic context injection
+  via `!`command`` syntax and `allowed-tools` for pre-approving tool use.
+  Apply selectively; both features add overhead and should only appear
+  where they genuinely help.
 ---
 
 # Skill capabilities reference
