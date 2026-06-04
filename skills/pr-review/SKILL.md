@@ -25,7 +25,8 @@ the checklist below, check for ordering conflicts, then take exactly one action.
 
 - No emojis anywhere in changed content
 - No em dashes -- use double hyphens or rephrase
-- Dispatch-agnostic language: roba appears as one option among several, not the assumed mechanism
+- Dispatch phrasing is Task-tool-centric; roba / `claude -p` appear only where
+  genuinely relevant (e.g. headless), not as co-equal defaults
 
 ### Frontmatter (SKILL.md and AGENT.md files)
 
