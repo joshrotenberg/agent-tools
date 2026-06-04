@@ -3,8 +3,8 @@
 This repo ships operational knowledge files (skills) and subagent definitions
 (agents) for use with Claude Code's dispatcher+runner model. `install.sh`
 copies them into `~/.claude/{skills,agents}/` for auto-discovery. Everything
-here is dispatch-agnostic -- works with the Task tool, roba, `claude -p`, or
-any wrapper.
+here is Task-tool-centric, and also works under `claude -p` or any other
+wrapper for headless use.
 
 ## Install
 
@@ -41,8 +41,9 @@ Or copy into `~/.claude/` directly:
 
 - No emojis in skill/agent body content, commits, or docs
 - No em dashes -- use double hyphens or rephrase
-- All skill and agent body language must be dispatch-agnostic; roba is one
-  dispatch option among several, not the assumed mechanism
+- Skill and agent body language is Task-tool-centric; keep process guidance
+  mechanism-neutral where natural, but the Task tool is the assumed default
+  (mention roba / `claude -p` only where genuinely relevant, e.g. headless)
 - Read `CLAUDE.md` decisions log before changing anything substantial
   (CLAUDE.md is tracked in this repo)
 

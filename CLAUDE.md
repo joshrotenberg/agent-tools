@@ -30,9 +30,8 @@ Personal customization layer for working with Claude Code:
   `~/.claude/{skills,agents}/` for Claude Code auto-discovery.
 
 The repo is a curated convention -- one way to use Claude Code,
-not THE way. Skills and agent bodies are dispatch-agnostic; they
-work under the Task tool, [`roba`](https://github.com/joshrotenberg/roba),
-`claude -p` directly, or any wrapper.
+not THE way. Skills and agent bodies are Task-tool-centric; they
+also work under `claude -p` (or any wrapper) for headless use.
 
 Repo: <https://github.com/joshrotenberg/agent-tools> (private).
 
@@ -112,7 +111,7 @@ agent-tools/
     ├── audit-remediate-handoff/               # findings → per-finding runners
     │
     ├── # Dispatch
-    ├── dispatch-options/                      # Task / roba / claude -p trade-offs
+    ├── dispatch-options/                      # Task tool / claude -p trade-offs
     ├── dispatch-wait-react/                   # background + notification, not polling
     ├── orchestrator-parallelization/          # fan-out heuristics
     ├── orchestration-prompt-template/         # how to write the runner prompt
@@ -155,6 +154,19 @@ agent-tools/
 - Surfaced + fixed a latent bug: 6 components had invalid YAML `description`
   frontmatter (unquoted `: `) that the loose `validate-frontmatter.sh` missed
   but `claude plugin validate` caught. Converted to `>-` block scalars.
+
+### 2026-06-04: dropped roba from the model (#206)
+
+- Reframed the dispatch docs Task-tool-centric; roba demoted from a
+  featured co-equal mechanism to a one-line "headless wrapper" footnote.
+  Rationale: roba's edge is headless/CI/cron + different-cwd batch, but
+  agent-tools work is interactive and now desktop-visible -- the Task tool
+  (in-session background + worktree isolation) and the desktop app's native
+  background-session view absorbed roba's niche; its `--trace`/JSONL story
+  was a workaround for visibility that's now native.
+- roba stays a separate tool (still usable via `roba --agent`); agent-tools
+  just stops featuring it. Historical anecdotes + the "split from roba"
+  entries are kept as provenance.
 
 ### 2026-06-02 morning
 
@@ -256,20 +268,16 @@ skill covers ONE thing well:
 
 Target: 50-200 lines per skill, depending on complexity.
 
-### Dispatch-agnostic phrasing
+### Dispatch phrasing (Task-tool-centric)
 
-Skill and agent bodies should NOT assume a specific dispatch
-mechanism. Use:
-
-- "the dispatched session" not "the spawned roba"
-- "the dispatch substrate" or "the wrapper" not "roba"
-- Examples can mention roba alongside Task tool and claude -p
-
-When roba-specific features matter (e.g. `--trace`), surface them
-as examples in the relevant skill (e.g. `spiral-diagnosis`
-mentions `--trace` as the roba example of a trace handle), but
-the skill should describe the general pattern + offer roba as
-one implementation.
+The Task tool is the assumed dispatch mechanism (`isolation:
+"worktree"` for same-repo file work, `run_in_background` + notify
+for async). Keep process guidance mechanism-neutral where that
+costs no clarity -- "the dispatched session" reads fine whether
+it's a Task subagent or a `claude -p` process. Mention alternatives
+(`claude -p` for genuine headless automation; roba if you use it)
+only where actually relevant, not as co-equal defaults. Don't bend
+bodies to feature roba -- that hedging is what #206 walked back.
 
 ## Install + use loop
 
@@ -302,13 +310,15 @@ claude --plugin-dir .     # load the plugin for a session; reload after edits
 
 ## Pending work / known gaps
 
-### Skills that still reference roba specifically
+### Residual roba mentions (intentional)
 
-Some skills (`spiral-diagnosis`, parts of `dispatch-options`,
-parts of `orchestration-prompt-template`) carry roba-specific
-examples or framing. Those are OK as long as roba is presented
-as ONE option among several, not THE option. If usage feedback
-suggests it reads as roba-centric, generalize further.
+#206 reframed the dispatch docs Task-tool-centric and demoted roba
+to a one-line "headless wrapper" footnote. A few skills still carry
+roba as an *example* of a trace/worktree flag (`spiral-diagnosis`,
+`orchestrator-parallelization`) and as historical incident anecdotes
+(`sandbox-preflight`, `runner-synchronous-lifecycle`, `heredoc-backticks`,
+`git-fix-pr-branching`). Those are kept on purpose -- examples and
+provenance, not "the mechanism." Don't "fix" them.
 
 ### Chained execution shape (design → impl → review)
 
@@ -348,16 +358,16 @@ broken cross-links, or roba-isms that slipped through.
 
 ## Relationship to roba
 
-- agent-tools `dispatch-options` skill lists `roba` as one
-  dispatch mechanism (alongside Task tool, claude-wrapper,
-  claude -p)
-- agent-tools agents can be driven via `roba --agent <name>`
-  (roba's `--agent NAME` flag is generic; not skill-bundle-
-  specific)
-- roba does NOT know about agent-tools. roba is purely
-  mechanical. Its README mentions BYO skills/agents and lists
-  agent-tools as one curated example (a one-line pointer).
-- Bumping one repo doesn't bump the other.
+As of #206, agent-tools is **Task-tool-centric** -- roba is no longer
+a featured dispatch mechanism (desktop + the Task tool absorbed its
+niche; see the 2026-06-04 decisions-log entry). roba remains a
+separate, independent tool:
+
+- agent-tools agents can still be driven via `roba --agent <name>`
+  if you choose to (roba's `--agent NAME` flag is generic) -- but the
+  docs assume the Task tool, not roba.
+- roba does NOT know about agent-tools; it's purely mechanical.
+  Bumping one repo doesn't bump the other.
 
 ## Desktop app
 

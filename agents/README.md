@@ -84,10 +84,10 @@ After install, any Claude Code session can spawn:
 
 ## Dispatch mechanism
 
-The agents are dispatch-agnostic. They can be driven by Claude
-Code's Task tool, by [`roba`](https://github.com/joshrotenberg/roba),
-by `claude -p` directly, or by any wrapper that takes an
-`--agent NAME` flag. See
+The agents are Task-tool-centric. They run as Task subagents
+(`isolation: "worktree"` for same-repo file work), and also work
+under `claude -p` or any wrapper that takes an `--agent NAME` flag
+for headless use. See
 [`dispatch-options`](../skills/dispatch-options/SKILL.md) for the
 trade-off table.
 

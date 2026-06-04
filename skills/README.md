@@ -27,7 +27,7 @@ lives here.
 
 | Skill | When to use |
 |---|---|
-| [`dispatch-options`](dispatch-options/SKILL.md) | Pick the dispatch mechanism: Task tool / Bash + roba / claude-wrapper / claude -p direct. Trade-off table |
+| [`dispatch-options`](dispatch-options/SKILL.md) | Pick the dispatch mechanism: Task tool (default), or Bash + `claude -p` for headless. Trade-off table |
 | [`dispatch-wait-react`](dispatch-wait-react/SKILL.md) | Coordinating with long-running background dispatches without polling or sleep-looping |
 | [`orchestrator-parallelization`](orchestrator-parallelization/SKILL.md) | When to fan out runners vs sequence them (for the parallel-runner shape) |
 | [`orchestration-prompt-template`](orchestration-prompt-template/SKILL.md) | Writing the prompt and wrapping the PR lifecycle when dispatching a runner |
