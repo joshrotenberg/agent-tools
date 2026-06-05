@@ -8,7 +8,7 @@ description: When the runner is about to return -- hold the invocation open unti
 Your (the runner's) invocation must hold open until the full
 lifecycle is done. **Returning to the dispatcher signals "task
 complete: PR is merged (or an exception was hit -- see exception
-cases in runner AGENT.md)."** Returning earlier orphans the work.
+cases in runner.md)."** Returning earlier orphans the work.
 
 ## The anti-pattern this prevents
 

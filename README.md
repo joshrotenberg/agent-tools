@@ -98,13 +98,13 @@ agent-tools ships as a Claude Code plugin, and the repo is its own
 marketplace. This works in both the CLI and the desktop app:
 
 ```
-/plugin marketplace add joshrotenberg/agent-tools
-/plugin install agent-tools@agent-tools
+claude plugin marketplace add joshrotenberg/agent-tools
+claude plugin install agent-tools@agent-tools
 ```
 
 Plugin components are namespaced under `agent-tools:` -- the dispatcher is
 `agent-tools:dispatcher`, skills invoke as `/agent-tools:<skill>`. Pull
-updates later with `/plugin marketplace update`.
+updates later with `claude plugin marketplace update`.
 
 For local development (edit + reload, nothing installed):
 

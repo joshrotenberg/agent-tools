@@ -28,9 +28,9 @@ the checklist below, check for ordering conflicts, then take exactly one action.
 - Dispatch phrasing is Task-tool-centric; roba / `claude -p` appear only where
   genuinely relevant (e.g. headless), not as co-equal defaults
 
-### Frontmatter (SKILL.md and AGENT.md files)
+### Frontmatter (skill and agent files)
 
-- `name:` field present, non-empty, matches the parent directory name exactly
+- `name:` field present, non-empty, matches the skill dir name / agent file name
 - `description:` field present, non-empty, under 1024 chars
 - `description:` uses trigger-condition language ("when X", "use when", "before Y")
 

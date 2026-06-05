@@ -284,8 +284,8 @@ bodies to feature roba -- that hedging is what #206 walked back.
 agent-tools is a plugin; the repo is its own marketplace. Primary path:
 
 ```
-/plugin marketplace add joshrotenberg/agent-tools
-/plugin install agent-tools@agent-tools     # components namespaced agent-tools:*
+claude plugin marketplace add joshrotenberg/agent-tools
+claude plugin install agent-tools@agent-tools     # components namespaced agent-tools:*
 ```
 
 Or copy into `~/.claude/` (unnamespaced; `claude --agent dispatcher` works):
