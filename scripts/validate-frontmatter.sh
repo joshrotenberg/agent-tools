@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# validate-frontmatter.sh -- check SKILL.md and AGENT.md files for spec compliance.
+# validate-frontmatter.sh -- check skill and agent frontmatter for spec compliance.
 #
 # Rules per file:
 #   0. Frontmatter parses as valid YAML (real parse via PyYAML or Ruby)
 #   1. YAML frontmatter is present (file starts with --- on line 1)
 #   2. name: field is present and non-empty
-#   3. name: value matches parent directory name exactly
+#   3. name: value matches the skill dir name / agent file name exactly
 #   4. description: field is present and non-empty
 #   5. description: value is under 1024 chars
 

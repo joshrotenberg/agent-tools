@@ -62,8 +62,8 @@ These agents ship with the agent-tools plugin (see the
 [root README](../README.md#install)):
 
 ```
-/plugin marketplace add joshrotenberg/agent-tools
-/plugin install agent-tools@agent-tools
+claude plugin marketplace add joshrotenberg/agent-tools
+claude plugin install agent-tools@agent-tools
 ```
 
 Or copy them into `~/.claude/agents/` from the repo root:

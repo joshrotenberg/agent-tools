@@ -193,8 +193,8 @@ done < <(find "$REPO_ROOT/skills" -name "SKILL.md" -print0 | sort -z)
 # -- 2. Per-agent body token count -------------------------------------------
 
 while IFS= read -r -d '' file; do
-    agent_dir="$(basename "$(dirname "$file")")"
-    label="agents/${agent_dir}"
+    agent_name="$(basename "$file" .md)"
+    label="agents/${agent_name}"
 
     tokens="$(count_tokens "$file")"
     token_cache["$file"]="$tokens"
@@ -208,14 +208,14 @@ while IFS= read -r -d '' file; do
     else
         add_row "$label" "$tokens" "OK"
     fi
-done < <(find "$REPO_ROOT/agents" -name "AGENT.md" -print0 | sort -z)
+done < <(find "$REPO_ROOT/agents" -maxdepth 1 -name "*.md" ! -name "README.md" -print0 | sort -z)
 
 # -- 3. Per-agent preload totals ---------------------------------------------
 
 max_preload=0
 
 while IFS= read -r -d '' agent_file; do
-    agent_name="$(basename "$(dirname "$agent_file")")"
+    agent_name="$(basename "$agent_file" .md)"
 
     skill_names=()
     while IFS= read -r skill; do
@@ -255,7 +255,7 @@ while IFS= read -r -d '' agent_file; do
     if [ "$total_tokens" -gt "$max_preload" ]; then
         max_preload=$total_tokens
     fi
-done < <(find "$REPO_ROOT/agents" -name "AGENT.md" -print0 | sort -z)
+done < <(find "$REPO_ROOT/agents" -maxdepth 1 -name "*.md" ! -name "README.md" -print0 | sort -z)
 
 # -- Summary -----------------------------------------------------------------
 
