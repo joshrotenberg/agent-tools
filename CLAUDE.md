@@ -329,13 +329,6 @@ this gets built, it likely produces new Layer 2 agents in
 agent-tools (`designer`, `implementer`, `reviewer`) plus a
 dispatcher update for the chained shape.
 
-### Audit + remediate execution shape
-
-Documented in `orchestration-patterns`. Worth building when a
-real audit task needs it (release audit, security sweep,
-dependency check). Probably a new skill describing the
-audit-output-to-runner-input handoff via durable state.
-
 ### Workspace config file
 
 `workspace-survey` documents the filesystem-walk approach as
@@ -343,18 +336,32 @@ v1, with a config file as a deferred option. Build when the
 filesystem walk gets lossy (projects in non-standard locations,
 priority hints that the filesystem can't express).
 
-### Dogfooding the dispatcher
+### Runner/worker branch contamination (#209-#213)
 
-The dispatcher agent body hasn't been used in a real session yet
-(as of split-out). First real use will surface body-level issues
-(too prescriptive, too vague, missing edge cases). Expect a
-follow-up commit reworking the body after first real session.
+Four open findings about concurrent agents in shared checkouts or
+during branch navigation: (#209) stray commit from one runner
+landed in another runner's squash merge; (#210) worker accidentally
+switched branches mid-dispatch and contaminated an unrelated PR;
+(#212) parallel runners in a shared checkout can cross-contaminate
+branches; (#213) git stash during branch navigation risks committing
+to the wrong branch. Likely produces a new skill or additions to
+runner/worker bodies. CI flatten ripple (#211) has PR #214 open.
 
-### Per-skill review pass
+### Sandbox write-gate (#217-#218)
 
-After the split-out, every skill was renamed/rewritten quickly.
-Worth one careful read-through to catch any stale references,
-broken cross-links, or roba-isms that slipped through.
+`sandbox-preflight` misses write-gate blocks -- needs a Step 0
+write probe (#217). `orchestration-prompt-template` also needs
+write-gate halt caveat, worktree isolation note, and single-commit
+reminder (#218). Both open.
+
+### New agents proposed (#200, #215, #216)
+
+- `issue-groomer` (#200): validate open issues against current code,
+  then comment or close stale ones.
+- `workspace-groomer` (#215): survey and groom projects, sessions,
+  worktrees, branches.
+- `extract-and-promote` (#216): extract project learnings and propose
+  enrichments to global skills/agents.
 
 ## Relationship to roba
 
@@ -422,25 +429,6 @@ and natural-language delegation resolve them regardless.
 - For "what's a unit of work" or "what execution shape," see
   `skills/orchestration-patterns/SKILL.md`.
 
-## Pre-commit / pre-push
-
-agent-tools has no Rust / no build / no test suite. The only
-gates worth running:
-
-- `bash -n install.sh` (syntax check on the install script)
-- `./install.sh --dry-run` (verify the walk works)
-- Manual: read any modified skill / agent body once for typos
-  and broken cross-links.
-
-There's no CI today. If usage justifies it, a minimal CI job
-could validate:
-
-- Every `SKILL.md` / `AGENT.md` has valid frontmatter
-- Every `[link](path)` resolves
-- Every `skills:` frontmatter list references real skills
-
-Not worth building yet.
-
 ## Read first, update last
 
 Same discipline as roba's CLAUDE.md:
@@ -455,6 +443,39 @@ Same discipline as roba's CLAUDE.md:
 - **Don't update for nothing.** A small content edit doesn't
   need a CLAUDE.md update. The bar: "would future-me want to
   find this when grepping the durable design home?"
+
+### 2026-06-03: self-audit session (17 issues, ~28 PRs)
+
+Three-domain self-audit dispatched in parallel (3 auditors). Audit
+produced 17 findings (#152-#168) -- all resolved in the same session.
+
+**Agent body sizes reduced.** runner 199 → 158 lines; auditor
+171 → 103 lines; reviewer 88 → 68 lines; dispatcher preload total
+1888 → 1603 lines (removed draft-pr-first and sandbox-preflight,
+which are covered by orchestration-prompt-template and runner
+respectively).
+
+**New skills added.** `runner-vs-worker` (decision boundary between
+runner and worker; failure mode: runner opened as worker causes
+unsolicited draft PR + CI + merge), `audit-protocol` (extracted
+from auditor body: rubric format + 5-phase execution contract),
+`audit-remediate-handoff` (findings → dispatcher labels in-progress
+→ per-finding runners), `install-cadence` (run `./install.sh
+--force` after each batch of merged PRs).
+
+**`claude -p` does not support `-C` flag.** Fixed to
+`cd <path> && claude -p` everywhere -- runner AGENT.md and
+orchestration-prompt-template both had `claude -p -C $(pwd)`.
+
+**Style-reference copy trap.** Worker prompts that reference an
+existing file for style must say "for style reference ONLY -- do
+not copy its content." Added to orchestration-prompt-template.
+
+**Pre-merge diff validation.** After a roba parallel-runner
+contamination incident (#198), added two disciplines to the runner
+lifecycle: (1) store PR number from `gh pr create` output and only
+ever merge that specific number; (2) run `gh pr diff --name-only
+$PR` before `gh pr merge` to verify scope matches the task.
 
 ### 2026-06-02 evening: first full dogfood session
 
@@ -495,30 +516,6 @@ applies to interactive sessions, not to the runner lifecycle.
 to document: subagent_type taxonomy (explore, plan, bash), effort/memory fields,
 Monitor tool for tailing, Workflow tool for multi-agent pipelines, dynamic context
 injection in skills, allowed-tools in SKILL.md frontmatter.
-
-**Open PRs for next session (merge in order to minimize conflicts):**
-
-- #19: fix/skill-descriptions (skill descriptions, independent)
-- #20: ci/markdownlint (CI, independent)
-- #23: fix/runner-permissions (runner AGENT.md)
-- #24: fix/agent-metadata (runner + dispatcher AGENT.md -- check for .markdownlint.json duplicate)
-- #25: fix/lift-runner-behaviors (runner + dispatcher AGENT.md)
-- #26: feat/auto-merge-default (runner AGENT.md + skills)
-- #27: feat/worktree-default (runner + dispatcher AGENT.md + skills)
-
-Runner AGENT.md is modified by PRs #23-#27 -- merge in order to minimize conflicts.
-
-**Open issues for next session:**
-
-- #5 (closed by #23)
-- #7 (closed by #24)
-- #8 (closed by #19)
-- #10 (closed by #20)
-- #17 (closed by #26)
-- #18 (closed by #25)
-- #21 (agent spec research)
-- #22 (closed by #27)
-- #33-#37 (research findings backlog)
 
 ## Dispatch and install conventions
 
