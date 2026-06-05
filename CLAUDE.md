@@ -487,7 +487,7 @@ dispatch-agnostic as designed.
 
 **CI added (issues #6, #9-#11, #15, PRs #12-#16 merged).** GitHub Actions
 workflow, frontmatter validation script, markdownlint, AGENTS.md, smoke tests,
-agent-feedback skill. Pre-commit section below is now outdated -- CI handles it.
+agent-feedback skill.
 
 **Worktree isolation: use `isolation: "worktree"` on all same-repo Agent
 dispatches.** The Task/Agent tool has this built in natively. No external tool
