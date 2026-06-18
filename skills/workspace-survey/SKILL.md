@@ -1,53 +1,77 @@
 ---
 name: workspace-survey
-description: When the dispatcher needs a workspace map -- at the start of any multi-project or scope-scoping invocation. Walk ~/Code/active/ for directories with both .git/ and CLAUDE.md, load each project's positioning and live GitHub state (open/draft PRs, issues, CI), and return a tight activity table. Re-survey on every invocation; do not rely on prior-session memory.
+description: When the dispatcher needs a workspace map -- at the start of any multi-project or scope-scoping invocation. Enumerate repos under the owner-prefixed layout with `ls ~/Code/github.com/*/*`, load each project's positioning and live GitHub state (open/draft PRs, issues, CI), and RECONSTITUTE a tight activity report. Re-survey on every invocation; never cache per-project status back into any workspace CLAUDE.md, and never rely on prior-session memory.
 ---
 
 # Workspace survey
 
 The dispatcher needs a workspace map. This skill describes how to
 build one from durable state (the filesystem + GitHub) every time,
-without depending on a separate config file or in-conversation
-memory.
+without depending on a separate config file, a cached inventory, or
+in-conversation memory.
+
+The path convention this survey walks is defined once in
+[`workspace-layout`](../workspace-layout/SKILL.md) -- load it for the
+canonical `~/Code/<host>/<owner>/<repo>` shape, the enumeration glob,
+and the map-not-model rule. This skill is the survey *procedure* on top
+of that layout.
 
 ## Discovery: the filesystem IS the map
 
-A "project" is any directory that has BOTH:
+Repos live under the owner-prefixed layout:
 
-- `.git/` (it's a git repository)
-- `CLAUDE.md` (it's actively being worked on)
-
-The default workspace root is `~/Code/active/`. The dispatcher
-walks subdirectories looking for the pair. Common layouts:
-
-```
-~/Code/active/
-├── rust/<project>/      # group-by-language is common
-├── elixir/<project>/
-└── <project>/           # top-level for one-off projects
+```text
+~/Code/<host>/<owner>/<repo>
 ```
 
-Walk depth ~3 levels under the workspace root. Stop descending into
-a directory once you've matched a `.git/` -- nested git repos
-aren't separate projects from the workspace's perspective.
+`<host>` is `github.com` today; `<owner>` is the GitHub owner
+(`joshrotenberg`, `genagent`, ...); `<repo>` is the repo. There is NO
+`active/` root and NO language/framework segment -- those were the
+pre-reorg layout. Enumerate every project with one glob:
+
+```bash
+ls -d ~/Code/github.com/*/*
+```
+
+`<host>/<owner>/<repo>` is exactly three levels deep, so `*/*` under a
+host lists every repo. Each result is a candidate project; confirm it's
+a real one by the presence of `.git/` (and, for "is it under active
+management," a `CLAUDE.md` -- see below). Do not walk by language buckets
+and do not look for an `active/` directory.
 
 ## What constitutes "active"
 
-Presence of CLAUDE.md is the active flag. A repo with no CLAUDE.md
-is not under the dispatcher's purview, even if it has a git dir.
-This gives the human a simple lever for "include this in the
-workspace map" -- just touch a CLAUDE.md.
+Presence of `CLAUDE.md` in a repo is the active flag. A repo with no
+CLAUDE.md is not under the dispatcher's purview, even if it has a git
+dir. This gives the human a simple lever for "include this in the
+workspace map" -- just touch a CLAUDE.md. "Active" is read fresh from the
+filesystem each survey; it is never a path segment and never a cached
+field.
+
+## Sibling resolution is path arithmetic
+
+Because the layout is derivable, one project resolves another by relative
+arithmetic from its own directory -- no lookup table:
+
+| Target | From `~/Code/<host>/<owner>/<repo>` |
+|---|---|
+| Same owner, other repo | `../<repo>` |
+| Other owner, same host | `../../<owner>/<repo>` |
+| Other host entirely | `../../../<host>/<owner>/<repo>` |
+
+Use this when a cross-project blocker means one project's survey must
+peek at a sibling (e.g. project A waits on project B's release).
 
 ## Per-project context loading
 
 For each discovered project, the dispatcher should know:
 
-1. **Path** (its location on disk)
-2. **Name** (basename of the path, or override from CLAUDE.md
-   metadata if present)
+1. **Path** (its canonical location under the owner-prefixed layout)
+2. **Owner/repo** (the `<owner>/<repo>` slug, derived from the path --
+   feeds straight into `gh -R <owner>/<repo>`)
 3. **One-line positioning** (first paragraph of CLAUDE.md, or its
    `## What this is` / `## Overview` section)
-4. **Live state** (from GitHub via `gh`):
+4. **Live state** (from GitHub via `gh`, queried fresh each survey):
    - Open PRs (`gh -R <owner>/<repo> pr list`)
    - Draft PRs (`gh -R ... pr list --draft`)
    - Open issues (`gh -R ... issue list`)
@@ -57,15 +81,37 @@ Read CLAUDE.md ONLY enough to get the positioning -- don't read
 the whole file unless you need it for routing a directive. Per-task
 context loading is the dispatcher's job.
 
+## Reconstitute to a report -- never cache upward
+
+The survey RECONSTITUTES status into a report and then lets it go. It
+does **not** write any per-project status back into a workspace-root /
+manager CLAUDE.md.
+
+This is the "map, not model" line from
+[`workspace-layout`](../workspace-layout/SKILL.md). The manager
+CLAUDE.md is a map: it says where projects are (the layout + the
+enumeration glob) and how to read each one. It must NOT carry:
+
+- A hardcoded project inventory (the glob enumerates it fresh).
+- Per-project last-seen PR/issue/CI/notable-change status.
+- Any "agents update this section when they learn something" cache.
+
+Every number in the survey is reconstituted on demand from durable
+substrate (the filesystem + a fresh `gh` query) at the moment of the
+survey, emitted to the report below, and discarded. Nothing flows
+upward. State that was true 30 minutes ago may not be true now; a cached
+inventory would be stale by design, which is exactly why the model
+forbids it.
+
 ## Workspace context, NOT project context
 
 The dispatcher should know the LAYOUT, not the DETAILS. If you
 find yourself reading project source files, you've descended too
-far. Hand off to the project's dispatcher.
+far. Hand off to the project's dispatcher/runner.
 
 What the dispatcher carries:
 
-- Which projects exist
+- Which projects exist (from the glob)
 - Which are in flight (have open PRs or draft PRs)
 - Which are dormant (no recent activity)
 - High-level cross-project blockers (project A waiting on
@@ -80,46 +126,50 @@ What the dispatcher does NOT carry:
 
 ## Survey output shape
 
-A workspace survey returns a tight table:
+A workspace survey returns a tight table (a transient report, not a
+persisted file):
 
-```
-project              | path                                 | open PRs | draft PRs | open issues | CI state
-my-tool              | ~/Code/active/rust/my-tool           | 0        | 0         | 12          | -
-agent-tools          | ~/Code/active/agent-tools            | 1        | 0         | 0           | green
-tower-mcp            | ~/Code/active/rust/tower-mcp         | 3        | 1         | 8           | 1 red
-claude-wrapper       | ~/Code/active/rust/claude-wrapper    | 0        | 0         | 4           | -
+```text
+project        | path                                          | open PRs | draft PRs | open issues | CI state
+my-tool        | ~/Code/github.com/joshrotenberg/my-tool       | 0        | 0         | 12          | -
+agent-tools    | ~/Code/github.com/joshrotenberg/agent-tools   | 1        | 0         | 0           | green
+tower-mcp      | ~/Code/github.com/joshrotenberg/tower-mcp     | 3        | 1         | 8           | 1 red
+some-lib       | ~/Code/github.com/genagent/some-lib           | 0        | 0         | 4           | -
 ```
 
 Sort by activity (PRs first, then draft PRs, then issues). Suppress
-fully-quiet projects unless the directive specifically asks for
-them.
+fully-quiet projects unless the directive specifically asks for them.
 
 ## Refresh discipline
 
 Re-survey at the start of EACH dispatcher invocation. Don't carry
-state from a prior conversation. The cost is two `gh` calls per
-project (PR list + issue list), which is cheap relative to dispatch
-cost.
+state from a prior conversation and don't read it from a cached
+inventory. The cost is two `gh` calls per project (PR list + issue
+list), which is cheap relative to dispatch cost.
 
 State that was true 30 minutes ago may not be true now (CI
 finished, a PR landed, a new issue opened). The survey is the
-ground truth; your conversation memory is not.
+ground truth; your conversation memory -- and any inventory someone
+was tempted to cache -- is not.
 
 ## The workspace-level CLAUDE.md gap
 
 Claude Code's CLAUDE.md discovery walks UP within a single
 project's hierarchy -- it does not cross project boundaries. When
 the dispatcher fires a worker into a specific project (e.g. with a
-`-C /path/to/project` cwd), the spawned session loads only that
-project's CLAUDE.md. Any workspace-level context -- the layer that
+`cd <path> && claude -p` invocation), the spawned session loads only
+that project's CLAUDE.md. Any workspace-level context -- the layer that
 sits above individual projects -- is invisible to the worker.
 
 That workspace-level context might carry:
 
 - Cross-project conventions (shared commit format, release cadence)
 - Workspace-level skills or dispatch patterns
-- The project name + role mapping (which repo plays which part)
 - Cross-project blockers (project A waits on project B's release)
+
+Note what it must NOT carry: per-project status or a project inventory.
+The manager CLAUDE.md stays a map (see "Reconstitute to a report"
+above); cross-project *conventions* are fine, cached *status* is not.
 
 **v1 recommendation: document the limitation; don't build a
 mechanism for it.** Two workarounds cover the real cases:
@@ -138,7 +188,8 @@ priority overrides, dormant flags, custom roots, and cross-project
 context the filesystem walk can't express; or an upstream
 claude-code feature that lets discovery cross a marked workspace
 boundary. Build either only when the filesystem walk and the two
-workarounds above visibly stop being enough.
+workarounds above visibly stop being enough. Note that such a file
+would hold *conventions/overrides*, not a reconstitutable status cache.
 
 ## When to apply
 
@@ -148,6 +199,9 @@ workarounds above visibly stop being enough.
 
 ## Related
 
+- [`workspace-layout`](../workspace-layout/SKILL.md) -- the canonical
+  owner-prefixed path shape, enumeration glob, sibling arithmetic, and
+  the map-not-model rule this survey obeys.
 - [`orchestration-patterns`](../orchestration-patterns/SKILL.md) -- the unit-of-work model the survey feeds into
 - [`dispatch-options`](../dispatch-options/SKILL.md) -- how to dispatch runners for each project discovered
-- [`durable-context`](../durable-context/SKILL.md) -- why re-survey rather than relying on memory
+- [`durable-context`](../durable-context/SKILL.md) -- why re-survey and reconstitute rather than relying on memory/cache

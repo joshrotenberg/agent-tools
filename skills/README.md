@@ -21,7 +21,8 @@ lives here.
 | [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
 | [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by component/category/priority, flag duplicates, close noise, surface the p1 queue before dispatch |
-| [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher discovers projects in the workspace (for multi-project units); also documents the workspace-level CLAUDE.md gap (discovery doesn't cross project boundaries) + workarounds |
+| [`workspace-layout`](workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
+| [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
 
 ### Dispatch
 
