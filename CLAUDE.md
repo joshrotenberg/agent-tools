@@ -291,7 +291,7 @@ claude plugin install agent-tools@agent-tools     # components namespaced agent-
 Or copy into `~/.claude/` (unnamespaced; `claude --agent dispatcher` works):
 
 ```bash
-cd ~/Code/active/agent-tools && ./install.sh
+cd ~/Code/github.com/joshrotenberg/agent-tools && ./install.sh
 
 # After install, any Claude Code session can spawn:
 # @dispatcher work the backlog in this project
@@ -399,8 +399,9 @@ runner` work is at parity.
   Fix by launching `open -a Claude` from a terminal, or pin
   PATH/env in `.claude/settings.json`.
 - **Cross-project `workspace-survey`.** Desktop scopes file
-  access to the open project folder(s); walking `~/Code/active/`
-  needs those dirs added. Single-project dispatching is fine.
+  access to the open project folder(s); walking
+  `~/Code/github.com/joshrotenberg/` needs those dirs added.
+  Single-project dispatching is fine.
 
 **Starting the dispatcher.** The dispatcher is a *driver* -- it
 fires runners via `Task`, so it's meant to BE the top-level
