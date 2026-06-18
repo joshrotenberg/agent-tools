@@ -23,6 +23,7 @@ lives here.
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by component/category/priority, flag duplicates, close noise, surface the p1 queue before dispatch |
 | [`workspace-layout`](workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
 | [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
+| [`maintenance-sweep`](maintenance-sweep/SKILL.md) | Per-project, read-mostly, non-PR status sweep: stars/forks, issues/PRs split mine vs community vs bots, package downloads, release-due, test run, stale-CLAUDE.md flag. Emit a fresh report every sweep; never cache status into a manager CLAUDE.md |
 
 ### Dispatch
 
