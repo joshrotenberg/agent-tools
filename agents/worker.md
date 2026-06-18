@@ -51,6 +51,18 @@ The caller is responsible for the git lifecycle.
   issue "flush" echo commands. Read the actual failing call, decide if it
   matters, fix or continue. Almost always the cure is to STOP issuing the
   duplicate call.
+- **Never run `git stash`.** A stash/checkout sequence during branch
+  navigation can silently leave you on a different branch than your own; you
+  then stage, commit, and push onto the wrong branch and contaminate an
+  unrelated PR (this was the #209/#210 cross-branch contamination root cause).
+  You have no reason to stash -- the caller set up your branch; operate on it
+  as-is.
+- **Assert the branch before every write to git.** Immediately before every
+  `git add` and every `git commit`, run `git branch --show-current` and
+  confirm it matches the branch the caller expects. If it does not match,
+  STOP -- do NOT add, commit, or `git checkout` to "fix" it; return STATUS:
+  failed and report the mismatch. A wrong-branch commit is unrecoverable
+  contamination, not a recoverable error.
 
 ## Steps
 
@@ -82,7 +94,9 @@ The caller is responsible for the git lifecycle.
    - A skill instruction that didn't match what actually happened -- file via `agent-feedback`
    - A dispatch/tool issue (permission gap, unexpected behavior, missing pattern) -- file via `field-feedback`
    The bar: would a fresh session benefit from finding this? Don't update for nothing.
-6. **If validation passes:** `git add <changed files>` and `git commit -m
+6. **If validation passes:** assert the branch first -- run `git branch
+   --show-current` and confirm it matches the expected branch (see Tool-call
+   discipline). Then `git add <changed files>` and `git commit -m
    "<type>: <description>"` per conventional commit format.
 7. **Print:** `git log --oneline -1`, `git diff HEAD^ --stat`, and
    `git branch --show-current`.

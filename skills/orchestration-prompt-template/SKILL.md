@@ -49,6 +49,12 @@ false blocking findings on a stale branch.
 
 cwd: <absolute path>
 
+For any dispatch that mutates the tree, use worktree isolation
+(`isolation: "worktree"` in a Task dispatch, `-w` in roba). Two
+sessions sharing one checkout can have one's `git checkout` yank
+the other's branch mid-run -- the concurrent-checkout interference
+that causes branch-flap contamination (#212).
+
 Steps 1-3 MUST run sequentially, one tool call at a time. Do NOT
 parallel-batch them with each other or with any exploration step.
 
@@ -77,6 +83,13 @@ spell out the seam.>
 `spiral-diagnosis`. Without it, parallel-batch cancellation
 cascades have a real chance of derailing the run.)
 
+If a write (Edit/Write tool) is blocked by a permission/approval
+gate -- message contains "haven't granted" or similar -- STOP
+immediately and report the exact gate message. Do NOT attempt
+mechanical bypasses (touch + git apply heredocs, perl redirect,
+tee, python). The launch configuration is wrong; no amount of
+workarounds will fix it.
+
 ## Steps
 
 1. ...
@@ -90,6 +103,12 @@ N+3. If the work produced anything worth capturing in project
      entry. See "Read first, update last" below.
 N+4. If all green: git add, commit
        <type>: <short description> (closes #<issue>)
+     Do not promise a "single commit" in the dispatch when an
+     auto-commit/auto-format hook is active in the project. The hook
+     will create its own commits; the single-commit contract is then
+     unsatisfiable and produces false "spec not followed" reads in the
+     reconcile step. Omit the single-commit clause, or scope it to "your
+     own commits," when a formatting/commit hook is in play.
 N+5. Print git log --oneline -1, git diff HEAD^ --stat, and the
      branch name.
 
@@ -246,6 +265,12 @@ and `#` inside the unclosed fence renders as H1.
 - Skipping the sandbox preflight step -- blocked tools degrade silently instead of aborting loudly.
 - Providing style references without an ONLY qualifier -- the worker may copy the reference file wholesale into the new
   file and spiral trying to fix it; always say "read [file] for style reference ONLY -- do not copy its content."
+- Attempting mechanical bypasses (touch + git apply, perl/tee/python redirects) after a blocked Edit/Write -- the launch
+  config is wrong; STOP and report the exact gate message instead.
+- Firing a tree-mutating dispatch without worktree isolation -- two sessions sharing one checkout can yank each other's
+  branch mid-run (#212); use `isolation: "worktree"` (or roba `-w`).
+- Promising a "single commit" when an auto-commit/auto-format hook is active -- the contract is unsatisfiable and
+  reads as "spec not followed."
 
 ## Related
 
