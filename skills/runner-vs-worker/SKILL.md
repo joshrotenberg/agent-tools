@@ -43,6 +43,13 @@ IS the lifecycle.
 The worker does NOT read GitHub issues, create branches, open PRs, push,
 watch CI, or merge.
 
+**Tier-2 scope note.** The shipped runner is the issue-lifecycle slice of
+project coordination: given one issue, it drives that issue from branch to
+merge. The other half of project coordination -- holding project context and
+deciding the shape for this project's work (which units, which order, single
+vs parallel runners) -- lives in the dispatcher, not the runner. The runner
+does not scope work or decide shape; it executes one already-scoped unit.
+
 ## Failure mode: dispatching runner when you want worker
 
 If a dispatcher or runner dispatches a runner subagent for a bounded
