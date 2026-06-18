@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.4.0](https://github.com/joshrotenberg/agent-tools/compare/v0.3.2...v0.4.0) (2026-06-18)
+
+
+### Features
+
+* add audit-remediate-handoff skill (closes [#159](https://github.com/joshrotenberg/agent-tools/issues/159)) ([#176](https://github.com/joshrotenberg/agent-tools/issues/176)) ([6b31e5b](https://github.com/joshrotenberg/agent-tools/commit/6b31e5b8c5b0e460d353f0430ddc7a13b0031147))
+* add auditor agent type (closes [#149](https://github.com/joshrotenberg/agent-tools/issues/149)) ([#150](https://github.com/joshrotenberg/agent-tools/issues/150)) ([06ed23e](https://github.com/joshrotenberg/agent-tools/commit/06ed23e88ad4acddd72682ba2cd74142d9a6dc9e))
+* add install-cadence skill (closes [#160](https://github.com/joshrotenberg/agent-tools/issues/160)) ([#175](https://github.com/joshrotenberg/agent-tools/issues/175)) ([3e35691](https://github.com/joshrotenberg/agent-tools/commit/3e356915d2d46dcdef62c1a4b5265218b52a850e))
+* add maintenance-sweep skill ([#225](https://github.com/joshrotenberg/agent-tools/issues/225)) ([0585667](https://github.com/joshrotenberg/agent-tools/commit/05856671f6f7fddbb2af478b35ecedf1c4ac6884)), closes [#124](https://github.com/joshrotenberg/agent-tools/issues/124)
+* add pre-merge diff validation and PR number discipline to runner (closes [#198](https://github.com/joshrotenberg/agent-tools/issues/198)) ([#199](https://github.com/joshrotenberg/agent-tools/issues/199)) ([90c6221](https://github.com/joshrotenberg/agent-tools/commit/90c6221382c74f657e1a32e27d55e311c248df21))
+* add runner-vs-worker skill (closes [#158](https://github.com/joshrotenberg/agent-tools/issues/158)) ([#183](https://github.com/joshrotenberg/agent-tools/issues/183)) ([363b966](https://github.com/joshrotenberg/agent-tools/commit/363b96649542140b1c4d76cf4b2760cfae661f5a))
+* package agent-tools as a Claude Code plugin (closes [#202](https://github.com/joshrotenberg/agent-tools/issues/202)) ([#203](https://github.com/joshrotenberg/agent-tools/issues/203)) ([6e41986](https://github.com/joshrotenberg/agent-tools/commit/6e41986463defd94fd003310debc9f065626b61d))
+
+
+### Bug Fixes
+
+* add Anti-patterns and Related sections to dispatch-options skill (closes [#166](https://github.com/joshrotenberg/agent-tools/issues/166)) ([#171](https://github.com/joshrotenberg/agent-tools/issues/171)) ([5a2c404](https://github.com/joshrotenberg/agent-tools/commit/5a2c4044d4b82249e738cba1ce6c5cb693967453))
+* add missing Anti-patterns and When to apply sections to 12 skills (closes [#167](https://github.com/joshrotenberg/agent-tools/issues/167)) ([#182](https://github.com/joshrotenberg/agent-tools/issues/182)) ([05f3bb2](https://github.com/joshrotenberg/agent-tools/commit/05f3bb2c08ad5d2edf6087672e43f7ed1353359f))
+* add pre-commit scope check to worker lifecycle (closes [#142](https://github.com/joshrotenberg/agent-tools/issues/142)) ([#144](https://github.com/joshrotenberg/agent-tools/issues/144)) ([d5fb388](https://github.com/joshrotenberg/agent-tools/commit/d5fb388c65d59b5f62d1f4b73bf361e24c1cca64))
+* add runner-vs-worker cross-link to runner Related section ([#190](https://github.com/joshrotenberg/agent-tools/issues/190)) ([ba0d509](https://github.com/joshrotenberg/agent-tools/commit/ba0d5090b79112cb71c4f4d86d382db184df15e2))
+* add structural sections to workspace-survey and fix synchronous-lifecycle description (closes [#165](https://github.com/joshrotenberg/agent-tools/issues/165), closes [#185](https://github.com/joshrotenberg/agent-tools/issues/185)) ([#188](https://github.com/joshrotenberg/agent-tools/issues/188)) ([12c5a72](https://github.com/joshrotenberg/agent-tools/commit/12c5a720ce451eeeecc75470a6b6b450db6dd57c))
+* add style-reference copy anti-pattern to prompt discipline (closes [#184](https://github.com/joshrotenberg/agent-tools/issues/184)) ([#189](https://github.com/joshrotenberg/agent-tools/issues/189)) ([851490e](https://github.com/joshrotenberg/agent-tools/commit/851490eebb4c4b20f7a542e82b2dec63fe28e12e))
+* add worker to runner Related agents section (closes [#164](https://github.com/joshrotenberg/agent-tools/issues/164)) ([#178](https://github.com/joshrotenberg/agent-tools/issues/178)) ([4497d16](https://github.com/joshrotenberg/agent-tools/commit/4497d164ddc0ce1a071bd0d94d9f2cedadca8007))
+* compress reviewer AGENT.md lifecycle section (closes [#156](https://github.com/joshrotenberg/agent-tools/issues/156)) ([#187](https://github.com/joshrotenberg/agent-tools/issues/187)) ([bd3efca](https://github.com/joshrotenberg/agent-tools/commit/bd3efca05c443da85327c074b9243dfbbc96115c))
+* dispatch-hygiene -- git stash prohibition, write-gate probe, prompt-template hygiene ([#226](https://github.com/joshrotenberg/agent-tools/issues/226)) ([8c5cb29](https://github.com/joshrotenberg/agent-tools/commit/8c5cb296954e841e4ae96fd8391f8a37a1b3e00e))
+* dispatcher preload trim, Related section, description language ([#177](https://github.com/joshrotenberg/agent-tools/issues/177)) ([54fe41d](https://github.com/joshrotenberg/agent-tools/commit/54fe41d7efdd3ab72e35b02d1a95658282d70303))
+* document -C $(pwd) for Bash worker dispatch from worktree (closes [#180](https://github.com/joshrotenberg/agent-tools/issues/180)) ([#191](https://github.com/joshrotenberg/agent-tools/issues/191)) ([67362d7](https://github.com/joshrotenberg/agent-tools/commit/67362d72f8859573c5d415ceb9ccea8916856a49))
+* establish owner-prefixed workspace layout as canonical ([#223](https://github.com/joshrotenberg/agent-tools/issues/223)) ([e1c7c51](https://github.com/joshrotenberg/agent-tools/commit/e1c7c512999f30746dccbc39bd2309bce0819a1c))
+* extract audit-protocol skill from auditor body (closes [#155](https://github.com/joshrotenberg/agent-tools/issues/155)) ([#170](https://github.com/joshrotenberg/agent-tools/issues/170)) ([4db21c4](https://github.com/joshrotenberg/agent-tools/commit/4db21c410e6f64e1871017eb5c1898cf22cedc6f))
+* field-feedback -- generalize routing and examples to be dispatch-agnostic (closes [#193](https://github.com/joshrotenberg/agent-tools/issues/193)) ([#195](https://github.com/joshrotenberg/agent-tools/issues/195)) ([ca43d4b](https://github.com/joshrotenberg/agent-tools/commit/ca43d4b65b9cb5ca8c9d69f8f9592d86458da712))
+* flatten ripples + /plugin docs (closes [#211](https://github.com/joshrotenberg/agent-tools/issues/211)) ([#214](https://github.com/joshrotenberg/agent-tools/issues/214)) ([dbfb455](https://github.com/joshrotenberg/agent-tools/commit/dbfb45555bd101857caae0944820b497b87211a6))
+* move long inline commands into fenced code blocks (closes [#162](https://github.com/joshrotenberg/agent-tools/issues/162)) ([#179](https://github.com/joshrotenberg/agent-tools/issues/179)) ([17df1a0](https://github.com/joshrotenberg/agent-tools/commit/17df1a098486fc9f4a111d90a27085e09626da59))
+* plugin validate-clean + document the plugin install path ([#204](https://github.com/joshrotenberg/agent-tools/issues/204)) ([ad0b331](https://github.com/joshrotenberg/agent-tools/commit/ad0b331749d8bf0b17b14f1ef19aa806a25e0eec))
+* pr-review -- replace broken placeholder cross-link with inline code (closes [#152](https://github.com/joshrotenberg/agent-tools/issues/152)) ([#172](https://github.com/joshrotenberg/agent-tools/issues/172)) ([1446464](https://github.com/joshrotenberg/agent-tools/commit/1446464957d56b86e6a93f8d431c78f39482b53b))
+* remove roba-only qualifier from spiral-diagnosis reference in dispatch-wait-react (closes [#192](https://github.com/joshrotenberg/agent-tools/issues/192)) ([#194](https://github.com/joshrotenberg/agent-tools/issues/194)) ([10bd919](https://github.com/joshrotenberg/agent-tools/commit/10bd919962befb892f77a097a00519f9fce86e46))
+* replace claude -p -C with cd for worktree cwd anchoring (closes [#196](https://github.com/joshrotenberg/agent-tools/issues/196)) ([#197](https://github.com/joshrotenberg/agent-tools/issues/197)) ([51ec8ca](https://github.com/joshrotenberg/agent-tools/commit/51ec8ca86c813a63c8bf541e20f1fd8489ad2b1b))
+* runner worker dispatch must use runner's worktree, not main checkout (closes [#147](https://github.com/joshrotenberg/agent-tools/issues/147)) ([#148](https://github.com/joshrotenberg/agent-tools/issues/148)) ([bfaf50f](https://github.com/joshrotenberg/agent-tools/commit/bfaf50f2d7e384be081b6549daa0f0c3daa656df))
+* trim runner AGENT.md body to safe range (closes [#154](https://github.com/joshrotenberg/agent-tools/issues/154)) ([#169](https://github.com/joshrotenberg/agent-tools/issues/169)) ([66616b7](https://github.com/joshrotenberg/agent-tools/commit/66616b771479a623a9c6769c77ad3e14b0d2e517))
+* validate frontmatter with a real YAML parse (closes [#205](https://github.com/joshrotenberg/agent-tools/issues/205)) ([#207](https://github.com/joshrotenberg/agent-tools/issues/207)) ([e077e77](https://github.com/joshrotenberg/agent-tools/commit/e077e77496c440829ffa9920c6c02a96f66dd052))
+
 ## [0.3.2](https://github.com/joshrotenberg/agent-tools/compare/v0.3.1...v0.3.2) (2026-06-03)
 
 
