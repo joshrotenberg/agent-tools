@@ -75,6 +75,40 @@ Check each by attempting a no-op version probe -- `<tool> --version`
 sandbox (not merely "command not found"), the tool is not in the
 allowlist.
 
+## Step 0: the write-gate probe
+
+Bash allowlisting is only half the surface. A file-mutating dispatch
+launched in `default` permission mode also hits the **Edit/Write approval
+gate** on its first write -- "haven't granted it yet" -- and the Bash probes
+above will not catch it. This is a distinct gate from the Bash allowlist, and
+it is the most common silent-failure mode for editing dispatches: the session
+either stalls silently (fire-and-forget no-op, zero work done) or grinds
+through mechanical bypasses (`touch` + `git apply` heredocs, `tee`, `perl`,
+`python` redirects) for dozens of turns, producing corrupted output.
+
+So before any real edit, **probe the write gate directly** -- exercise the
+actual Edit/Write tool, not a Bash command:
+
+1. Pick a scratch path the task will touch. If the task creates a **new
+   top-level directory** (e.g. `skills/`, `src/new-module/`), probe a scratch
+   file inside that new directory -- new-directory creation is a distinct
+   write-gate trigger from editing an existing file, and a common one. If the
+   task only edits existing files, probe a scratch path in the task's cwd.
+2. Attempt a trivial `Write` to that scratch path (e.g. one line of content).
+3. **Expected pass:** the write succeeds. Delete the scratch file and proceed.
+4. **Expected fail:** the write returns the approval/permission gate message
+   ("haven't granted", "permission to write", or similar). Treat this exactly
+   like a blocked Bash tool: **fail loud immediately** with the exact gate
+   message and do NOT proceed. The launch configuration is wrong -- the
+   dispatch needs `--full-auto` or `--permission-mode acceptEdits` (or the
+   Task-tool equivalent). Workarounds cannot fix a misconfigured launch.
+
+**Discipline (carry this into the run, not just preflight):** if a write is
+blocked by a permission/approval gate -- not a logic error -- STOP immediately
+and report the exact gate message. Do NOT attempt mechanical bypasses
+(`touch` + `git apply`, `perl` redirect, `tee`, `python` script). The launch
+configuration is wrong; workarounds cannot fix it.
+
 ## The fail-loud rule
 
 **Never produce a "run this yourself" artifact.** If a tool you need
@@ -137,6 +171,12 @@ auto-heal them; surface the need and wait.
 - Producing "run this yourself" artifacts when a tool is blocked -- the dispatcher gets a fake "complete" signal.
 - Silently degrading to a partial run when a needed tool is missing from the allowlist -- abort loudly instead.
 - Auto-healing tools outside the known-safe list (docker, kubectl, terraform) -- these require explicit user consent.
+- Probing only Bash allowlisting and skipping the Step 0 write-gate probe -- a
+  `default`-mode editing dispatch passes the Bash checks then stalls or
+  corrupts on the first blocked Edit/Write.
+- Grinding through mechanical write bypasses (`touch` + `git apply`, `tee`,
+  `perl`, `python` redirect) after a blocked write -- the launch config is
+  wrong; STOP and report the gate message instead.
 
 ## Related
 
