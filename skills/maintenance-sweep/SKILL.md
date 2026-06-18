@@ -1,6 +1,6 @@
 ---
 name: maintenance-sweep
-description: When the directive is "status check," "what's new across my projects," or "sweep maintenance" -- run a per-project, read-mostly, non-PR sweep. For each project under the owner-prefixed layout, gather stars/forks, open issues/PRs split into mine vs community vs bots, package downloads, release-due (unreleased conventional commits), a test run, and a stale-CLAUDE.md flag. Emit a fresh per-project report every sweep; NEVER cache status back into a workspace/manager CLAUDE.md.
+description: When the directive is "status check," "what's new across my projects," or "sweep maintenance" -- run a per-project, read-mostly, non-PR sweep. For each project under the owner-prefixed layout, gather stars/forks, open issues/PRs split into mine vs community vs bots, package downloads, release-due (unreleased conventional commits), a test run, a stale-CLAUDE.md flag, and branch-cleanup candidates. Emit a fresh per-project report every sweep; NEVER cache status back into a workspace/manager CLAUDE.md.
 ---
 
 # Maintenance sweep
@@ -46,7 +46,7 @@ Each match is a project root. A project is in scope if it has a
 `.git/` (and typically a `CLAUDE.md`). Derive `<owner>/<repo>` from
 the path for the `gh` calls below -- the path is the map.
 
-## The six axes
+## The seven axes
 
 Run these per project. Each axis degrades gracefully: if an axis
 can't run (no remote, not published, no test command), record `-`
@@ -148,6 +148,49 @@ A large gap (months of active commits, untouched CLAUDE.md) earns a
 `stale?` flag. The flag is a *proposal to review*, not a license to
 edit -- see below.
 
+### (g) Branch cleanup
+
+List local and remote branches that are candidates for deletion. Two
+categories:
+
+- **Merged or closed.** Branches whose PR is merged or closed -- the
+  work has landed (or been abandoned) and the branch is dead weight.
+- **Stale.** Branches with no open PR and no recent commits -- no
+  activity, nothing tracking them, candidates to prune.
+
+```bash
+# Local branches already merged into the default branch
+git -C <path> branch --merged origin/main | grep -vE '^\*|main$'
+
+# Remote branches and their merge state against origin/main
+git -C <path> branch -r --merged origin/main | grep -vE 'origin/main$|origin/HEAD'
+
+# PR state per branch (merged / closed / open / none)
+gh pr list --repo <owner>/<repo> --state all --json headRefName,state,number \
+  --jq '.[] | {branch: .headRefName, state: .state, number: .number}'
+
+# Last commit date per branch, to spot stale ones
+git -C <path> for-each-ref --sort=committerdate \
+  --format='%(committerdate:relative)  %(refname:short)' refs/heads refs/remotes
+```
+
+Cross-reference the three signals: a branch whose PR is `MERGED` or
+`CLOSED`, or a branch with no PR and a last commit older than the
+staleness window, is a deletion candidate. Record the count of
+candidates and list them in the expansion below the table.
+
+This axis is **propose-only**, same discipline as the rest. The
+read-only sweep does not delete branches. Deletion candidates are
+surfaced in the report and routed to a worker, or run on confirmation:
+
+```bash
+git -C <path> branch -d <branch>                  # local, merged
+git push <remote> --delete <branch>               # remote
+```
+
+Never run those from the sweep itself. The sweeper reads and reports;
+a separate writer (worker, or the owner on confirmation) deletes.
+
 ## Output discipline
 
 **Emit a per-project report, reconstituted fresh every sweep.** One
@@ -180,21 +223,26 @@ A tight table, one row per project, sorted by signal (community
 issues/PRs first, then release-due, then the rest):
 
 ```
-project       | stars | forks | mine i/pr | community i/pr | bots | downloads | release | tests | claude.md
-my-crate      | 45    | 6     | 2 / 0     | 3 / 1          | 4    | 8.2k/mo   | DUE (4) | pass  | stale?
-my-lib        | 12    | 1     | 0 / 0     | 0 / 0          | 1    | 1.1k/mo   | -       | pass  | ok
-local-tool    | -     | -     | -         | -              | -    | -         | -       | fail  | ok
+project       | stars | forks | mine i/pr | community i/pr | bots | downloads | release | tests | claude.md | branches
+my-crate      | 45    | 6     | 2 / 0     | 3 / 1          | 4    | 8.2k/mo   | DUE (4) | pass  | stale?    | 3
+my-lib        | 12    | 1     | 0 / 0     | 0 / 0          | 1    | 1.1k/mo   | -       | pass  | ok        | 0
+local-tool    | -     | -     | -         | -              | -    | -         | -       | fail  | ok        | 1
 ```
 
-Below the table, expand only the rows that need action: which
+The `branches` column is the count of branch-cleanup candidates (axis
+g). Below the table, expand only the rows that need action: which
 community PRs are waiting, what's release-due and why, which tests
-failed, which CLAUDE.md looks stale and the proposed routing.
+failed, which CLAUDE.md looks stale and the proposed routing, and
+which branches are deletion candidates with their reason (merged,
+closed, or stale).
 
 ## Graceful degradation (local-only / no-remote)
 
 For a repo with no GitHub remote (local-only), skip the `gh` axes
 (a, b, c) -- record `-` -- and run only the local axes (d release
-check against any local tags, e test run, f CLAUDE.md staleness).
+check against any local tags, e test run, f CLAUDE.md staleness, g
+branch cleanup over local branches only, without the PR-state
+cross-reference).
 Do not fail the sweep because one repo has no remote. Full handling
 of local-only and non-standard-remote repos is tracked separately in
 issue #222; this skill just degrades cleanly for now.
@@ -206,6 +254,10 @@ issue #222; this skill just degrades cleanly for now.
   *map, not model*. Reconstitute every sweep; persist nothing.
 - **Editing a project's CLAUDE.md from the sweep.** The stale flag is
   a proposal; the read-only sweeper never writes it. File or hand off.
+- **Deleting branches from the sweep.** Axis (g) lists deletion
+  candidates; the read-only sweeper never runs `branch -d` or
+  `push --delete`. Hand the candidates to a worker or delete on
+  confirmation.
 - **Working an issue mid-sweep.** The moment you review a community PR
   or write a fix, you've left the sweep and started a runner's job --
   dispatch one instead.
