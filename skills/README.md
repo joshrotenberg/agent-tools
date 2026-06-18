@@ -24,6 +24,7 @@ lives here.
 | [`workspace-layout`](workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
 | [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
 | [`maintenance-sweep`](maintenance-sweep/SKILL.md) | Per-project, read-mostly, non-PR status sweep: stars/forks, issues/PRs split mine vs community vs bots, package downloads, release-due, test run, stale-CLAUDE.md flag. Emit a fresh report every sweep; never cache status into a manager CLAUDE.md |
+| [`local-only-repos`](local-only-repos/SKILL.md) | A repo with no GitHub remote (or not yet git): detect with `git remote` empty, treat blank GitHub columns as expected in survey + sweep, route dispatch to commits + CLAUDE.md instead of issues + PRs, and degrade the sweep to the local axes (release-due via local tags, tests, stale-CLAUDE.md, local-branch cleanup) |
 
 ### Dispatch
 
