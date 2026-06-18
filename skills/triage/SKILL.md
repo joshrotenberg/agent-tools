@@ -1,6 +1,6 @@
 ---
 name: triage
-description: When the issue queue has open unlabeled issues -- run a read-only triage pass that labels each issue by component, category, and priority, flags duplicates, closes noise, and reports the p1 queue before runners are dispatched.
+description: When the issue or PR queue has open unlabeled items -- run a read-only triage pass that labels each one by component, category, priority, and size, flags duplicates, closes noise, and reports the p1 queue before runners are dispatched.
 allowed-tools: Bash(gh:*)
 ---
 
@@ -8,46 +8,58 @@ allowed-tools: Bash(gh:*)
 
 Current open issues: !`gh issue list --state open --json number,title,labels --jq 'map({number,title,labels:(.labels|map(.name))})'`
 
-The issue queue is the dispatcher's input. When issues land
+Current open PRs: !`gh pr list --state open --json number,title,labels --jq 'map({number,title,labels:(.labels|map(.name))})'`
+
+The issue and PR queues are the dispatcher's input. When items land
 unlabeled, the dispatcher can't scope or prioritize without first
 reading every body -- which defeats the point of durable state.
 Triage fixes that: a read-only pass that reads each open issue and
-writes back labels, so the queue becomes self-describing. Triage
-labels, comments, and closes noise; it does NOT implement fixes.
+PR and writes back labels, so the queue becomes self-describing.
+Triage labels, comments, and closes noise; it does NOT implement
+fixes.
 
 ## When to apply
 
-- At the **start of a work session** when open unlabeled issues
-  exist -- before scoping any runner.
+- At the **start of a work session** when open unlabeled issues or
+  PRs exist -- before scoping any runner.
 - When the dispatcher (or human) explicitly asks to **"triage open
-  issues"**.
+  issues"** or **"triage open PRs"**.
 
-If every open issue is already labeled, skip triage and go straight
+If every open item is already labeled, skip triage and go straight
 to scoping.
 
 ## The triage workflow
 
-Run the pass one issue at a time. It is entirely read-plus-label;
-no code changes.
+Run the pass one item at a time. It is entirely read-plus-label;
+no code changes. The same pass covers both issues and PRs; the
+`gh issue` commands below have `gh pr` equivalents
+(`gh pr list`, `gh pr edit`, `gh pr comment`).
 
-1. **List all open issues** with their current labels and bodies:
+1. **List all open issues and PRs** with their current labels and
+   bodies:
 
    ```bash
    gh issue list --state open --json number,title,labels,body
+   gh pr list --state open --json number,title,labels,body,files
    ```
 
-2. **For each unlabeled issue**, read the full body and determine
-   three labels:
-   - **Component** -- `skills` / `agents` / `ci` / `docs`
-   - **Category** -- `bug` / `feat` / `field-feedback` / `research` /
-     `chore`
+2. **For each unlabeled item**, read the full body and determine
+   its labels from the taxonomy below:
+   - **Component** -- where the change lands
+   - **Category** -- what kind of change
    - **Priority** -- `p1` / `p2` / `p3` (see heuristics below)
+   - **Size** (PRs) -- `size/small` / `size/medium` / `size/large`,
+     from the file count
 
 3. **Apply the labels** in one edit:
 
    ```bash
    gh issue edit N --add-label "skills,feat,p2"
+   gh pr edit N --add-label "skills,feat,p2,size/small"
    ```
+
+   A PR's component and category should match the issue it closes;
+   add the size label from its changed-file count.
 
 4. **Normalize the title.** Check whether the title has a conventional
    commit prefix (`feat:`, `fix:`, `docs:`, `chore:`, `ci:`, `perf:`,
@@ -57,7 +69,10 @@ no code changes.
 
    ```bash
    gh issue edit N --title "type: normalized title"
+   gh pr edit N --title "type: normalized title"
    ```
+
+   The same prefix scheme applies to PR titles.
 
    Mapping rules for non-canonical prefixes:
 
@@ -89,12 +104,52 @@ no code changes.
    gh issue close N --comment "Closing: empty body, not actionable. Reopen with detail if needed."
    ```
 
-7. **Emit a brief triage report**: N issues processed, breakdown by
-   priority, any duplicates flagged, any issues closed. Keep it
-   terse -- the labels are the durable output; the report is a
-   summary for the human.
+7. **Emit a brief triage report**: N issues and PRs processed,
+   breakdown by priority, any duplicates flagged, any issues
+   closed. Keep it terse -- the labels are the durable output; the
+   report is a summary for the human.
 
-## Priority heuristics
+## The label taxonomy
+
+Every issue and PR draws from four axes. This is the single
+source of truth for which labels exist and what they mean.
+
+**Component** -- where the change lands:
+
+- `skills` -- a skill file under `skills/`
+- `agents` -- an agent definition under `agents/`
+- `ci` -- workflows, gates, repo automation
+- `docs` -- README or other documentation
+
+**Category** -- what kind of change. These mirror the
+conventional-commit prefixes used on commits, branches, PR titles,
+and issue titles:
+
+- `feat` -- new capability (new skill, new agent, new section)
+- `fix` -- a correction; documented behavior diverges from actual
+- `docs` -- documentation only
+- `chore` -- maintenance, housekeeping, no behavior change
+- `ci` -- workflows, gates, release process
+- `test` -- tests only
+
+Two non-prefix category labels are also in use and do not map to a
+commit type: `field-feedback` (surfaced from a dispatch-time
+observation) and `research` (open question or investigation, not
+yet a fix). The `bug` label is the GitHub default; prefer `fix`
+for the category axis.
+
+**Priority** -- `p1` / `p2` / `p3` (see heuristics below).
+
+**Size** (PRs only) -- from the changed-file count:
+
+- `size/small` -- 1-3 files changed
+- `size/medium` -- 4-10 files changed
+- `size/large` -- 10+ files changed
+
+When an item spans components, pick the primary one and note the
+secondary in a comment. Don't stack every plausible label.
+
+### Priority heuristics
 
 | priority | meaning | examples |
 |---|---|---|
@@ -105,26 +160,6 @@ no code changes.
 Most issues are p2. p1 is reserved for things that block work or
 break the substrate; if everything is p1, nothing is. p3 is for work
 worth recording but not worth scheduling yet.
-
-## Label selection guidance
-
-**Component** -- where the change lands:
-
-- `skills` -- a skill file under `skills/`
-- `agents` -- an agent definition under `agents/`
-- `ci` -- workflows, gates, repo automation
-- `docs` -- README or other documentation
-
-**Category** -- what kind of change:
-
-- `bug` -- documented behavior diverges from actual behavior
-- `feat` -- new capability (new skill, new agent, new section)
-- `field-feedback` -- surfaced from a dispatch-time observation
-- `research` -- open question or investigation, not yet a fix
-- `chore` -- maintenance, housekeeping, no behavior change
-
-When an issue spans components, pick the primary one and note the
-secondary in a comment. Don't stack every plausible label.
 
 ## After triage
 

@@ -49,8 +49,25 @@ dispatcher loop) merge.
 Append `!` to mark a breaking change: `refactor!: cut --head and
 --tail (closes #42)`.
 
+The same prefixes apply to **issue titles**, not only commits,
+branches, and PR titles. An issue that proposes a new skill is
+`feat: ...`; an issue documenting a bug is `fix: ...`. The
+`triage` skill normalizes issue titles to this scheme.
+
+## No trailers, author is the repo owner
+
 Do not include "Generated with Claude Code" or "Co-Authored-By"
-trailers.
+trailers on any commit. The commit author is always the repo
+owner (`Josh Rotenberg <joshrotenberg@gmail.com>`); no
+co-author is added. After committing, verify before pushing:
+
+```bash
+git log -1 --format='%an <%ae>%n%(trailers)'
+```
+
+The author line must be the repo owner and the trailers must be
+empty. If a trailer slipped in, amend it out (`git commit --amend`)
+before pushing.
 
 ## Related
 
