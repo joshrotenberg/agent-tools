@@ -6,23 +6,37 @@
 
 My custom skills and subagents for working with Claude Code.
 
-## Entry point
+## How you drive it (pull-driven by default)
 
-After install, the primary invocation is:
+The default posture is **pull-driven**: nothing runs while you're away. You sit
+down, run a check-in sweep, and hand-dispatch the work you choose. You decide the
+unit of work; the dispatcher (or, for a single task, a runner) carries it out.
+
+Typical session:
+
+1. File issues (describe what you want done)
+2. Sit down and review state across the project(s)
+3. Hand off the work you choose: `@dispatcher work the backlog` for a scoped
+   batch, or `@runner implement #N` for a single task
+4. Review the resulting PRs
+
+A `loop`/timer may *remind* you to run this sweep, but it never runs the sweep
+itself. Dispatching is a deliberate act you take when you sit down.
+
+### Opt-in: work the whole backlog unattended
+
+When a batch of well-specified issues makes it worth it, you can escalate to the
+fully autonomous loop for that session:
 
 ```
 claude --agent dispatcher
 ```
 
-Dispatcher reads your GitHub issue queue, decides execution shape, and fires
-runners. Runners dispatch workers that branch, edit files, open PRs, watch CI,
-and merge. The entire pipeline runs automatically.
-
-Typical session:
-
-1. File issues (describe what you want done)
-2. Run: `claude --agent dispatcher`
-3. Review merged PRs
+In this mode the dispatcher reads your GitHub issue queue, decides execution
+shape, and fires runners. Runners dispatch workers that branch, edit files, open
+PRs, watch CI, and merge — the whole pipeline runs unattended until the queue is
+worked. Turn it on deliberately, per session; it is the escalation, not the
+standing mode.
 
 ## Architecture
 
@@ -77,7 +91,10 @@ graph LR
 
 The `field-feedback` and `agent-feedback` skills file GitHub issues automatically
 when agents encounter problems during dispatch. `@dispatcher triage open issues`
-labels and prioritizes them. Runners work the queue. The loop closes.
+labels and prioritizes them. You then work that queue on your next check-in —
+hand-dispatching the fixes you choose, or, when the backlog warrants it, opting
+into the autonomous loop above to let runners work it unattended. Either way the
+loop closes; what varies is whether you drive each hop or let the queue do it.
 
 ## How it fits together
 
