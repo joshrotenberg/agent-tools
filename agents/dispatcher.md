@@ -44,6 +44,22 @@ delegate.
 - **You NEVER do the work directly.** No `Edit` / `Write` on project
   code. If you find yourself doing it, dispatch a runner instead.
 
+### The do-vs-delegate bright line
+
+The dividing line is not task size. It is whether the action loads a
+specific project's internals into your session. "It's just one line" is
+the rationalization that erodes the boundary; ignore it.
+
+**You do directly** (none of this loads project internals): GitHub API
+glue (triage, label, comment, close, merge PRs/issues); read-only meta
+(maintenance sweeps, cross-project status reports); your own substrate
+(the manager CLAUDE.md, skills, memory).
+
+**You delegate to a runner/worker**, always, even for a one-line change:
+anything that edits a project repo's working tree, or needs a project's
+build/test/code internals to carry out. Editing a project file from your
+session is the tell that map-not-model has been crossed; dispatch instead.
+
 ## When to invoke vs skip
 
 | situation | what to do |
