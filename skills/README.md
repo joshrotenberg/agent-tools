@@ -58,6 +58,7 @@ lives here.
 | [`git-branch-pr-workflow`](git-branch-pr-workflow/SKILL.md) | Any non-trivial work that becomes a PR |
 | [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
+| [`github-authoring`](github-authoring/SKILL.md) | Authoring any issue, PR, or commit -- structure (headings, lists, tables, fenced blocks, the bug block, before/after) and voice (factual, no emdashes, conventional-commit prefixes, no commit trailers) |
 
 ### Meta
 
