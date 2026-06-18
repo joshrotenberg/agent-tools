@@ -50,6 +50,16 @@ deciding the shape for this project's work (which units, which order, single
 vs parallel runners) -- lives in the dispatcher, not the runner. The runner
 does not scope work or decide shape; it executes one already-scoped unit.
 
+**Why a small project edit still comes down to you.** A one-line change to
+a project file looks small enough for the dispatcher to absorb, but it does
+not. The dispatcher's bright line is whether an action loads a specific
+project's internals into the manager session, not task size. Editing a
+project repo's working tree, or needing its build/test/code internals, sits
+below that line regardless of how few lines change. So the dispatcher hands
+even the smallest project edit down to a runner (from an issue) or a worker
+(within an open lifecycle); it does not edit project files itself. See the
+do-vs-delegate bright line in [`dispatcher.md`](../../agents/dispatcher.md).
+
 ## Failure mode: dispatching runner when you want worker
 
 If a dispatcher or runner dispatches a runner subagent for a bounded
