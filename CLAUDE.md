@@ -130,6 +130,7 @@ agent-tools/
     │
     ├── # Git + tooling hygiene
     ├── issue-pr-conventions/                  # naming, label taxonomy, claim protocol
+    ├── work-reports/                          # plan report + completion report shapes
     ├── git-branch-pr-workflow/                # branch + PR discipline
     ├── git-fix-pr-branching/                  # branch off main, not off open PR
     ├── heredoc-backticks/                     # gh issue/PR body formatting
@@ -141,7 +142,7 @@ agent-tools/
     └── install-cadence/                       # re-install after merged PRs
 ```
 
-28 skills + 5 agents + repo files. Skills are categorized in
+29 skills + 5 agents + repo files. Skills are categorized in
 `skills/README.md` (visible there).
 
 ## Decisions log
@@ -184,6 +185,29 @@ collides.
 
 Scope was standard-only: no repo was migrated, and no labels were
 created or renamed anywhere.
+
+### 2026-08-19: two report shapes per unit of work (#247)
+
+Added `work-reports` after reviewing Codex session transcripts the
+owner flagged as the target style. Two reports per unit, no third: the
+plan report (the draft PR body, already half the claim protocol) and
+the completion report.
+
+The completion report is four mechanical parts, in order:
+
+1. **Verdict line.** One sentence, state first. The reader can stop here.
+2. **Labeled block.** `Changes:` then one-fact verb-first bullets, parallel in tense and shape.
+3. **Gate roll-call.** Every gate named with its result. `Tests pass` does not qualify, because it does not say which gates ran or which were skipped. A gate that did not run is reported as not run; omission reads as pass.
+4. **Negative-space line.** What was left undone, or an explicit statement that nothing was. Silence here claims completeness.
+
+The fourth part is the one that does the most work and is the easiest
+to drop. It states what the reader does not know to ask about.
+
+This governs shape only. Voice stays with the global `wrapitup`
+protocol (not in this repo), and destination stays with
+`non-pr-output-conventions`. The machine-readable `STATUS:` block in
+`runner.md` and `worker.md` is unchanged: the report sits above it,
+and neither replaces the other.
 
 ### 2026-06-04: packaged as a Claude Code plugin
 

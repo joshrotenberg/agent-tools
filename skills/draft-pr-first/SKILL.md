@@ -154,22 +154,17 @@ that case.
 
 ## Plan body shape
 
-A good plan body for a draft PR mirrors the orchestration prompt
-template:
+The plan report shape is defined in
+[`work-reports`](../work-reports/SKILL.md): one or two sentences on
+what changes, a labeled block of one-fact bullets, the gates that
+will run, and an explicit `Out of scope` section.
 
-- **Setup** -- branch, cwd, pre-conditions
-- **Context** -- 2-4 sentences on why this matters
-- **Task / Decision** -- what specifically to change
-- **Steps** -- numbered, with verification gates (fmt, clippy, test)
-- **Constraints** -- explicit do-nots
-- **Acceptance** -- what the final state should look like
-
-This is the same shape as the prompt at
-[`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md);
-the body and the prompt can often be the same text. Where they
-differ: the PR body is human-facing (the user reads it to
-understand the work); the prompt is agent-facing (the spawned
-claude executes it). Sometimes you want both, slightly different.
+For a dispatched unit the body and the runner prompt are often the
+same text, built from
+[`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md).
+Where they differ: the PR body is human-facing, the prompt is
+agent-facing. `Out of scope` matters more in the body, because it is
+what tells the next agent where this unit stops.
 
 ## When NOT to apply
 
@@ -196,6 +191,8 @@ first is the default.
 
 - [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md) -- the
   claim protocol, naming, and label taxonomy this lifecycle uses.
+- [`work-reports`](../work-reports/SKILL.md) -- the plan report that
+  goes in the body, and the completion report that closes the unit.
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)
   -- the prompt template the plan body is built from.
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md) --

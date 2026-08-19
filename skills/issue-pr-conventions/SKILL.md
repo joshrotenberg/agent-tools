@@ -175,9 +175,9 @@ Closes #<N>.
 
 ## Plan
 
-<2-6 sentences or a short list: what changes, which files, how it
-gets verified. Enough that another agent reading only this knows
-whether to pick something else up.>
+<What changes, which files, which gates verify it, and what is
+explicitly out of scope. Shape per work-reports. Enough that another
+agent reading only this knows whether to pick something else up.>
 EOF
 )"
 ```
@@ -268,6 +268,9 @@ to leave sitting on history. Do not block adoption on them.
   labels to an open queue.
 - [`github-authoring`](../github-authoring/SKILL.md) -- how the
   issue and PR bodies these names sit on are written.
+- [`work-reports`](../work-reports/SKILL.md) -- the shape of the plan
+  body that makes up half the claim, and of the report that closes
+  the unit.
 - [`draft-pr-first`](../draft-pr-first/SKILL.md) -- the full PR
   lifecycle the claim protocol opens.
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md) --

@@ -157,13 +157,24 @@ for it to resolve.
 
 ## What you return to the dispatcher
 
-Every return ends with a structured block. The dispatcher greps
-for `STATUS:` to determine outcome.
+A completion report, then the machine-readable block. The report is
+for reading; the block is for parsing. Shape per
+[`work-reports`](../skills/work-reports/SKILL.md): verdict line, a
+labeled block of one-fact bullets, a gate roll-call naming each gate
+and its result, and a line stating what was left undone.
+
+`Tests pass` is not a gate roll-call. A gate that did not run is
+reported as not run, never omitted.
 
 ```
-## Summary
-- <bullet>
-- <bullet>
+<Verdict line: one sentence, state first.>
+
+Changes:
+- <verb-first, one fact per bullet>
+- <verb-first, one fact per bullet>
+
+<Gate roll-call: each gate named, each result stated.>
+<Negative-space line: what was left undone, or that nothing was.>
 
 ## Result
 branch: <name>
