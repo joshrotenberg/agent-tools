@@ -70,20 +70,25 @@ State what the user could not do before and can do after.
 - **Never use the term "load bearing."** State what the thing
   does and what breaks without it, in plain terms.
 
-## Titles: conventional-commit prefixes
+## Titles and labels
 
-Commit, PR, and issue titles all take a conventional-commit
-prefix:
+Naming and the label taxonomy are defined in
+[`issue-pr-conventions`](../issue-pr-conventions/SKILL.md). What
+matters while authoring:
 
-- `feat:` new user-visible behavior
-- `fix:` bug fix
-- `refactor:` internal restructuring, no behavior change
-- `chore:` repo maintenance (dependencies, config)
-- `ci:` CI or release-process changes
-- `docs:` documentation only
-- `test:` tests only
-
-Append `!` to mark a breaking change (`refactor!: drop --head`).
+- Every title takes a conventional-commit prefix: `feat:`, `fix:`,
+  `docs:`, `chore:`, `ci:`, `refactor:`, `test:`, `perf:`, `build:`.
+  Append `!` for a breaking change. This applies to issue titles as
+  much as to commits and PRs.
+- A PR title closing an issue names it: `(closes #N)`.
+- There is no type label. The prefix is the only record of an
+  item's type, so an unprefixed title is unfindable by type.
+- Never apply `good first issue` or `help wanted`. PR-farming
+  accounts scrape GitHub's global feed of newly labeled beginner
+  issues and open drive-by PRs within minutes: filing an audit
+  backlog with these labels drew a burst of bot PRs to a private
+  repo inside half an hour, with a label-to-PR latency around 30
+  minutes. If a human added one, leave it in place.
 
 ## Commits: no trailers, author is the repo owner
 
@@ -101,22 +106,12 @@ git log -1 --format='%(trailers)' # empty
 If a trailer appears, amend it out before pushing
 (`git commit --amend` and remove the trailer line).
 
-## Labels
-
-Never apply the `good first issue` or `help wanted` labels to an
-issue. Automated PR-farming accounts scrape GitHub's global feed of
-newly labeled beginner issues and open low-quality drive-by PRs
-within minutes: filing an audit backlog with these labels drew a
-burst of bot PRs to a private repo inside half an hour, with a
-label-to-PR latency around 30 minutes. Label by component,
-category, priority, and size (see [`triage`](../triage/SKILL.md));
-leave the beginner-friendly labels off unless you specifically want
-that inbound and are ready to review it.
-
 ## Anti-patterns
 
 - A `good first issue` or `help wanted` label on an issue (a
   PR-farming-bot magnet).
+- A type label (`feat`, `bug`, `enhancement`) restating the title
+  prefix.
 - Emdashes anywhere in the authored body or title.
 - Editorializing labels like "(critical)" or "the key part."
 - The phrase "load bearing."
@@ -129,6 +124,8 @@ that inbound and are ready to review it.
 
 ## Related
 
+- [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md): the
+  naming scheme and label taxonomy these bodies sit on.
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md):
   the branch + PR discipline these titles and bodies ride on.
 - [`triage`](../triage/SKILL.md): labels the issues this skill

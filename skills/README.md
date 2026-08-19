@@ -19,8 +19,9 @@ lives here.
 | [`durable-context`](durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
 | [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
 | [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
+| [`work-reports`](work-reports/SKILL.md) | Writing a draft PR body or reporting a finished dispatch -- the plan report and the completion report (verdict line, one-fact bullets, gate roll-call, what was left undone) |
 | [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
-| [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by component/category/priority, flag duplicates, close noise, surface the p1 queue before dispatch |
+| [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by priority/area/size per `issue-pr-conventions`, normalize titles, flag duplicates, close noise, surface the p1 queue before dispatch |
 | [`workspace-layout`](workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
 | [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
 | [`maintenance-sweep`](maintenance-sweep/SKILL.md) | Per-project, read-mostly, non-PR status sweep: stars/forks, issues/PRs split mine vs community vs bots, package downloads, release-due, test run, stale-CLAUDE.md flag. Emit a fresh report every sweep; never cache status into a manager CLAUDE.md |
@@ -56,6 +57,7 @@ lives here.
 
 | Skill | When to use |
 |---|---|
+| [`issue-pr-conventions`](issue-pr-conventions/SKILL.md) | The cross-project standard: conventional-commit prefixes on branch/issue/PR/commit, the four-axis label taxonomy (priority, area, status, size), and the claim protocol pairing `status/in-progress` with a draft PR |
 | [`git-branch-pr-workflow`](git-branch-pr-workflow/SKILL.md) | Any non-trivial work that becomes a PR |
 | [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |

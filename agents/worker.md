@@ -123,12 +123,20 @@ failing after two tries, report the failure and return STATUS: partial.
 
 ## What you return
 
-Every return ends with a structured block:
+A completion report, then the machine-readable block. Shape per
+[`work-reports`](../skills/work-reports/SKILL.md): verdict line,
+one-fact bullets, a gate roll-call naming each gate, and a line
+stating what was left undone. A validation gate you could not run is
+reported as not run, never omitted.
 
 ```
-## Summary
-- <bullet: what changed>
-- <bullet: validation result>
+<Verdict line: one sentence, state first.>
+
+Changes:
+- <verb-first, one fact per bullet>
+
+<Gate roll-call: each gate named, each result stated.>
+<Negative-space line: what was left undone, or that nothing was.>
 
 ## Result
 branch: <git branch --show-current output>

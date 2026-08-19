@@ -45,21 +45,25 @@ no code changes. The same pass covers both issues and PRs; the
 
 2. **For each unlabeled item**, read the full body and determine
    its labels from the taxonomy below:
-   - **Component** -- where the change lands
-   - **Category** -- what kind of change
    - **Priority** -- `p1` / `p2` / `p3` (see heuristics below)
+   - **Area** -- `area/*`, where the change lands, if the repo
+     defines any
    - **Size** (PRs) -- `size/small` / `size/medium` / `size/large`,
      from the file count
+
+   Leave the `status/*` axis alone. The runner and dispatcher set it
+   during execution, and overwriting it during a triage pass drops a
+   claim on work already underway.
 
 3. **Apply the labels** in one edit:
 
    ```bash
-   gh issue edit N --add-label "skills,feat,p2"
-   gh pr edit N --add-label "skills,feat,p2,size/small"
+   gh issue edit N --add-label "p2,area/skills"
+   gh pr edit N --add-label "p2,area/skills,size/small"
    ```
 
-   A PR's component and category should match the issue it closes;
-   add the size label from its changed-file count.
+   A PR's priority and area should match the issue it closes; add
+   the size label from its changed-file count.
 
    **Never apply `good first issue` or `help wanted`.** These labels
    feed GitHub's global beginner-issue firehose, which PR-farming
@@ -85,6 +89,11 @@ no code changes. The same pass covers both issues and PRs; the
    - `research:` → `docs:` (if the issue documents findings or a
      known gap) or `chore:` (if it's internal housekeeping)
    - `brainstorm:` → `docs:` (design sketches and deferred ideas)
+
+   With no type axis in the taxonomy, the prefix is the only thing
+   that makes an item findable by type
+   (`gh issue list --search "fix: in:title"`). An unprefixed title
+   is a gap in the queue, not a cosmetic one.
 
    If the correct prefix is ambiguous, do NOT rename. Leave a comment
    instead:
@@ -117,55 +126,41 @@ no code changes. The same pass covers both issues and PRs; the
 
 ## The label taxonomy
 
-Every issue and PR draws from four axes. This is the single
-source of truth for which labels exist and what they mean.
+Defined in
+[`issue-pr-conventions`](../issue-pr-conventions/SKILL.md), which is
+the source of truth for which labels exist. Triage applies them; it
+does not define them. The short form:
 
-**Component** -- where the change lands:
-
-- `skills` -- a skill file under `skills/`
-- `agents` -- an agent definition under `agents/`
-- `ci` -- workflows, gates, repo automation
-- `docs` -- README or other documentation
-
-**Category** -- what kind of change. These mirror the
-conventional-commit prefixes used on commits, branches, PR titles,
-and issue titles:
-
-- `feat` -- new capability (new skill, new agent, new section)
-- `fix` -- a correction; documented behavior diverges from actual
-- `docs` -- documentation only
-- `chore` -- maintenance, housekeeping, no behavior change
-- `ci` -- workflows, gates, release process
-- `test` -- tests only
-
-Two non-prefix category labels are also in use and do not map to a
-commit type: `field-feedback` (surfaced from a dispatch-time
-observation) and `research` (open question or investigation, not
-yet a fix). The `bug` label is the GitHub default; prefer `fix`
-for the category axis.
-
-**Priority** -- `p1` / `p2` / `p3` (see heuristics below).
-
-**Size** (PRs only) -- from the changed-file count:
-
-- `size/small` -- 1-3 files changed
-- `size/medium` -- 4-10 files changed
-- `size/large` -- 10+ files changed
-
-When an item spans components, pick the primary one and note the
-secondary in a comment. Don't stack every plausible label.
-
-### Priority heuristics
-
-| priority | meaning | examples |
+| axis | labels | applied by triage |
 |---|---|---|
-| **p1** | Blocking or high-impact | runtime failures, broken CI, missing core behavior an agent depends on |
-| **p2** | Standard queue | improvements, new skills, documentation gaps |
-| **p3** | Nice-to-have | minor wording, future shapes, brainstorm ideas |
+| priority | `p1`, `p2`, `p3` | yes |
+| area | `area/*`, repo-defined, cap 6 | yes |
+| status | `status/in-progress`, `status/blocked`, `status/needs-review` | no, the runner and dispatcher own these |
+| size (PRs only) | `size/small`, `size/medium`, `size/large` | yes |
 
-Most issues are p2. p1 is reserved for things that block work or
-break the substrate; if everything is p1, nothing is. p3 is for work
-worth recording but not worth scheduling yet.
+**There is no type axis.** The conventional-commit prefix in the
+title carries the type, so a `feat` or `bug` label would store the
+same fact twice. If a repo still has those labels, triage does not
+apply them; retiring them is the adoption pass described in the
+conventions skill, not a triage job.
+
+`field-feedback` is the one label outside the axes. It records that
+an agent filed the item from a dispatch-time observation, which the
+title prefix cannot express.
+
+### Applying the axes
+
+The priority heuristics table and the area cap live in
+[`issue-pr-conventions`](../issue-pr-conventions/SKILL.md). What
+that means at the point of labeling:
+
+- **Most items are p2.** Reserve p1 for work that blocks or breaks
+  the substrate; if everything is p1, nothing is.
+- **Pick one area.** When an item spans two, label the primary and
+  note the secondary in a comment. If the repo defines no `area/*`
+  labels, skip the axis rather than inventing one per item.
+- **Leave `status/*` alone.** It reflects execution state the
+  runner and dispatcher own.
 
 ## After triage
 
@@ -198,6 +193,9 @@ scoping and firing runners against the labeled queue.
 - [`dispatch-options`](../dispatch-options/SKILL.md) -- triage is
   best dispatched read-only (`subagent_type: "explore"` / no
   worktree); pick the mechanism here.
+- [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md) -- the
+  source of truth for the labels this pass applies and the naming
+  this pass normalizes to.
 - [`agent-feedback`](../agent-feedback/SKILL.md) -- if triage reveals
   a skill or agent gap, file it rather than working around it.
 - [`field-feedback`](../field-feedback/SKILL.md) -- issues labeled

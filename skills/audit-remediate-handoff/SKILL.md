@@ -1,6 +1,6 @@
 ---
 name: audit-remediate-handoff
-description: When the dispatcher has audit findings filed as GitHub issues and needs to decide how to fire per-finding runners -- use this to read the labeled finding-issues, apply the in-progress label before dispatch, and choose parallel vs sequential runner execution.
+description: When the dispatcher has audit findings filed as GitHub issues and needs to decide how to fire per-finding runners -- use this to read the labeled finding-issues, apply the status/in-progress label before dispatch, and choose parallel vs sequential runner execution.
 ---
 
 # Audit-remediate handoff
@@ -31,16 +31,16 @@ The handoff is a durable-state handoff, not an in-memory one:
    gh issue list --label audit-finding --state open --repo <owner/repo>
    ```
 
-   Filter out any issues already labeled `in-progress` (already dispatched in a
+   Filter out any issues already labeled `status/in-progress` (already dispatched in a
    prior session or parallel run):
 
    ```bash
    gh issue list --label audit-finding --state open --repo <owner/repo> \
      --json number,title,labels \
-     --jq '[.[] | select(.labels[].name != "in-progress")]'
+     --jq '[.[] | select(.labels[].name != "status/in-progress")]'
    ```
 
-3. **Dispatcher labels before firing** -- apply `in-progress` to a finding-issue
+3. **Dispatcher labels before firing** -- apply `status/in-progress` to a finding-issue
    before dispatching its runner. See the avoid-double-dispatch section below.
 
 4. **Runner reads the issue** -- the runner's prompt references `gh issue view N`
@@ -116,10 +116,10 @@ For the fan-out mechanics of parallel dispatch, see
 Two sessions or a re-dispatch scenario can pick up the same finding-issue if
 it is not marked before the runner starts. The sequence to prevent this:
 
-1. **Label the issue `in-progress` before firing the runner:**
+1. **Label the issue `status/in-progress` before firing the runner:**
 
    ```bash
-   gh issue edit <N> --add-label in-progress --repo <owner/repo>
+   gh issue edit <N> --add-label status/in-progress --repo <owner/repo>
    ```
 
 2. **Optionally assign or comment** to make dispatch visible:
@@ -130,21 +130,21 @@ it is not marked before the runner starts. The sequence to prevent this:
    ```
 
 3. **Check the label before each dispatch** -- skip any issue already labeled
-   `in-progress`:
+   `status/in-progress`:
 
    ```bash
-   gh issue view <N> --json labels --jq '.labels[].name' | grep in-progress
+   gh issue view <N> --json labels --jq '.labels[].name' | grep status/in-progress
    ```
 
-   If the grep returns `in-progress`, skip the issue in this session.
+   If the grep returns `status/in-progress`, skip the issue in this session.
 
-The in-progress label is an idempotency guard. It does not need to be removed
+The status/in-progress label is an idempotency guard. It does not need to be removed
 after the runner completes -- the runner's PR close will change the issue state
 to `closed`, which removes it from the open findings queue.
 
 ## Anti-patterns
 
-**Firing runners before labeling findings in-progress.** A parallel session or
+**Firing runners before labeling findings status/in-progress.** A parallel session or
 re-dispatch will pick up the same finding. Two runners addressing the same issue
 produce conflicting PRs. Label first, fire second -- always.
 

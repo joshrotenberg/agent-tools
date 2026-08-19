@@ -40,9 +40,24 @@ artifacts produced at the end.
 
 ## The dispatch flow
 
-For a dispatcher firing on the user's behalf:
+For a dispatcher firing on the user's behalf.
+
+**Check the claim first.** Either half means the work is taken, and
+opening a second PR against the same issue wastes the runner:
 
 ```bash
+gh issue view <N> --json labels --jq '.labels[].name' | grep status/in-progress
+gh pr list --search "<N>" --state open --json number,title,url
+```
+
+If an open PR already closes the issue, evaluate it against the
+issue's acceptance criteria instead of branching.
+
+```bash
+# 0. Claim the issue before branching. The label and the draft PR are
+#    two halves of one claim; see issue-pr-conventions.
+gh issue edit <N> --add-label status/in-progress
+
 # 1. Branch + empty initial commit so a PR can exist
 git checkout main && git pull --ff-only origin main
 git checkout -b <type>/<short-description>
@@ -77,7 +92,7 @@ gh pr merge <pr-number> --squash --delete-branch
 # Exception cases -- skip the merge and return "PR #N ready; awaiting
 # manual merge" instead:
 #   - No CI checks configured ("no checks" from gh pr checks)
-#   - Issue has a needs-review label
+#   - Issue has the status/needs-review label
 #   - Dispatcher passed review:manual in constraints
 #   - Change described as "critical" or "delicate" in the issue body
 ```
@@ -92,6 +107,17 @@ may be returned first and merged by mistake.
 The empty initial commit gets squashed away on merge. The plan
 lives in the PR body permanently, which is what makes the work
 observable from anywhere even after the merge.
+
+## The plan body is the other half of the claim
+
+`status/in-progress` says the work is taken. It does not say what
+the work covers, so it cannot tell a second agent whether its own
+task overlaps. That is what the plan body is for, and it is why a
+draft PR opened with an empty body is a half-made claim.
+
+If the work is abandoned without merging, remove
+`status/in-progress` and say why in a comment. Merging clears it
+automatically by closing the issue.
 
 ## Plan as PR body, not as `.tasks/<N>.md`
 
@@ -128,22 +154,17 @@ that case.
 
 ## Plan body shape
 
-A good plan body for a draft PR mirrors the orchestration prompt
-template:
+The plan report shape is defined in
+[`work-reports`](../work-reports/SKILL.md): one or two sentences on
+what changes, a labeled block of one-fact bullets, the gates that
+will run, and an explicit `Out of scope` section.
 
-- **Setup** -- branch, cwd, pre-conditions
-- **Context** -- 2-4 sentences on why this matters
-- **Task / Decision** -- what specifically to change
-- **Steps** -- numbered, with verification gates (fmt, clippy, test)
-- **Constraints** -- explicit do-nots
-- **Acceptance** -- what the final state should look like
-
-This is the same shape as the prompt at
-[`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md);
-the body and the prompt can often be the same text. Where they
-differ: the PR body is human-facing (the user reads it to
-understand the work); the prompt is agent-facing (the spawned
-claude executes it). Sometimes you want both, slightly different.
+For a dispatched unit the body and the runner prompt are often the
+same text, built from
+[`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md).
+Where they differ: the PR body is human-facing, the prompt is
+agent-facing. `Out of scope` matters more in the body, because it is
+what tells the next agent where this unit stops.
 
 ## When NOT to apply
 
@@ -160,9 +181,18 @@ first is the default.
 - Opening the PR after the work is done -- the plan is no longer visible in flight and unobservable during execution.
 - Writing the plan into task files instead of the PR body -- the plan pollutes the source tree and gets squash-merged away.
 - Leaving a draft PR in draft state indefinitely -- it never gets marked ready and stays invisible to CI and merge gates.
+- Opening the draft PR without labeling the issue
+  `status/in-progress`, or labeling without opening the PR -- either
+  half alone leaves the next agent guessing.
+- Branching without checking for an existing PR that already closes
+  the issue.
 
 ## Related
 
+- [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md) -- the
+  claim protocol, naming, and label taxonomy this lifecycle uses.
+- [`work-reports`](../work-reports/SKILL.md) -- the plan report that
+  goes in the body, and the completion report that closes the unit.
 - [`orchestration-prompt-template`](../orchestration-prompt-template/SKILL.md)
   -- the prompt template the plan body is built from.
 - [`git-branch-pr-workflow`](../git-branch-pr-workflow/SKILL.md) --

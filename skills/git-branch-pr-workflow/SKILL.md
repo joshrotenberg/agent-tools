@@ -28,6 +28,10 @@ dispatcher loop) merge.
 ## How to apply
 
 1. Before any change, `git checkout -b <type>/<short-description>`.
+   If the work closes an issue, claim it first
+   (`gh issue edit <N> --add-label status/in-progress`); see the
+   claim protocol in
+   [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md).
 2. Make commits with conventional-commit messages
    (`<type>: <description>`; `!` marks breaking).
 3. Push: `git push -u origin <branch>`.
@@ -36,41 +40,33 @@ dispatcher loop) merge.
    PR body so the merge closes the linked issue).
 5. Wait for CI; merge with `gh pr merge --squash --delete-branch`.
 
-## Commit-message conventions
+## Naming
 
-- `feat: ...` -- new user-visible behavior
-- `fix: ...` -- bug fix
-- `refactor: ...` -- internal restructuring, no behavior change
-- `chore: ...` -- repo maintenance (dependencies, config, etc.)
-- `ci: ...` -- CI/release-process changes
-- `docs: ...` -- documentation only
-- `test: ...` -- tests only
+Branch, issue title, PR title, and commit subject all take the same
+conventional-commit prefix. The scheme, the type list, and the
+tool-owned exemptions are in
+[`issue-pr-conventions`](../issue-pr-conventions/SKILL.md).
 
-Append `!` to mark a breaking change: `refactor!: cut --head and
---tail (closes #42)`.
+Two rules that bite here specifically:
 
-The same prefixes apply to **issue titles**, not only commits,
-branches, and PR titles. An issue that proposes a new skill is
-`feat: ...`; an issue documenting a bug is `fix: ...`. The
-`triage` skill normalizes issue titles to this scheme.
+- **The branch prefix matches the PR type.** A `fix:` PR belongs on
+  a `fix/` branch. Where they disagree, rename the branch
+  (`git branch -m fix/<slug>`) before opening the PR.
+- **No trailers, and the author is the repo owner.** Never add
+  `Co-Authored-By` or a "Generated with Claude Code" line. Verify
+  before pushing:
 
-## No trailers, author is the repo owner
+  ```bash
+  git log -1 --format='%an <%ae>%n%(trailers)'
+  ```
 
-Do not include "Generated with Claude Code" or "Co-Authored-By"
-trailers on any commit. The commit author is always the repo
-owner (`Josh Rotenberg <joshrotenberg@gmail.com>`); no
-co-author is added. After committing, verify before pushing:
-
-```bash
-git log -1 --format='%an <%ae>%n%(trailers)'
-```
-
-The author line must be the repo owner and the trailers must be
-empty. If a trailer slipped in, amend it out (`git commit --amend`)
-before pushing.
+  The author must be the repo owner and the trailers must be empty.
+  Amend before pushing if one slipped in.
 
 ## Related
 
+- [`issue-pr-conventions`](../issue-pr-conventions/SKILL.md) -- the
+  naming scheme, label taxonomy, and claim protocol.
 - [`git-fix-pr-branching`](../git-fix-pr-branching/SKILL.md) -- how
   to handle fixes when a PR is open vs merged.
 - [`heredoc-backticks`](../heredoc-backticks/SKILL.md) -- formatting
