@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.5.0](https://github.com/joshrotenberg/agent-tools/compare/v0.4.0...v0.5.0) (2026-08-19)
+
+
+### Features
+
+* add branch-cleanup axis to maintenance-sweep ([#231](https://github.com/joshrotenberg/agent-tools/issues/231)) ([84403db](https://github.com/joshrotenberg/agent-tools/commit/84403db5d3a5ecf4baf123568eaaabbb402b87e1)), closes [#229](https://github.com/joshrotenberg/agent-tools/issues/229)
+* add github-authoring skill ([#230](https://github.com/joshrotenberg/agent-tools/issues/230)) ([5b62b7c](https://github.com/joshrotenberg/agent-tools/commit/5b62b7cdca43d586489cdc20d5733f6fcc566c68)), closes [#227](https://github.com/joshrotenberg/agent-tools/issues/227)
+* add local-only-repos skill for no-remote repos ([#236](https://github.com/joshrotenberg/agent-tools/issues/236)) ([5f0b1be](https://github.com/joshrotenberg/agent-tools/commit/5f0b1bea9a8e61a353dc9f333ba72a8371c9884d)), closes [#222](https://github.com/joshrotenberg/agent-tools/issues/222)
+* encode the dispatcher do-vs-delegate bright line ([#238](https://github.com/joshrotenberg/agent-tools/issues/238)) ([e94c2b7](https://github.com/joshrotenberg/agent-tools/commit/e94c2b70a3720d4d7d63933b33c3e24b063cf867)), closes [#237](https://github.com/joshrotenberg/agent-tools/issues/237)
+* extend git-branch-pr-workflow and triage for titles and PR labels ([#232](https://github.com/joshrotenberg/agent-tools/issues/232)) ([3741169](https://github.com/joshrotenberg/agent-tools/commit/37411697450e510825da0f638e8e86b29ff10899)), closes [#228](https://github.com/joshrotenberg/agent-tools/issues/228)
+* forbid good first issue and help wanted labels (PR-farming bot magnet) ([#239](https://github.com/joshrotenberg/agent-tools/issues/239)) ([f0ccf4c](https://github.com/joshrotenberg/agent-tools/commit/f0ccf4c267e70874c276325bb2d4dd5cadc006b0))
+* issue/PR conventions and work-report shapes (closes [#246](https://github.com/joshrotenberg/agent-tools/issues/246)) ([#247](https://github.com/joshrotenberg/agent-tools/issues/247)) ([7a89a79](https://github.com/joshrotenberg/agent-tools/commit/7a89a79e715e8aa0f596cc448e5be32da94bc6af))
+
+
+### Bug Fixes
+
+* update stale ~/Code/active paths and clarify Tier-2 runner scope ([#235](https://github.com/joshrotenberg/agent-tools/issues/235)) ([575acea](https://github.com/joshrotenberg/agent-tools/commit/575acea8068840e69e37d58396ca03cf310fa6d6)), closes [#234](https://github.com/joshrotenberg/agent-tools/issues/234)
+
 ## [0.4.0](https://github.com/joshrotenberg/agent-tools/compare/v0.3.2...v0.4.0) (2026-06-18)
 
 
