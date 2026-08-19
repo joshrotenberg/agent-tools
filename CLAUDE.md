@@ -129,6 +129,7 @@ agent-tools/
     ├── pr-review/                             # review a PR in agent-tools
     │
     ├── # Git + tooling hygiene
+    ├── issue-pr-conventions/                  # naming, label taxonomy, claim protocol
     ├── git-branch-pr-workflow/                # branch + PR discipline
     ├── git-fix-pr-branching/                  # branch off main, not off open PR
     ├── heredoc-backticks/                     # gh issue/PR body formatting
@@ -140,10 +141,49 @@ agent-tools/
     └── install-cadence/                       # re-install after merged PRs
 ```
 
-27 skills + 5 agents + repo files. Skills are categorized in
+28 skills + 5 agents + repo files. Skills are categorized in
 `skills/README.md` (visible there).
 
 ## Decisions log
+
+### 2026-08-19: one cross-project issue/PR standard (#246/#247)
+
+Surveyed the five most recently pushed repos (tower-resilience, roba,
+adrs, jpx, jmespath-zig) before designing. Findings: priority was
+labeled four different ways across five repos; two competing type
+vocabularies were in use (agent-tools' `feat`/`fix` vs the GitHub
+defaults, which dominate elsewhere at 60+ uses each); `in-progress`
+existed on two repos and was heavily used, but did not exist on
+agent-tools even though `audit-remediate-handoff` told the dispatcher
+to apply it, so that command errored; area labels ranged from none to
+nine `cmd-*` labels.
+
+Added `issue-pr-conventions` as the source of truth. Three decisions:
+
+- **The type axis is dropped from labels entirely.** The
+  conventional-commit prefix in the title already carries type, so a
+  `feat` label on a `feat:` issue stores the same fact twice and the
+  copies drift. This makes prefix discipline carry weight rather than
+  being cosmetic: an unprefixed title is now unfindable by type.
+- **Priority is `p1`/`p2`/`p3`.** Shortest scheme in use, sorts, and
+  the triage heuristics were already written against it.
+- **Four axes, capped:** priority, `area/*` (repo-defined, max 6),
+  `status/*`, `size/*`. One exception, `field-feedback`, which records
+  provenance the title cannot.
+
+The claim protocol pairs `status/in-progress` on the issue with a
+draft PR whose body states the plan. Both halves are required: the
+label says the work is taken, the body says what it covers. The
+pre-branch claim check also closes the duplicate-work gap reported in
+#241.
+
+`scripts/bootstrap-labels.sh` provisions the repo-independent axes. It
+defers creating any label a pending rename would produce, because
+renaming preserves existing assignments and creating-then-renaming
+collides.
+
+Scope was standard-only: no repo was migrated, and no labels were
+created or renamed anywhere.
 
 ### 2026-06-04: packaged as a Claude Code plugin
 
@@ -319,6 +359,36 @@ roba as an *example* of a trace/worktree flag (`spiral-diagnosis`,
 (`sandbox-preflight`, `runner-synchronous-lifecycle`, `heredoc-backticks`,
 `git-fix-pr-branching`). Those are kept on purpose -- examples and
 provenance, not "the mechanism." Don't "fix" them.
+
+### Label migration across repos (deferred from #247)
+
+`issue-pr-conventions` and `scripts/bootstrap-labels.sh` landed, but no
+repo was migrated. Running the adoption pass means, per repo: rename
+the priority labels to `p1`/`p2`/`p3`, rename `in-progress` to
+`status/in-progress`, create the missing `status/*` and `size/*`
+labels, define up to six `area/*` labels, and stop applying the type
+labels. Rename rather than delete; renaming keeps every existing
+assignment. Dry-run first:
+
+```bash
+./scripts/bootstrap-labels.sh --repo joshrotenberg/<name>
+```
+
+Known state at deferral: agent-tools needs 3 status labels and carries
+8 type labels to retire; adrs needs 4 renames and carries 9 `cmd-*`
+labels to collapse; tower-resilience, roba, and jpx are unsurveyed for
+area candidates.
+
+### Runner merge gates (#243, #244, #245)
+
+Three findings hit the same six lines of the `draft-pr-first` dispatch
+flow and were left out of #247, which was scoped to the standard:
+verify the PR head SHA matches the pushed commit before trusting `gh
+pr checks` or merging (#243); check main has not advanced past the
+branch's merge-base since CI ran (#245); remove the worktree and its
+build cache after a merged lifecycle (#244). #241 (check for an
+existing closing PR before branching) is covered by the claim check
+added in #247.
 
 ### Chained execution shape (design → impl → review)
 
