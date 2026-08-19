@@ -1,6 +1,6 @@
 ---
 name: maintenance-sweep
-description: When the directive is "status check," "what's new across my projects," or "sweep maintenance" -- run a per-project, read-mostly, non-PR sweep. For each project under the owner-prefixed layout, gather stars/forks, open issues/PRs split into mine vs community vs bots, package downloads, release-due (unreleased conventional commits), a test run, a stale-CLAUDE.md flag, and branch-cleanup candidates. Emit a fresh per-project report every sweep; NEVER cache status back into a workspace/manager CLAUDE.md.
+description: When the directive is "status check," "what's new across my projects," or "sweep maintenance" -- run a per-project, read-mostly, non-PR sweep. For each project under the owner-prefixed layout, gather stars/forks, open issues/PRs split into mine vs community vs bots, package downloads, release-due (unreleased conventional commits), a test run, a stale-docs flag covering CLAUDE.md and any standalone docs, and branch-cleanup candidates. Emit a fresh per-project report every sweep; NEVER cache status back into a workspace/manager CLAUDE.md.
 ---
 
 # Maintenance sweep
@@ -132,7 +132,7 @@ manifest -- `cargo test`, `mix test`, `npm test`, etc.). Record
 signal; a failing suite is a flag to investigate, not something the
 sweep fixes.
 
-### (f) Stale CLAUDE.md flag
+### (f) Stale docs flag (CLAUDE.md and standalone docs)
 
 Flag a project's CLAUDE.md as possibly stale when it has drifted from
 the code -- e.g. the file is much older than recent substantive
@@ -147,6 +147,27 @@ git -C <path> log -1 --format=%cr                 # last commit overall
 A large gap (months of active commits, untouched CLAUDE.md) earns a
 `stale?` flag. The flag is a *proposal to review*, not a license to
 edit -- see below.
+
+**Apply the same gap check to any standalone docs file.** These drift
+faster than CLAUDE.md, because nothing loads them on a schedule:
+
+```bash
+git -C <path> ls-files 'docs/*.md' '*.md' | grep -vE '^(README|CHANGELOG|CLAUDE|AGENTS|CONTRIBUTING|LICENSE)'
+for f in <those files>; do
+    git -C <path> log -1 --format="%cr  $f" -- "$f"
+done
+```
+
+Report each one with its age alongside the repo's last commit. A doc
+that has gone untouched across months of active commits is a
+staleness candidate. Per
+[`standalone-docs`](../standalone-docs/SKILL.md), a doc that shows up
+stale on two consecutive sweeps is a deletion candidate rather than a
+rewrite candidate: repeated drift is evidence nothing is exercising
+it. Surface that as a proposal; the sweep never deletes.
+
+If a project has no standalone docs files, say so in one line. That
+is the healthy state, not a gap in the report.
 
 ### (g) Branch cleanup
 
@@ -204,7 +225,7 @@ start holding a stale model of every project instead of a map of
 where they are. Reconstitute on demand; do not persist the readout.
 
 **Any proposed CLAUDE.md edit is *proposed*, never applied by the
-sweeper.** The stale-CLAUDE.md flag (axis f) surfaces a candidate for
+sweeper.** The stale-docs flag (axis f) surfaces a candidate for
 revision -- it does not authorize the read-only sweep to rewrite that
 file. Route the proposal per
 [`non-pr-output-conventions`](../non-pr-output-conventions/SKILL.md):
@@ -223,24 +244,28 @@ A tight table, one row per project, sorted by signal (community
 issues/PRs first, then release-due, then the rest):
 
 ```
-project       | stars | forks | mine i/pr | community i/pr | bots | downloads | release | tests | claude.md | branches
-my-crate      | 45    | 6     | 2 / 0     | 3 / 1          | 4    | 8.2k/mo   | DUE (4) | pass  | stale?    | 3
+project       | stars | forks | mine i/pr | community i/pr | bots | downloads | release | tests | docs      | branches
+my-crate      | 45    | 6     | 2 / 0     | 3 / 1          | 4    | 8.2k/mo   | DUE (4) | pass  | stale? 2  | 3
 my-lib        | 12    | 1     | 0 / 0     | 0 / 0          | 1    | 1.1k/mo   | -       | pass  | ok        | 0
 local-tool    | -     | -     | -         | -              | -    | -         | -       | fail  | ok        | 1
 ```
 
-The `branches` column is the count of branch-cleanup candidates (axis
-g). Below the table, expand only the rows that need action: which
+The `docs` column covers axis f: `ok`, or `stale? N` where N counts
+CLAUDE.md plus any standalone docs files past the gap threshold. The
+`branches` column is the count of branch-cleanup candidates (axis g).
+
+Below the table, expand only the rows that need action: which
 community PRs are waiting, what's release-due and why, which tests
-failed, which CLAUDE.md looks stale and the proposed routing, and
-which branches are deletion candidates with their reason (merged,
-closed, or stale).
+failed, which docs look stale (naming each file, with CLAUDE.md
+getting a proposed routing and a standalone doc getting a
+review-or-delete proposal), and which branches are deletion
+candidates with their reason (merged, closed, or stale).
 
 ## Graceful degradation (local-only / no-remote)
 
 For a repo with no GitHub remote (local-only), skip the `gh` axes
 (a, b, c) -- record `-` -- and run only the local axes (d release
-check against any local tags, e test run, f CLAUDE.md staleness, g
+check against any local tags, e test run, f docs staleness, g
 branch cleanup over local branches only, without the PR-state
 cross-reference).
 Do not fail the sweep because one repo has no remote. Full handling

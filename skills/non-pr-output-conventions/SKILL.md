@@ -17,7 +17,7 @@ differs from the PR-centric path.
 | Human reading now | ephemeral | stdout / return text |
 | Human + future agents, this project | durable, project-scoped | CLAUDE.md entry (brainstorm-sketches or decisions log) |
 | Visible to others, indexed by GitHub | durable, public | issue comment (`gh issue comment N --body "..."`) |
-| Cross-session, shareable artifact | durable, file | markdown file in repo or `/tmp/<task-id>-findings.md` |
+| Cross-session, shareable artifact | durable, file | `/tmp/<task-id>-findings.md`; an in-repo file only per `standalone-docs` |
 | Spawns further work | structured input | issue body / issue comment as findings list |
 
 Pick the most durable destination that the consumer actually needs.
@@ -53,6 +53,15 @@ that belong to a tracking issue. Visible to all; searchable.
 Write to `/tmp/<task-id>-findings.md`. Return the path in the
 response so the dispatcher can reference it in a follow-on prompt.
 Use when a subsequent runner dispatch will consume the findings.
+
+**Scratch, not committed.** A findings file is transient by design.
+Committing it into the repo makes it a standalone docs file, which
+nothing then exercises and nothing catches when it drifts. If the
+findings are durable enough to belong in the repo, they belong in an
+issue comment or CLAUDE.md instead. See
+[`standalone-docs`](../standalone-docs/SKILL.md) for the bar an
+in-repo markdown file has to clear and the accuracy check it carries
+afterward.
 
 ## Spawn-issue handback pattern
 
@@ -96,6 +105,8 @@ These are defaults. The dispatcher overrides per the specific task.
 
 ## Related
 
+- [`standalone-docs`](../standalone-docs/SKILL.md)
+  -- why an in-repo markdown file is the destination of last resort
 - [`runner-synchronous-lifecycle`](../runner-synchronous-lifecycle/SKILL.md)
   -- the hold-open contract this skill extends to non-PR runs
 - [`orchestration-patterns`](../orchestration-patterns/SKILL.md)

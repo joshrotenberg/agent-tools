@@ -25,7 +25,7 @@ branch happens to be checked out. The working tree is a candidate or
 a side branch; the thing that ships is `origin/main` (or the project's
 release branch).
 
-## Three disciplines
+## Four disciplines
 
 ### 1. Anchor on origin/main
 
@@ -111,6 +111,34 @@ tag/release. A mismatch is usually release-plz state (in-tree bumped
 ahead of a not-yet-published release), not "version chaos" -- name it
 as such rather than flagging it as a blocking inconsistency.
 
+### 4. Check standalone docs for accuracy
+
+Any standalone markdown doc the repo carries is read against the
+current code before the release goes out. Not "does it exist," but
+"is each claim in it still true."
+
+```bash
+git ls-files 'docs/*.md' '*.md' | grep -vE '^(README|CHANGELOG|CLAUDE|AGENTS|CONTRIBUTING|LICENSE)'
+```
+
+For each file, compare its last touch against the last commit to the
+code it describes:
+
+```bash
+git log -1 --format=%cr -- <doc>
+git log -1 --format=%cr -- <the code it describes>
+```
+
+A doc untouched across the release's changes is a blocking finding
+when it documents something the release changed, and a note
+otherwise. Per [`standalone-docs`](../standalone-docs/SKILL.md), a
+doc that fails this check on two consecutive releases is a deletion
+candidate: repeated drift means nothing is exercising it.
+
+README and CHANGELOG are checked as part of the normal release pass
+and are not what this discipline is about. It covers the files
+nothing else reads.
+
 ## Worked example
 
 The #114 failure mode -- a bare dispatch audited a stale docs branch's
@@ -145,11 +173,18 @@ that the apparent "version chaos" was just a stale side branch.
 
 ## Anti-patterns
 
+- Reporting a standalone doc as current because it exists, without
+  reading its claims against the code.
+
 - Auditing the working branch tip instead of `origin/main` -- produces false blocking findings on stale content.
 - Reporting version skew as "chaos" without cross-checking the registry -- misses release-plz in-tree bumps ahead of publish.
 - Opening the audit with findings rather than branch divergence -- the user can't redirect before reading stale analysis.
 
 ## Related
+
+- [`standalone-docs`](../standalone-docs/SKILL.md) -- the bar a
+  standalone doc has to clear to exist, and the accuracy check it
+  carries afterward.
 
 - [`sandbox-preflight`](../sandbox-preflight/SKILL.md) -- the other
   "the audit ran but produced nothing trustworthy" failure mode
