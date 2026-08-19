@@ -131,6 +131,7 @@ agent-tools/
     ├── # Git + tooling hygiene
     ├── issue-pr-conventions/                  # naming, label taxonomy, claim protocol
     ├── work-reports/                          # plan report + completion report shapes
+    ├── standalone-docs/                       # default against bespoke docs files
     ├── git-branch-pr-workflow/                # branch + PR discipline
     ├── git-fix-pr-branching/                  # branch off main, not off open PR
     ├── heredoc-backticks/                     # gh issue/PR body formatting
@@ -142,7 +143,7 @@ agent-tools/
     └── install-cadence/                       # re-install after merged PRs
 ```
 
-29 skills + 5 agents + repo files. Skills are categorized in
+30 skills + 5 agents + repo files. Skills are categorized in
 `skills/README.md` (visible there).
 
 ## Decisions log
@@ -208,6 +209,41 @@ protocol (not in this repo), and destination stays with
 `non-pr-output-conventions`. The machine-readable `STATUS:` block in
 `runner.md` and `worker.md` is unchanged: the report sits above it,
 and neither replaces the other.
+
+### 2026-08-19: default against standalone docs files (#249/#250)
+
+Added `standalone-docs`. The position: a markdown file written to
+explain something, living outside the paths a reader or a test already
+touches, is not created by default.
+
+The reasoning is about what exercises a file, not about documentation
+being bad. Code has tests, the README is read on every visit, CLAUDE.md
+is loaded every session, a CHANGELOG entry is generated from commits.
+A file under `docs/` is referenced by nothing and asserted by no test,
+so nothing catches it when it goes wrong. A stale doc is worse than no
+doc, because a reader who finds it trusts it.
+
+Three rules:
+
+- **Route the content first.** A table sends it to code docs, README,
+  CLAUDE.md, an ADR, the CHANGELOG, the issue body, or an `examples/`
+  file CI compiles. The last is the one to reach for: an example that
+  drifts breaks the build.
+- **Creating one is a discussion, not a judgment call.** An agent
+  proposes and waits. The justification has to name a mechanism that
+  will catch the doc when it goes wrong. "We will keep it updated" is
+  an intention, not a mechanism, and is the sentence that precedes
+  every stale doc.
+- **A surviving doc carries an accuracy check**, before a release at
+  minimum. A doc that fails twice is deleted rather than fixed again:
+  repeated drift is evidence nothing exercises it, so the original
+  justification did not hold.
+
+`non-pr-output-conventions` had listed "markdown file in repo" as a
+free destination for durable output, which contradicted this; it now
+routes through the bar. `maintenance-sweep` axis (f) widened from
+CLAUDE.md staleness to docs staleness, and `release-audit-anchoring`
+gained a fourth discipline.
 
 ### 2026-06-04: packaged as a Claude Code plugin
 
