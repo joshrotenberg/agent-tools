@@ -61,6 +61,12 @@ no code changes. The same pass covers both issues and PRs; the
    A PR's component and category should match the issue it closes;
    add the size label from its changed-file count.
 
+   **Never apply `good first issue` or `help wanted`.** These labels
+   feed GitHub's global beginner-issue firehose, which PR-farming
+   bots scrape and pounce on within minutes. They are not part of
+   the taxonomy above; if a human added one, leave it, but triage
+   never adds them.
+
 4. **Normalize the title.** Check whether the title has a conventional
    commit prefix (`feat:`, `fix:`, `docs:`, `chore:`, `ci:`, `perf:`,
    `refactor:`, `test:`). If not -- or if it uses a non-canonical prefix
