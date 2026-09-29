@@ -1,6 +1,6 @@
 ---
 name: workflow-basics
-description: When deciding between the Workflow tool and the Task tool for large-scale orchestration (50+ agents) -- use this. Covers what the Workflow tool is, its critical no-direct-I/O constraint, the fan-out + synthesize and chained design->impl->review shapes it fits, and when the simpler Task tool wins instead.
+description: When deciding between the Workflow tool and the Task tool for large-scale orchestration (50+ agents) -- use this. Covers what the Workflow tool is, its critical no-direct-I/O constraint, the harness relay frame that can pull agents off their assigned task, the fan-out + synthesize and chained design->impl->review shapes it fits, and when the simpler Task tool wins instead.
 ---
 
 # Workflow basics
@@ -82,12 +82,69 @@ fan out web searches and source fetches across many agents,
 cross-check claims adversarially, then synthesize a single cited
 report. It demonstrates fan-out -> verify -> synthesize end to end.
 
+## Harness relay frame
+
+Observed 2026-09-28 on Claude Code 2.1.284 (macOS desktop app). Every
+`agent()` the Workflow tool spawns receives two framed messages ahead
+of the script-written prompt:
+
+| frame | header | contents | stated authority |
+|---|---|---|---|
+| 1 | `[Workflow harness -- user request]` | the user's most recent human chat message, verbatim | "the only user voice in this task"; where the computed task conflicts with it, "this request wins" |
+| 2 | `[Workflow harness -- computed task]` | the script's per-agent prompt | "no user authority" |
+
+The literal headers use an em dash; `--` stands in for it here. The
+strings are compiled into the `claude` binary and gated by the env var
+`CLAUDE_CODE_WORKFLOW_PROMPT_PROVENANCE`, falling back to the
+GrowthBook gate `tengu_bubbly_harbor` (default true). Third-party
+testing reports the env var has no effect in 2.1.283; it has not been
+tested on 2.1.284 here, so do not rely on it to turn the frame off.
+
+### Failure mode
+
+The relayed message is whatever the user last typed, which may be
+unrelated to the workflow. An agent that judges its task to conflict
+with it can drop the task and answer the message instead. The script
+receives that answer as an ordinary result.
+
+Observed: a 3-agent fan-out where each agent was asked to write a
+haiku. Two complied. The third judged the haiku task to conflict with
+the relayed message, invoked the `workflow-basics` and
+`workflow-authoring` skills, and answered the relayed message. A
+downstream judge agent with no grading criteria picked that off-task
+output as the winner. The upstream reports below describe the same
+behavior, including cases where the relayed message was stale or
+unrelated to the workflow.
+
+### Mitigations
+
+- **Write each agent prompt so it visibly serves the user's launching
+  request.** An agent comparing the two frames should find no conflict.
+- **State the user's intent in the prompt**, not only the mechanical
+  task. One sentence naming the request the workflow was launched for.
+- **Give judge and aggregator agents explicit grading criteria and the
+  original task spec.** An output that answers a different question can
+  then be scored as off-task instead of compared on its own merits.
+- **Avoid sending unrelated chat messages while a workflow is
+  launching.** The relayed frame carries the most recent human message,
+  so an unrelated one sent around launch can be the one relayed.
+- **Validate each agent's output against its assigned task before
+  aggregating.** Drop or re-run outputs that do not address it.
+
+### Upstream reports
+
+- [anthropics/claude-code#96640](https://github.com/anthropics/claude-code/issues/96640)
+- [anthropics/claude-code#95369](https://github.com/anthropics/claude-code/issues/95369)
+
 ## Anti-patterns
 
 - Using Workflow for single-runner tasks -- one issue, one PR, one runner; a workflow script is pure overhead here.
 - Writing I/O in the orchestration script -- the script has no direct I/O; delegate filesystem and shell work to agents.
 - Assuming each agent's output returns to context -- only the final synthesized answer
   does; intermediates stay in the runtime.
+- Assuming the script's per-agent prompt is the only instruction an agent sees -- the harness relays the user's latest
+  chat message ahead of it and tells the agent that message wins on conflict (see Harness relay frame).
+- Running a judge or aggregator agent with no grading criteria -- it can select an off-task output as the winner.
 
 ## Related
 
