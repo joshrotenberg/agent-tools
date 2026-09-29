@@ -18,7 +18,7 @@ lives here.
 |---|---|
 | [`durable-context`](durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
 | [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
-| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
+| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, the script's no-direct-I/O constraint, and the harness relay frame that can pull agents off their task |
 | [`work-reports`](work-reports/SKILL.md) | Writing a draft PR body or reporting a finished dispatch -- the plan report and the completion report (verdict line, one-fact bullets, gate roll-call, what was left undone) |
 | [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by priority/area/size per `issue-pr-conventions`, normalize titles, flag duplicates, close noise, surface the p1 queue before dispatch |
