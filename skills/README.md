@@ -62,6 +62,14 @@ lives here.
 | [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
 | [`github-authoring`](github-authoring/SKILL.md) | Authoring any issue, PR, or commit -- structure (headings, lists, tables, fenced blocks, the bug block, before/after) and voice (factual, no emdashes, conventional-commit prefixes, no commit trailers) |
+| [`vhs-terminal-recordings`](vhs-terminal-recordings/SKILL.md) | Recording README screenshots and demo GIFs with vhs from committed .tape scripts -- determinism, parser and Output gotchas, verifying by extracting frames instead of trusting the result |
+
+### Communication
+
+| Skill | When to use |
+|---|---|
+| [`wrapitup`](wrapitup/SKILL.md) | The default communication protocol for any output a person or agent reads -- cut preamble, narration, recap, and closing offers; protect findings, caveats, and bad news; three registers; checkable forms over prose claims |
+| [`status-cards`](status-cards/SKILL.md) | Presenting a GitHub issue or PR (status, triage output, sweep results) as a fixed card, and offering enumerable choices as a popup instead of a prose question |
 
 ### Meta
 
