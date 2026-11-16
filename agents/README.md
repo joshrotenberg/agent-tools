@@ -84,7 +84,7 @@ After install, any Claude Code session can spawn:
 
 ## Dispatch mechanism
 
-The agents are Task-tool-centric. They run as Task subagents
+The agents are Agent-tool-centric. They run as Agent subagents
 (`isolation: "worktree"` for same-repo file work), and also work
 under `claude -p` or any wrapper that takes an `--agent NAME` flag
 for headless use. See

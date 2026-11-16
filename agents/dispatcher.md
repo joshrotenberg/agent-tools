@@ -4,7 +4,7 @@ description: >-
   Use when you need to scope and dispatch tasks from an issue queue -- reads
   open issues, decides execution shape, fires runners. Skip for a single
   well-defined task; go straight to the runner instead.
-tools: Read, Bash, Task
+tools: Read, Bash, Agent
 model: sonnet
 skills:
   - workspace-survey
@@ -121,8 +121,8 @@ Most days: single runner.
 
 Compose the prompt per
 [`orchestration-prompt-template`](../skills/orchestration-prompt-template/SKILL.md).
-Use `subagent_type: "runner"` (Task tool) for dispatches. For same-repo
-Task dispatches that modify files, pass `isolation: "worktree"`. See
+Use `subagent_type: "runner"` (Agent tool) for dispatches. For same-repo
+Agent dispatches that modify files, pass `isolation: "worktree"`. See
 [`dispatch-options`](../skills/dispatch-options/SKILL.md).
 
 **Background vs foreground:** When a directive is self-contained -- the result

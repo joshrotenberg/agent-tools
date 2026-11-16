@@ -23,13 +23,13 @@ overlap by construction.
 - Each dispatch runs in its own branch + draft PR + watch loop. The
   lifecycle is already parallel-safe.
 - **For same-repo parallelism:** use `isolation: "worktree"` on each
-  Task dispatch. Each runner gets its own git checkout; the
+  Agent dispatch. Each runner gets its own git checkout; the
   dispatcher's working tree is unaffected. Fan out N dispatches;
   wait for notifications; push each worktree's changes as
   notifications arrive, then remove the worktree. For Bash-based
   dispatch, use `claude -p` with a separate worktree checkout
   (or roba's `-w` if roba is installed).
-- Multiple Task dispatches (or `run_in_background=true` Bash calls)
+- Multiple Agent dispatches (or `run_in_background=true` Bash calls)
   fire simultaneously.
 - **Cap concurrency at 3-5.** Beyond that, cognitive load and token
   cost outpace wall-clock savings.

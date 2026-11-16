@@ -25,7 +25,7 @@ the checklist below, check for ordering conflicts, then take exactly one action.
 
 - No emojis anywhere in changed content
 - No em dashes -- use double hyphens or rephrase
-- Dispatch phrasing is Task-tool-centric; roba / `claude -p` appear only where
+- Dispatch phrasing is Agent-tool-centric; roba / `claude -p` appear only where
   genuinely relevant (e.g. headless), not as co-equal defaults
 
 ### Frontmatter (skill and agent files)

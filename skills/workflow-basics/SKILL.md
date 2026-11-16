@@ -1,6 +1,6 @@
 ---
 name: workflow-basics
-description: When deciding between the Workflow tool and the Task tool for large-scale orchestration (50+ agents) -- use this. Covers what the Workflow tool is, its critical no-direct-I/O constraint, the fan-out + synthesize and chained design->impl->review shapes it fits, and when the simpler Task tool wins instead.
+description: When deciding between the Workflow tool and the Agent tool for large-scale orchestration (50+ agents) -- use this. Covers what the Workflow tool is, its critical no-direct-I/O constraint, the fan-out + synthesize and chained design->impl->review shapes it fits, and when the simpler Agent tool wins instead.
 ---
 
 # Workflow basics
@@ -35,9 +35,9 @@ the filesystem, git, or a shell must be delegated to a spawned
 agent. Don't write a script that tries to `readFile` or exec a
 command -- it has no such capability.
 
-## When to use vs the Task tool
+## When to use vs the Agent tool
 
-| dimension | Workflow tool | Task tool |
+| dimension | Workflow tool | Agent tool |
 |---|---|---|
 | **Plan location** | In the JS script (durable across run) | In the dispatching conversation |
 | **Context model** | Only final answer returns | Each agent's output returns to context |
@@ -49,7 +49,7 @@ holding every agent's output in conversation context would blow the
 budget, or when the same multi-agent plan should run repeatably with
 different inputs.
 
-Reach for the **Task tool** for everything smaller: a single runner,
+Reach for the **Agent tool** for everything smaller: a single runner,
 a few parallel runners, anything where you want each agent's output
 visible in your context.
 
@@ -58,7 +58,7 @@ visible in your context.
 - **Audit + remediate fan-out at scale.** A survey phase spawns
   dozens of read-only agents (one per file, module, or finding),
   then a synthesis phase combines findings. When the fan-out is 50+
-  agents, the Task tool's per-agent context return doesn't fit;
+  agents, the Agent tool's per-agent context return doesn't fit;
   Workflow keeps it in the runtime and returns only the synthesis.
 - **Chained design -> impl -> review.** The script sequences the
   phases and passes each phase's output to the next as script-local
@@ -67,13 +67,13 @@ visible in your context.
 ## NOT for
 
 - **Single-runner tasks.** One issue, one PR -- use a runner via the
-  Task tool. A workflow script is pure overhead here.
+  Agent tool. A workflow script is pure overhead here.
 - **Small parallel tasks.** A few independent edits across different
-  files -- the Task tool with parallel dispatches is simpler and
+  files -- the Agent tool with parallel dispatches is simpler and
   keeps each result in context.
 
 The dividing line is scale and context pressure, not task type. If
-the Task tool fits, it's the simpler choice.
+the Agent tool fits, it's the simpler choice.
 
 ## Reference example
 

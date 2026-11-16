@@ -74,7 +74,7 @@ gh pr create --draft \
 # 3. Fire the dispatch against the same branch (the dispatcher owns
 #    the branch lifecycle). Mechanism per dispatch-options:
 #
-#    Task tool:      Task(subagent_type: "runner", prompt: <full prompt>)
+#    Agent tool:      Agent(subagent_type: "runner", prompt: <full prompt>)
 #    Bash + claude -p: claude -p --agent runner "$(cat /tmp/task-<N>.md)"
 
 # 4. When the dispatch returns: push the commits it made

@@ -89,7 +89,7 @@ Load them, follow them. The condensed loop:
    cd $(pwd) && claude -p --agent worker "$(cat /tmp/task-N.md)"
    ```
 
-   For Task tool dispatch, use `isolation: "worktree"`. See
+   For Agent tool dispatch, use `isolation: "worktree"`. See
    [`dispatch-options`](../skills/dispatch-options/SKILL.md).
 7. **On dispatch completion: push + ready.** Push the commits and mark
    the PR ready per [`draft-pr-first`](../skills/draft-pr-first/SKILL.md).

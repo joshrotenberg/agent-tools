@@ -22,7 +22,7 @@ This is a stacked-reliability contract:
 - **Top:** dispatcher that writes the prompt + wraps the PR
   lifecycle around the dispatch
 
-The dispatch substrate (Task tool / Bash + claude -p) is
+The dispatch substrate (Agent tool / Bash + claude -p) is
 interchangeable per
 [`dispatch-options`](../dispatch-options/SKILL.md). The
 dispatcher's value-add is the prompt-writing layer plus the
@@ -50,7 +50,7 @@ false blocking findings on a stale branch.
 cwd: <absolute path>
 
 For any dispatch that mutates the tree, use worktree isolation
-(`isolation: "worktree"` in a Task dispatch, `-w` in roba). Two
+(`isolation: "worktree"` in a Agent dispatch, `-w` in roba). Two
 sessions sharing one checkout can have one's `git checkout` yank
 the other's branch mid-run -- the concurrent-checkout interference
 that causes branch-flap contamination (#212).
@@ -181,8 +181,8 @@ gh pr create --draft \
 #    For same-repo work, use isolation: "worktree" so the runner
 #    gets its own checkout and the dispatcher's tree stays clean.
 #
-#    Task tool (same-repo, default):
-#      Task(subagent_type: "runner", isolation: "worktree", prompt: ...)
+#    Agent tool (same-repo, default):
+#      Agent(subagent_type: "runner", isolation: "worktree", prompt: ...)
 #      # => returns {path: "/tmp/wt-xxx", branch: "<branch>"} if changes made
 #
 #    Bash + claude -p: cd into the runner's worktree first so the
@@ -190,7 +190,7 @@ gh pr create --draft \
 #      cd $(pwd) && claude -p --agent runner "$(cat /tmp/task-<N>.md)"
 
 # 4. When the dispatch returns: push the commits it made.
-#    For worktree-isolated Task dispatches, push from the returned path:
+#    For worktree-isolated Agent dispatches, push from the returned path:
 git -C <returned-path> push -u origin <returned-branch>
 git worktree remove <returned-path>
 #    For non-isolated dispatches (same-checkout):
