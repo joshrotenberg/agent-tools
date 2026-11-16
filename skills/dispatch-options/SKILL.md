@@ -40,7 +40,7 @@ references in settings and agent definitions still resolve as aliases.
 For same-repo runner dispatches (branch + file changes), add
 `isolation: "worktree"`. The agent gets its own checkout;
 the dispatcher's working tree is unaffected. See the
-[worktree lifecycle pattern](#task-tool-worktree-isolation) below.
+[worktree lifecycle pattern](#agent-tool-worktree-isolation) below.
 
 This is the normal in-session subagent path. Use it.
 

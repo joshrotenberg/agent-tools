@@ -95,9 +95,9 @@ Defined in [SKILL.md](SKILL.md); here each in depth.
 A single fact, a confirmation, a location, a number, a yes or no.
 
 > Fixed: the validator was never applied to piped input (`editor.rs:995`).
-
+>
 > 152 pass. Coverage 65%.
-
+>
 > No. The archive scan stops at 400 sessions, so that result is partial.
 
 Do not decorate a fact with structure. A table with one row is a sentence wearing a hat.
