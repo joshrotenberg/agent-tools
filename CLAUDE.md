@@ -203,9 +203,9 @@ The completion report is four mechanical parts, in order:
 The fourth part is the one that does the most work and is the easiest
 to drop. It states what the reader does not know to ask about.
 
-This governs shape only. Voice stays with the global `wrapitup`
-protocol (not in this repo), and destination stays with
-`non-pr-output-conventions`. The machine-readable `STATUS:` block in
+This governs shape only. Voice stays with the
+[`wrapitup`](skills/wrapitup/SKILL.md) skill, and destination stays
+with `non-pr-output-conventions`. The machine-readable `STATUS:` block in
 `runner.md` and `worker.md` is unchanged: the report sits above it,
 and neither replaces the other.
 

@@ -18,7 +18,7 @@ lives here.
 |---|---|
 | [`durable-context`](durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
 | [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
-| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Task tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
+| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Agent tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
 | [`work-reports`](work-reports/SKILL.md) | Writing a draft PR body or reporting a finished dispatch -- the plan report and the completion report (verdict line, one-fact bullets, gate roll-call, what was left undone) |
 | [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
 | [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by priority/area/size per `issue-pr-conventions`, normalize titles, flag duplicates, close noise, surface the p1 queue before dispatch |
@@ -31,7 +31,7 @@ lives here.
 
 | Skill | When to use |
 |---|---|
-| [`dispatch-options`](dispatch-options/SKILL.md) | Pick the dispatch mechanism: Task tool (default), or Bash + `claude -p` for headless. Trade-off table |
+| [`dispatch-options`](dispatch-options/SKILL.md) | Pick the dispatch mechanism: Agent tool (default), or Bash + `claude -p` for headless. Trade-off table |
 | [`dispatch-wait-react`](dispatch-wait-react/SKILL.md) | Coordinating with long-running background dispatches without polling or sleep-looping |
 | [`orchestrator-parallelization`](orchestrator-parallelization/SKILL.md) | When to fan out runners vs sequence them (for the parallel-runner shape) |
 | [`orchestration-prompt-template`](orchestration-prompt-template/SKILL.md) | Writing the prompt and wrapping the PR lifecycle when dispatching a runner |
@@ -62,6 +62,14 @@ lives here.
 | [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
 | [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
 | [`github-authoring`](github-authoring/SKILL.md) | Authoring any issue, PR, or commit -- structure (headings, lists, tables, fenced blocks, the bug block, before/after) and voice (factual, no emdashes, conventional-commit prefixes, no commit trailers) |
+| [`vhs-terminal-recordings`](vhs-terminal-recordings/SKILL.md) | Recording README screenshots and demo GIFs with vhs from committed .tape scripts -- determinism, parser and Output gotchas, verifying by extracting frames instead of trusting the result |
+
+### Communication
+
+| Skill | When to use |
+|---|---|
+| [`wrapitup`](wrapitup/SKILL.md) | The default communication protocol for any output a person or agent reads -- cut preamble, narration, recap, and closing offers; protect findings, caveats, and bad news; three registers; checkable forms over prose claims |
+| [`status-cards`](status-cards/SKILL.md) | Presenting a GitHub issue or PR (status, triage output, sweep results) as a fixed card, and offering enumerable choices as a popup instead of a prose question |
 
 ### Meta
 

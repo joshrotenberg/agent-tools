@@ -56,14 +56,14 @@ mechanism you were using:
 | Observation | Target repo |
 |---|---|
 | roba wrapper behavior, CLI flags, session lifecycle, exit codes | joshrotenberg/roba |
-| Task tool behavior (how Claude Code's Task tool itself works) | Claude Code issue tracker |
+| Agent tool behavior (how Claude Code's Agent tool itself works) | Claude Code issue tracker |
 | `claude -p` CLI behavior (exit codes, output envelope, session lifecycle) | Claude Code issue tracker |
 | Skill missing, skill/agent body wrong, cross-link broken | joshrotenberg/agent-tools |
 | Skill/agent definition caused the problem (regardless of dispatch mechanism) | joshrotenberg/agent-tools |
 | Project CLAUDE.md wrong, project CI failures, project-specific gaps | that project's repo |
 | Unclear | default to joshrotenberg/agent-tools; note in the body which repo might be more appropriate |
 
-The key distinction: if the **dispatch mechanism itself** (roba, `claude -p`, Task
+The key distinction: if the **dispatch mechanism itself** (roba, `claude -p`, Agent
 tool) is the bug, route to that tool's tracker. If the **skill or agent definition**
 caused the problem regardless of how the session was dispatched, route to
 `joshrotenberg/agent-tools`.
@@ -91,11 +91,11 @@ you have; omit fields you don't.
 
 ```
 **Auto-context**
-- wrapper: roba 0.2.1  (or: Task tool, claude -p, claude-wrapper)
+- wrapper: roba 0.2.1  (or: Agent tool, claude -p, claude-wrapper)
 - model: claude-sonnet-4-5
 - os: darwin 24.x
 - task: implement #42 in /path/to/repo  (issue number or task file name, not content)
-- session-id: <mechanism-dependent: roba stderr, Task tool /tasks UI, or N/A for claude -p>
+- session-id: <mechanism-dependent: roba stderr, Agent tool /tasks UI, or N/A for claude -p>
 - exit-code: 1
 - error-envelope: <wrapper error output if any, redacted of project content>
 ```
@@ -119,7 +119,7 @@ Examples:
 ```
 fix: roba/session-lifecycle -- exit code 1 on clean run when output contains warnings
 feat: sandbox-preflight -- no guidance for npm workspaces when package.json is nested
-fix: spiral-diagnosis -- session-id not available from Task tool dispatch
+fix: spiral-diagnosis -- session-id not available from Agent tool dispatch
 fix: task-tool/worktree -- isolation: "worktree" returns empty path on clean-run dispatch
 fix: claude-p/exit-code -- claude -p exits 0 when dispatched session hits rate limit
 ```

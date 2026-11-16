@@ -101,7 +101,7 @@ actual Edit/Write tool, not a Bash command:
    like a blocked Bash tool: **fail loud immediately** with the exact gate
    message and do NOT proceed. The launch configuration is wrong -- the
    dispatch needs `--full-auto` or `--permission-mode acceptEdits` (or the
-   Task-tool equivalent). Workarounds cannot fix a misconfigured launch.
+   Agent-tool equivalent). Workarounds cannot fix a misconfigured launch.
 
 **Discipline (carry this into the run, not just preflight):** if a write is
 blocked by a permission/approval gate -- not a logic error -- STOP immediately

@@ -28,7 +28,7 @@ Original failure mode observed on the work machine (roba #104):
 
   ```bash
   # Mechanism per dispatch-options:
-  #   Task tool:    Task(subagent_type: "runner", prompt: <prompt>)
+  #   Agent tool:    Agent(subagent_type: "runner", prompt: <prompt>)
   #   Bash + roba:  roba --fresh --full-auto -C <repo-path> -f /tmp/task-<N>.md
   #   Bash + claude -p: claude -p --agent runner "$(cat /tmp/task-<N>.md)"
   ```

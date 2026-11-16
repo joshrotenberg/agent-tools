@@ -51,8 +51,8 @@ ls -lt ~/.claude/projects/<this-project-dir>/*.jsonl | head -3
 The biggest recent file that *isn't* the current Claude Code
 session is the dispatched session.
 
-For dispatches via the Task tool (same process, no separate
-session id): the Task tool's output stream IS the transcript;
+For dispatches via the Agent tool (same process, no separate
+session id): the Agent tool's output stream IS the transcript;
 read what's been emitted so far.
 
 ## What to look for
@@ -148,11 +148,11 @@ touch the same files).
 
 ## Resuming interrupted sessions
 
-If a Task tool subagent was interrupted mid-run (rate limit, network failure,
+If a Agent tool subagent was interrupted mid-run (rate limit, network failure,
 session crash), you can continue it rather than re-dispatching from scratch:
 
 ```
-Task(resume: "<agent-id>", prompt: "continue from where you left off")
+Agent(resume: "<agent-id>", prompt: "continue from where you left off")
 ```
 
 Agent IDs are visible via `/tasks` in the Claude Code interface.

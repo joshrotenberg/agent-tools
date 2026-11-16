@@ -132,7 +132,7 @@ labeled queue. See [`triage`](../triage/SKILL.md).
 
 The read-only, text-output shape. The unit is a question, comparison,
 or status request. The dispatcher fires a `subagent_type: "explore"`
-Task dispatch (or researcher agent when available). Output goes to
+Agent dispatch (or researcher agent when available). Output goes to
 the destination per
 [`non-pr-output-conventions`](../non-pr-output-conventions/SKILL.md):
 stdout for ephemeral answers, issue comment or file for durable
@@ -193,7 +193,7 @@ CLAUDE.md and continue. The shapes are not stateful processes
 ## When NOT to invoke the dispatcher
 
 If the unit is small and well-defined, the human IS the
-dispatcher; invoke a runner directly via Task tool or Bash.
+dispatcher; invoke a runner directly via Agent tool or Bash.
 The dispatcher agent earns its keep when:
 
 - Unit scoping is non-trivial

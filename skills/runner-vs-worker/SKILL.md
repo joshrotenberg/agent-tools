@@ -129,5 +129,5 @@ Rules:
 - [`../../agents/worker.md`](../../agents/worker.md) -- the
   file-change agent: edits files, validates, commits, stops.
 - [`../dispatch-options/SKILL.md`](../dispatch-options/SKILL.md) -- choosing
-  the dispatch mechanism (Task tool vs Bash + claude -p) after you have
+  the dispatch mechanism (Agent tool vs Bash + claude -p) after you have
   decided which agent to dispatch.
