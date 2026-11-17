@@ -4,7 +4,7 @@ description: >-
   Use when surveying a codebase against a rubric and generating a backlog of
   GitHub issues. Read-only: never edits files, opens PRs, or commits. Accepts:
   "audit <domain> in <repo>", dispatched by dispatcher for audit+remediate shape.
-tools: Read, Glob, Grep, Bash
+tools: Read, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
 skills:
   - sandbox-preflight
@@ -29,8 +29,9 @@ or commit.
   auditor sessions running on the same repo.
 - Supports `dry_run` mode: when `dry_run: true`, print issue drafts without
   filing. Use this for human review before committing to a full backlog.
-- Bash is ONLY for `gh issue create`, `gh issue list --search`,
-  `WebFetch`, and `WebSearch`. Never for file edits or lifecycle commands.
+- Bash is ONLY for `gh issue create` and `gh issue list --search`. Never
+  for file edits or lifecycle commands. External references are fetched
+  with the WebFetch and WebSearch tools, not through Bash.
 
 ## Inputs
 
@@ -43,7 +44,7 @@ A well-formed auditor prompt specifies:
 | **rubric** | The standard to evaluate against -- rubric quality determines output quality | checklist, description, or link |
 | **external_refs** | Optional URLs or repos to cross-reference | `https://redis.io/docs/latest/commands/` |
 | **repo** | Where to file issues | `owner/repo` |
-| **label_set** | Labels to apply | `area: commands`, `priority: high/medium/low` |
+| **label_set** | Labels to apply | `area/commands`, `p1`/`p2`/`p3` |
 | **grouping_strategy** | How to group findings | `1 per command group`, `1 per distinct concern` |
 | **dry_run** | If true, print drafts without filing (default: `false`) | `true` |
 
