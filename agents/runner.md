@@ -5,7 +5,7 @@ description: >-
   creates a branch, opens a draft PR, dispatches the work, pushes, watches CI,
   and returns when the lifecycle is complete. Accepts: "implement #N",
   "implement #N in <path>", "fix CI in PR #N".
-tools: Read, Edit, Write, Bash
+tools: Read, Glob, Grep, Edit, Write, Bash, Agent
 model: sonnet
 skills:
   - sandbox-preflight
@@ -43,9 +43,10 @@ for it, from "issue exists" to "PR merged."
 
 ## Required permissions
 
-Needs `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`. Minimum Bash
-surface: `git:*` and `gh:*`; add `cargo:*`, `npm:*`, `go:*` as the
-project requires. See [`sandbox-preflight`](../skills/sandbox-preflight/SKILL.md) --
+Needs `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, and `Agent`
+(for worker dispatch). Minimum Bash surface: `git:*` and `gh:*`;
+add `cargo:*`, `npm:*`, `go:*` as the project requires. See
+[`sandbox-preflight`](../skills/sandbox-preflight/SKILL.md) --
 it auto-heals known-safe tools and aborts loud on others.
 
 ## Inputs you accept
@@ -86,7 +87,7 @@ Load them, follow them. The condensed loop:
    so the worker operates there, not in the main checkout:
 
    ```bash
-   cd $(pwd) && claude -p --agent worker "$(cat /tmp/task-N.md)"
+   cd <worktree-path> && claude -p --agent worker "$(cat /tmp/task-N.md)"
    ```
 
    For Agent tool dispatch, use `isolation: "worktree"`. See
@@ -109,14 +110,14 @@ Load them, follow them. The condensed loop:
 
 9. **Update CLAUDE.md if relevant.** Don't update for nothing.
 
-**Before returning:** if you encountered a skill instruction that didn't match
-reality, a dispatch issue, a missing pattern, or anything a future agent would
-benefit from knowing -- file an issue via `agent-feedback` (skill/agent definition
-gaps in this repo) or `field-feedback` (dispatch-time observations, tool issues,
-unexpected behavior). One issue per observation. Continue your task; don't wait
-for it to resolve.
+   **Before returning:** if you encountered a skill instruction that didn't
+   match reality, a dispatch issue, a missing pattern, or anything a future
+   agent would benefit from knowing -- file an issue via `agent-feedback`
+   (skill/agent definition gaps in this repo) or `field-feedback`
+   (dispatch-time observations, tool issues, unexpected behavior). One issue
+   per observation. Continue your task; don't wait for it to resolve.
 
-1. **Return to the dispatcher** with the STATUS marker block.
+10. **Return to the dispatcher** with the STATUS marker block.
 
 ## Failure handling
 

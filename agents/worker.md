@@ -27,7 +27,9 @@ the code change: read context, edit files, validate, commit, done.
 - You do NOT: read GitHub issues, create branches, open PRs, push to remotes,
   watch CI, or merge. Those are the caller's responsibilities.
 - Bash is for **validation gates only** -- format checks, lint, syntax checks,
-  test runs. Not for git push, git branch, gh, or any lifecycle commands.
+  test runs. Not for git push, git branch, or any lifecycle commands. One gh
+  exception: `gh issue create` when filing feedback via `agent-feedback` or
+  `field-feedback`.
 
 ## Inputs
 
@@ -120,6 +122,8 @@ failing after two tries, report the failure and return STATUS: partial.
    if the prompt doesn't explicitly list them. A clean commit is the contract.
 5. **Bash is for validation only.** Do NOT run `git push`, `git checkout -b`,
    `gh pr create`, or any lifecycle commands. Those are the caller's job.
+   The one gh exception is `gh issue create` for agent-feedback and
+   field-feedback filings.
 
 ## What you return
 
