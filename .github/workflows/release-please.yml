@@ -2,26 +2,32 @@ name: Release Please
 on:
   push:
     branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
   release-please:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: simple
+          extra-files:
+            - type: json
+              path: .claude-plugin/plugin.json
+              jsonpath: $.version
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
       - name: Create release archives
         if: ${{ steps.release.outputs.release_created }}
         run: |
           tar czf agent-tools-${{ steps.release.outputs.tag_name }}.tar.gz \
-            skills/ agents/ install.sh README.md AGENTS.md
+            skills/ agents/ install.sh README.md AGENTS.md \
+            LICENSE-MIT LICENSE-APACHE .claude-plugin/
           zip -r agent-tools-${{ steps.release.outputs.tag_name }}.zip \
-            skills/ agents/ install.sh README.md AGENTS.md
+            skills/ agents/ install.sh README.md AGENTS.md \
+            LICENSE-MIT LICENSE-APACHE .claude-plugin/
       - uses: svenstaro/upload-release-action@v2
         if: ${{ steps.release.outputs.release_created }}
         with:
