@@ -16,68 +16,68 @@ lives here.
 
 | Skill | When to use |
 |---|---|
-| [`durable-context`](durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
-| [`orchestration-patterns`](orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
-| [`workflow-basics`](workflow-basics/SKILL.md) | When to use the Workflow tool vs the Agent tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
-| [`work-reports`](work-reports/SKILL.md) | Writing a draft PR body or reporting a finished dispatch -- the plan report and the completion report (verdict line, one-fact bullets, gate roll-call, what was left undone) |
-| [`non-pr-output-conventions`](non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
-| [`triage`](triage/SKILL.md) | Read-only pass over the open-issue queue: label by priority/area/size per `issue-pr-conventions`, normalize titles, flag duplicates, close noise, surface the p1 queue before dispatch |
-| [`workspace-layout`](workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
-| [`workspace-survey`](workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
-| [`maintenance-sweep`](maintenance-sweep/SKILL.md) | Per-project, read-mostly, non-PR status sweep: stars/forks, issues/PRs split mine vs community vs bots, package downloads, release-due, test run, stale-CLAUDE.md flag. Emit a fresh report every sweep; never cache status into a manager CLAUDE.md |
-| [`local-only-repos`](local-only-repos/SKILL.md) | A repo with no GitHub remote (or not yet git): detect with `git remote` empty, treat blank GitHub columns as expected in survey + sweep, route dispatch to commits + CLAUDE.md instead of issues + PRs, and degrade the sweep to the local axes (release-due via local tags, tests, stale-CLAUDE.md, local-branch cleanup) |
+| [`mm-durable-context`](mm-durable-context/SKILL.md) | Persistence hierarchy, MEMORY.md trap, externalization discipline, cold-restart corollary, dispatcher compaction survival -- load at start of any long session |
+| [`mm-orchestration-patterns`](mm-orchestration-patterns/SKILL.md) | Units of work + execution shapes (single runner / parallel / sequential / chained / audit + remediate / researcher / auditor). Pick the simplest shape that fits. |
+| [`mm-workflow-basics`](mm-workflow-basics/SKILL.md) | When to use the Workflow tool vs the Agent tool for large-scale orchestration (50+ agents); fan-out + synthesize + chained shapes, and the script's no-direct-I/O constraint |
+| [`mm-work-reports`](mm-work-reports/SKILL.md) | Writing a draft PR body or reporting a finished dispatch -- the plan report and the completion report (verdict line, one-fact bullets, gate roll-call, what was left undone) |
+| [`mm-non-pr-output-conventions`](mm-non-pr-output-conventions/SKILL.md) | Non-PR dispatch output: pick the right destination (stdout, CLAUDE.md, issue comment, findings file), spawn-issue handback, synchronous discipline, token budget hints |
+| [`mm-triage`](mm-triage/SKILL.md) | Read-only pass over the open-issue queue: label by priority/area/size per `mm-issue-pr-conventions`, normalize titles, flag duplicates, close noise, surface the p1 queue before dispatch |
+| [`mm-workspace-layout`](mm-workspace-layout/SKILL.md) | The canonical owner-prefixed layout (`~/Code/<host>/<owner>/<repo>`): path shape, `ls ~/Code/github.com/*/*` enumeration, sibling path-arithmetic, and the map-not-model rule (no cached project inventory/status in the manager CLAUDE.md) |
+| [`mm-workspace-survey`](mm-workspace-survey/SKILL.md) | How the dispatcher enumerates projects under the owner-prefixed layout (for multi-project units), reconstitutes a status report (never caches it upward), and the workspace-level CLAUDE.md gap + workarounds |
+| [`mm-maintenance-sweep`](mm-maintenance-sweep/SKILL.md) | Per-project, read-mostly, non-PR status sweep: stars/forks, issues/PRs split mine vs community vs bots, package downloads, release-due, test run, stale-CLAUDE.md flag. Emit a fresh report every sweep; never cache status into a manager CLAUDE.md |
+| [`mm-local-only-repos`](mm-local-only-repos/SKILL.md) | A repo with no GitHub remote (or not yet git): detect with `git remote` empty, treat blank GitHub columns as expected in survey + sweep, route dispatch to commits + CLAUDE.md instead of issues + PRs, and degrade the sweep to the local axes (release-due via local tags, tests, stale-CLAUDE.md, local-branch cleanup) |
 
 ### Dispatch
 
 | Skill | When to use |
 |---|---|
-| [`dispatch-options`](dispatch-options/SKILL.md) | Pick the dispatch mechanism: Agent tool (default), or Bash + `claude -p` for headless. Trade-off table |
-| [`dispatch-wait-react`](dispatch-wait-react/SKILL.md) | Coordinating with long-running background dispatches without polling or sleep-looping |
-| [`orchestrator-parallelization`](orchestrator-parallelization/SKILL.md) | When to fan out runners vs sequence them (for the parallel-runner shape) |
-| [`orchestration-prompt-template`](orchestration-prompt-template/SKILL.md) | Writing the prompt and wrapping the PR lifecycle when dispatching a runner |
-| [`spiral-diagnosis`](spiral-diagnosis/SKILL.md) | When a dispatched session hangs, produces no output, or seems stuck |
+| [`mm-dispatch-options`](mm-dispatch-options/SKILL.md) | Pick the dispatch mechanism: Agent tool (default), or Bash + `claude -p` for headless. Trade-off table |
+| [`mm-dispatch-wait-react`](mm-dispatch-wait-react/SKILL.md) | Coordinating with long-running background dispatches without polling or sleep-looping |
+| [`mm-orchestrator-parallelization`](mm-orchestrator-parallelization/SKILL.md) | When to fan out runners vs sequence them (for the parallel-runner shape) |
+| [`mm-orchestration-prompt-template`](mm-orchestration-prompt-template/SKILL.md) | Writing the prompt and wrapping the PR lifecycle when dispatching a runner |
+| [`mm-spiral-diagnosis`](mm-spiral-diagnosis/SKILL.md) | When a dispatched session hangs, produces no output, or seems stuck |
 
 ### Lifecycle
 
 | Skill | When to use |
 |---|---|
-| [`draft-pr-first`](draft-pr-first/SKILL.md) | Opening a draft PR with the plan as the body BEFORE the work starts |
-| [`sandbox-preflight`](sandbox-preflight/SKILL.md) | Start of any runner dispatch -- verify needed tools are in the sandbox allowlist; fail loud on a block |
-| [`runner-issue-authority`](runner-issue-authority/SKILL.md) | The runner's authoritative source is `gh issue view <N>`, not the dispatcher's paraphrase |
-| [`runner-synchronous-lifecycle`](runner-synchronous-lifecycle/SKILL.md) | The runner fires its dispatch synchronously and only returns after the full lifecycle is complete |
-| [`release-audit-anchoring`](release-audit-anchoring/SKILL.md) | Release-audit work -- anchor analysis on `origin/main` not the working tip; cross-check published versions externally |
+| [`mm-draft-pr-first`](mm-draft-pr-first/SKILL.md) | Opening a draft PR with the plan as the body BEFORE the work starts |
+| [`mm-sandbox-preflight`](mm-sandbox-preflight/SKILL.md) | Start of any runner dispatch -- verify needed tools are in the sandbox allowlist; fail loud on a block |
+| [`mm-runner-issue-authority`](mm-runner-issue-authority/SKILL.md) | The runner's authoritative source is `gh issue view <N>`, not the dispatcher's paraphrase |
+| [`mm-runner-synchronous-lifecycle`](mm-runner-synchronous-lifecycle/SKILL.md) | The runner fires its dispatch synchronously and only returns after the full lifecycle is complete |
+| [`mm-release-audit-anchoring`](mm-release-audit-anchoring/SKILL.md) | Release-audit work -- anchor analysis on `origin/main` not the working tip; cross-check published versions externally |
 
 ### Review
 
 | Skill | When to use |
 |---|---|
-| [`pr-review`](pr-review/SKILL.md) | When reviewing a PR in agent-tools -- reads the diff and issue, checks conventions, approves+merges, approves+notes ordering, or requests changes+converts to draft |
+| [`mm-pr-review`](mm-pr-review/SKILL.md) | When reviewing a PR in agent-tools -- reads the diff and issue, checks conventions, approves+merges, approves+notes ordering, or requests changes+converts to draft |
 
 ### Git + tooling hygiene
 
 | Skill | When to use |
 |---|---|
-| [`issue-pr-conventions`](issue-pr-conventions/SKILL.md) | The cross-project standard: conventional-commit prefixes on branch/issue/PR/commit, the four-axis label taxonomy (priority, area, status, size), and the claim protocol pairing `status/in-progress` with a draft PR |
-| [`git-branch-pr-workflow`](git-branch-pr-workflow/SKILL.md) | Any non-trivial work that becomes a PR |
-| [`git-fix-pr-branching`](git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
-| [`heredoc-backticks`](heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
-| [`github-authoring`](github-authoring/SKILL.md) | Authoring any issue, PR, or commit -- structure (headings, lists, tables, fenced blocks, the bug block, before/after) and voice (factual, no emdashes, conventional-commit prefixes, no commit trailers) |
-| [`vhs-terminal-recordings`](vhs-terminal-recordings/SKILL.md) | Recording README screenshots and demo GIFs with vhs from committed .tape scripts -- determinism, parser and Output gotchas, verifying by extracting frames instead of trusting the result |
+| [`mm-issue-pr-conventions`](mm-issue-pr-conventions/SKILL.md) | The cross-project standard: conventional-commit prefixes on branch/issue/PR/commit, the four-axis label taxonomy (priority, area, status, size), and the claim protocol pairing `status/in-progress` with a draft PR |
+| [`mm-git-branch-pr-workflow`](mm-git-branch-pr-workflow/SKILL.md) | Any non-trivial work that becomes a PR |
+| [`mm-git-fix-pr-branching`](mm-git-fix-pr-branching/SKILL.md) | A PR is open and needs a fix |
+| [`mm-heredoc-backticks`](mm-heredoc-backticks/SKILL.md) | Piping markdown into `gh issue create` / `gh pr create` |
+| [`mm-github-authoring`](mm-github-authoring/SKILL.md) | Authoring any issue, PR, or commit -- structure (headings, lists, tables, fenced blocks, the bug block, before/after) and voice (factual, no emdashes, conventional-commit prefixes, no commit trailers) |
+| [`mm-vhs-terminal-recordings`](mm-vhs-terminal-recordings/SKILL.md) | Recording README screenshots and demo GIFs with vhs from committed .tape scripts -- determinism, parser and Output gotchas, verifying by extracting frames instead of trusting the result |
 
 ### Communication
 
 | Skill | When to use |
 |---|---|
-| [`wrapitup`](wrapitup/SKILL.md) | The default communication protocol for any output a person or agent reads -- cut preamble, narration, recap, and closing offers; protect findings, caveats, and bad news; three registers; checkable forms over prose claims |
-| [`status-cards`](status-cards/SKILL.md) | Presenting a GitHub issue or PR (status, triage output, sweep results) as a fixed card, and offering enumerable choices as a popup instead of a prose question |
+| [`mm-wrapitup`](mm-wrapitup/SKILL.md) | The default communication protocol for any output a person or agent reads -- cut preamble, narration, recap, and closing offers; protect findings, caveats, and bad news; three registers; checkable forms over prose claims |
+| [`mm-status-cards`](mm-status-cards/SKILL.md) | Presenting a GitHub issue or PR (status, triage output, sweep results) as a fixed card, and offering enumerable choices as a popup instead of a prose question |
 
 ### Meta
 
 | Skill | When to use |
 |---|---|
-| [`agent-feedback`](agent-feedback/SKILL.md) | When you notice something wrong or suboptimal in a skill or agent definition -- file an issue rather than silently proceeding |
-| [`field-feedback`](field-feedback/SKILL.md) | When a dispatch-time issue surfaces -- wrapper bug, sandbox gap, unexpected behavior -- file a structured issue to close the feedback loop |
-| [`skill-capabilities`](skill-capabilities/SKILL.md) | When authoring or updating a skill -- reference for `allowed-tools` frontmatter and dynamic context injection (`!`command`` syntax) |
+| [`mm-agent-feedback`](mm-agent-feedback/SKILL.md) | When you notice something wrong or suboptimal in a skill or agent definition -- file an issue rather than silently proceeding |
+| [`mm-field-feedback`](mm-field-feedback/SKILL.md) | When a dispatch-time issue surfaces -- wrapper bug, sandbox gap, unexpected behavior -- file a structured issue to close the feedback loop |
+| [`mm-skill-capabilities`](mm-skill-capabilities/SKILL.md) | When authoring or updating a skill -- reference for `allowed-tools` frontmatter and dynamic context injection (`!`command`` syntax) |
 
 ## Installation
 

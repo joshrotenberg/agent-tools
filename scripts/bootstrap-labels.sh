@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # bootstrap-labels.sh -- provision the issue-pr-conventions label set into a repo.
 #
-# The standard is defined in skills/issue-pr-conventions/SKILL.md: four axes,
+# The standard is defined in skills/mm-issue-pr-conventions/SKILL.md: four axes,
 # capped. This script covers the three that are repo-independent.
 #
 #   priority  p1 / p2 / p3

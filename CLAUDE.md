@@ -67,7 +67,7 @@ The shape is a per-unit choice, NOT an architectural commitment.
 ## The two roles
 
 **Runner** (task-level). Reads `gh issue view N`, composes prompt
-per [`orchestration-prompt-template`](skills/orchestration-prompt-template/SKILL.md),
+per [`mm-orchestration-prompt-template`](skills/mm-orchestration-prompt-template/SKILL.md),
 runs the draft-PR-first lifecycle synchronously (branch → draft
 PR → dispatch → push → ready → watch CI → merge). Returns when
 the lifecycle is complete.
@@ -101,45 +101,45 @@ agent-tools/
     ├── README.md                              # categorized skill index
     │
     ├── # Orchestration model
-    ├── durable-context/                       # what state survives a session
-    ├── orchestration-patterns/                # units of work + execution shapes
-    ├── workflow-basics/                       # Workflow tool vs Task tool (50+)
-    ├── non-pr-output-conventions/             # where non-PR output lands
-    ├── triage/                                # label the open-issue queue
-    ├── workspace-survey/                      # how dispatcher finds projects
-    ├── audit-protocol/                        # rubric + 5-phase auditor contract
-    ├── audit-remediate-handoff/               # findings → per-finding runners
+    ├── mm-durable-context/                       # what state survives a session
+    ├── mm-orchestration-patterns/                # units of work + execution shapes
+    ├── mm-workflow-basics/                       # Workflow tool vs Task tool (50+)
+    ├── mm-non-pr-output-conventions/             # where non-PR output lands
+    ├── mm-triage/                                # label the open-issue queue
+    ├── mm-workspace-survey/                      # how dispatcher finds projects
+    ├── mm-audit-protocol/                        # rubric + 5-phase auditor contract
+    ├── mm-audit-remediate-handoff/               # findings → per-finding runners
     │
     ├── # Dispatch
-    ├── dispatch-options/                      # Task tool / claude -p trade-offs
-    ├── dispatch-wait-react/                   # background + notification, not polling
-    ├── orchestrator-parallelization/          # fan-out heuristics
-    ├── orchestration-prompt-template/         # how to write the runner prompt
-    ├── spiral-diagnosis/                      # when a dispatched session hangs
-    ├── runner-vs-worker/                      # dispatch a runner or a worker?
+    ├── mm-dispatch-options/                      # Task tool / claude -p trade-offs
+    ├── mm-dispatch-wait-react/                   # background + notification, not polling
+    ├── mm-orchestrator-parallelization/          # fan-out heuristics
+    ├── mm-orchestration-prompt-template/         # how to write the runner prompt
+    ├── mm-spiral-diagnosis/                      # when a dispatched session hangs
+    ├── mm-runner-vs-worker/                      # dispatch a runner or a worker?
     │
     ├── # Lifecycle
-    ├── draft-pr-first/                        # PR before work
-    ├── sandbox-preflight/                     # fail loud on blocked tools
-    ├── runner-issue-authority/                # gh issue view is authoritative
-    ├── runner-synchronous-lifecycle/          # runner holds open until PR is merged
-    ├── release-audit-anchoring/               # anchor on origin/main
+    ├── mm-draft-pr-first/                        # PR before work
+    ├── mm-sandbox-preflight/                     # fail loud on blocked tools
+    ├── mm-runner-issue-authority/                # gh issue view is authoritative
+    ├── mm-runner-synchronous-lifecycle/          # runner holds open until PR is merged
+    ├── mm-release-audit-anchoring/               # anchor on origin/main
     │
     ├── # Review
-    ├── pr-review/                             # review a PR in agent-tools
+    ├── mm-pr-review/                             # review a PR in agent-tools
     │
     ├── # Git + tooling hygiene
-    ├── issue-pr-conventions/                  # naming, label taxonomy, claim protocol
-    ├── work-reports/                          # plan report + completion report shapes
-    ├── git-branch-pr-workflow/                # branch + PR discipline
-    ├── git-fix-pr-branching/                  # branch off main, not off open PR
-    ├── heredoc-backticks/                     # gh issue/PR body formatting
+    ├── mm-issue-pr-conventions/                  # naming, label taxonomy, claim protocol
+    ├── mm-work-reports/                          # plan report + completion report shapes
+    ├── mm-git-branch-pr-workflow/                # branch + PR discipline
+    ├── mm-git-fix-pr-branching/                  # branch off main, not off open PR
+    ├── mm-heredoc-backticks/                     # gh issue/PR body formatting
     │
     └── # Meta
-    ├── agent-feedback/                        # file an issue on a bad skill/agent
-    ├── field-feedback/                        # file a dispatch-time issue
-    ├── skill-capabilities/                    # allowed-tools + dynamic injection
-    └── install-cadence/                       # re-install after merged PRs
+    ├── mm-agent-feedback/                        # file an issue on a bad skill/agent
+    ├── mm-field-feedback/                        # file a dispatch-time issue
+    ├── mm-skill-capabilities/                    # allowed-tools + dynamic injection
+    └── mm-install-cadence/                       # re-install after merged PRs
 ```
 
 29 skills + 5 agents + repo files. Skills are categorized in
@@ -155,11 +155,11 @@ labeled four different ways across five repos; two competing type
 vocabularies were in use (agent-tools' `feat`/`fix` vs the GitHub
 defaults, which dominate elsewhere at 60+ uses each); `in-progress`
 existed on two repos and was heavily used, but did not exist on
-agent-tools even though `audit-remediate-handoff` told the dispatcher
+agent-tools even though `mm-audit-remediate-handoff` told the dispatcher
 to apply it, so that command errored; area labels ranged from none to
 nine `cmd-*` labels.
 
-Added `issue-pr-conventions` as the source of truth. Three decisions:
+Added `mm-issue-pr-conventions` as the source of truth. Three decisions:
 
 - **The type axis is dropped from labels entirely.** The
   conventional-commit prefix in the title already carries type, so a
@@ -169,7 +169,7 @@ Added `issue-pr-conventions` as the source of truth. Three decisions:
 - **Priority is `p1`/`p2`/`p3`.** Shortest scheme in use, sorts, and
   the triage heuristics were already written against it.
 - **Four axes, capped:** priority, `area/*` (repo-defined, max 6),
-  `status/*`, `size/*`. One exception, `field-feedback`, which records
+  `status/*`, `size/*`. One exception, `mm-field-feedback`, which records
   provenance the title cannot.
 
 The claim protocol pairs `status/in-progress` on the issue with a
@@ -188,7 +188,7 @@ created or renamed anywhere.
 
 ### 2026-08-19: two report shapes per unit of work (#247)
 
-Added `work-reports` after reviewing Codex session transcripts the
+Added `mm-work-reports` after reviewing Codex session transcripts the
 owner flagged as the target style. Two reports per unit, no third: the
 plan report (the draft PR body, already half the claim protocol) and
 the completion report.
@@ -204,8 +204,8 @@ The fourth part is the one that does the most work and is the easiest
 to drop. It states what the reader does not know to ask about.
 
 This governs shape only. Voice stays with the
-[`wrapitup`](skills/wrapitup/SKILL.md) skill, and destination stays
-with `non-pr-output-conventions`. The machine-readable `STATUS:` block in
+[`mm-wrapitup`](skills/mm-wrapitup/SKILL.md) skill, and destination stays
+with `mm-non-pr-output-conventions`. The machine-readable `STATUS:` block in
 `runner.md` and `worker.md` is unchanged: the report sits above it,
 and neither replaces the other.
 
@@ -246,7 +246,7 @@ and neither replaces the other.
   - "BYO skills + agents" is a cleaner pitch for roba; one
     curated convention is a cleaner pitch for this repo.
 - **One-way relationship.** agent-tools may have a roba
-  dispatch option among others (per `dispatch-options`); roba
+  dispatch option among others (per `mm-dispatch-options`); roba
   doesn't know about agent-tools.
 - **Migration path.** Skills + agents moved verbatim, then
   reworked against the new model. roba's `skills/` and
@@ -258,7 +258,7 @@ and neither replaces the other.
   runner (task) hierarchy.
 - Wrote `coordinator/AGENT.md`, `orchestrator/AGENT.md`,
   `runner/AGENT.md`, plus `coordinator-orchestrator-protocol`
-  skill, `workspace-survey` skill.
+  skill, `mm-workspace-survey` skill.
 - **Rejected** later the same session.
 
 ### 2026-06-02 afternoon: reframed to dispatcher + runner
@@ -275,7 +275,7 @@ and neither replaces the other.
     / audit + remediate): per-unit decision, not architectural.
 - Deleted `coordinator/`, `coordinator-orchestrator-protocol/`;
   renamed `orchestrator/` → `dispatcher/`; rewrote
-  `orchestration-patterns/` around units + shapes.
+  `mm-orchestration-patterns/` around units + shapes.
 - This is the current shape.
 - **Why this reframe is the right shape:** because the substrate
   IS the durable state. Roles describing levels of an
@@ -289,11 +289,11 @@ and neither replaces the other.
 ### Naming conventions
 
 - `name:` field in frontmatter MUST match directory name.
-- Kebab-case for everything (`dispatch-options`, not
+- Kebab-case for everything (`mm-dispatch-options`, not
   `dispatchOptions` or `dispatch_options`).
 - Skill names are noun-phrases describing what the skill is
-  about (`spiral-diagnosis`, `sandbox-preflight`,
-  `workspace-survey`).
+  about (`mm-spiral-diagnosis`, `mm-sandbox-preflight`,
+  `mm-workspace-survey`).
 - Agent names are nouns describing the role (`runner`,
   `dispatcher`).
 
@@ -378,15 +378,15 @@ claude --plugin-dir .     # load the plugin for a session; reload after edits
 
 #206 reframed the dispatch docs Task-tool-centric and demoted roba
 to a one-line "headless wrapper" footnote. A few skills still carry
-roba as an *example* of a trace/worktree flag (`spiral-diagnosis`,
-`orchestrator-parallelization`) and as historical incident anecdotes
-(`sandbox-preflight`, `runner-synchronous-lifecycle`, `heredoc-backticks`,
-`git-fix-pr-branching`). Those are kept on purpose -- examples and
+roba as an *example* of a trace/worktree flag (`mm-spiral-diagnosis`,
+`mm-orchestrator-parallelization`) and as historical incident anecdotes
+(`mm-sandbox-preflight`, `mm-runner-synchronous-lifecycle`, `mm-heredoc-backticks`,
+`mm-git-fix-pr-branching`). Those are kept on purpose -- examples and
 provenance, not "the mechanism." Don't "fix" them.
 
 ### Label migration across repos (deferred from #247)
 
-`issue-pr-conventions` and `scripts/bootstrap-labels.sh` landed, but no
+`mm-issue-pr-conventions` and `scripts/bootstrap-labels.sh` landed, but no
 repo was migrated. Running the adoption pass means, per repo: rename
 the priority labels to `p1`/`p2`/`p3`, rename `in-progress` to
 `status/in-progress`, create the missing `status/*` and `size/*`
@@ -405,7 +405,7 @@ area candidates.
 
 ### Runner merge gates (#243, #244, #245)
 
-Three findings hit the same six lines of the `draft-pr-first` dispatch
+Three findings hit the same six lines of the `mm-draft-pr-first` dispatch
 flow and were left out of #247, which was scoped to the standard:
 verify the PR head SHA matches the pushed commit before trusting `gh
 pr checks` or merging (#243); check main has not advanced past the
@@ -416,7 +416,7 @@ added in #247.
 
 ### Chained execution shape (design → impl → review)
 
-Documented in `orchestration-patterns` as a future shape. Build
+Documented in `mm-orchestration-patterns` as a future shape. Build
 when the single-runner approach visibly breaks for a specific
 unit of work. Tracked in roba issue #127 (the brainstorm); when
 this gets built, it likely produces new Layer 2 agents in
@@ -425,7 +425,7 @@ dispatcher update for the chained shape.
 
 ### Workspace config file
 
-`workspace-survey` documents the filesystem-walk approach as
+`mm-workspace-survey` documents the filesystem-walk approach as
 v1, with a config file as a deferred option. Build when the
 filesystem walk gets lossy (projects in non-standard locations,
 priority hints that the filesystem can't express).
@@ -443,8 +443,8 @@ runner/worker bodies. CI flatten ripple (#211) has PR #214 open.
 
 ### Sandbox write-gate (#217-#218)
 
-`sandbox-preflight` misses write-gate blocks -- needs a Step 0
-write probe (#217). `orchestration-prompt-template` also needs
+`mm-sandbox-preflight` misses write-gate blocks -- needs a Step 0
+write probe (#217). `mm-orchestration-prompt-template` also needs
 write-gate halt caveat, worktree isolation note, and single-commit
 reminder (#218). Both open.
 
@@ -487,12 +487,12 @@ runner` work is at parity.
 
 - **Bash subprocess dispatch.** `roba` / `claude -p` dispatch
   (roba-orchestrator, roba-runner, `dispatch-via-bash`, the Bash
-  branch of `dispatch-options`) needs those binaries on PATH. A
+  branch of `mm-dispatch-options`) needs those binaries on PATH. A
   GUI launch may not inherit your shell PATH (the macOS Dock
   gotcha). Check in a desktop Bash cell: `which claude roba gh`.
   Fix by launching `open -a Claude` from a terminal, or pin
   PATH/env in `.claude/settings.json`.
-- **Cross-project `workspace-survey`.** Desktop scopes file
+- **Cross-project `mm-workspace-survey`.** Desktop scopes file
   access to the open project folder(s); walking
   `~/Code/github.com/joshrotenberg/` needs those dirs added.
   Single-project dispatching is fine.
@@ -520,9 +520,9 @@ and natural-language delegation resolve them regardless.
 - Check `skills/README.md` and `agents/README.md` for the
   current shape of the library.
 - Check `git log --oneline | head -20` for recent direction.
-- For dispatch-mechanism questions, see `skills/dispatch-options/SKILL.md`.
+- For dispatch-mechanism questions, see `skills/mm-dispatch-options/SKILL.md`.
 - For "what's a unit of work" or "what execution shape," see
-  `skills/orchestration-patterns/SKILL.md`.
+  `skills/mm-orchestration-patterns/SKILL.md`.
 
 ## Read first, update last
 
@@ -550,12 +550,12 @@ produced 17 findings (#152-#168) -- all resolved in the same session.
 which are covered by orchestration-prompt-template and runner
 respectively).
 
-**New skills added.** `runner-vs-worker` (decision boundary between
+**New skills added.** `mm-runner-vs-worker` (decision boundary between
 runner and worker; failure mode: runner opened as worker causes
-unsolicited draft PR + CI + merge), `audit-protocol` (extracted
+unsolicited draft PR + CI + merge), `mm-audit-protocol` (extracted
 from auditor body: rubric format + 5-phase execution contract),
-`audit-remediate-handoff` (findings → dispatcher labels in-progress
-→ per-finding runners), `install-cadence` (run `./install.sh
+`mm-audit-remediate-handoff` (findings → dispatcher labels in-progress
+→ per-finding runners), `mm-install-cadence` (run `./install.sh
 --force` after each batch of merged PRs).
 
 **`claude -p` does not support `-C` flag.** Fixed to
@@ -582,7 +582,7 @@ dispatch-agnostic as designed.
 
 **CI added (issues #6, #9-#11, #15, PRs #12-#16 merged).** GitHub Actions
 workflow, frontmatter validation script, markdownlint, AGENTS.md, smoke tests,
-agent-feedback skill.
+mm-agent-feedback skill.
 
 **Worktree isolation: use `isolation: "worktree"` on all same-repo Agent
 dispatches.** The Task/Agent tool has this built in natively. No external tool

@@ -7,16 +7,16 @@ description: >-
 tools: Read, Bash, Agent
 model: sonnet
 skills:
-  - workspace-survey
-  - triage
-  - orchestration-patterns
-  - dispatch-options
-  - dispatch-wait-react
-  - orchestration-prompt-template
-  - spiral-diagnosis
-  - orchestrator-parallelization
-  - durable-context
-  - non-pr-output-conventions
+  - mm-workspace-survey
+  - mm-triage
+  - mm-orchestration-patterns
+  - mm-dispatch-options
+  - mm-dispatch-wait-react
+  - mm-orchestration-prompt-template
+  - mm-spiral-diagnosis
+  - mm-orchestrator-parallelization
+  - mm-durable-context
+  - mm-non-pr-output-conventions
 ---
 
 # Dispatcher
@@ -88,24 +88,24 @@ the other (add a type + use it), or it's a pure formatting/lint pass on a
 file already being touched.
 
 If open unlabeled issues exist, dispatch a triage pass
-(`subagent_type: "explore"` using [`triage`](../skills/triage/SKILL.md))
+(`subagent_type: "explore"` using [`mm-triage`](../skills/mm-triage/SKILL.md))
 before scoping runners. Triage is read-only; the human reviews the p1
 queue before dispatch starts.
 
-Key skills (triage, orchestration-patterns, dispatch-options) do not survive
+Key skills (mm-triage, mm-orchestration-patterns, mm-dispatch-options) do not survive
 `/compact`. Re-invoke them at the start of each new dispatch cycle to ensure
 they are in context regardless of whether compaction occurred. See
-[`durable-context`](../skills/durable-context/SKILL.md) for details.
+[`mm-durable-context`](../skills/mm-durable-context/SKILL.md) for details.
 
 ### 2. Gather durable context per unit
 
 Read: `gh issue view N`, `gh pr list`, the project's CLAUDE.md, cross-project
-surveys via [`workspace-survey`](../skills/workspace-survey/SKILL.md).
+surveys via [`mm-workspace-survey`](../skills/mm-workspace-survey/SKILL.md).
 You're gathering context, not doing work.
 
 ### 3. Decide the execution shape
 
-Per [`orchestration-patterns`](../skills/orchestration-patterns/SKILL.md):
+Per [`mm-orchestration-patterns`](../skills/mm-orchestration-patterns/SKILL.md):
 
 | shape | when |
 | --- | --- |
@@ -120,10 +120,10 @@ Most days: single runner.
 ### 4. Fire + reconcile
 
 Compose the prompt per
-[`orchestration-prompt-template`](../skills/orchestration-prompt-template/SKILL.md).
+[`mm-orchestration-prompt-template`](../skills/mm-orchestration-prompt-template/SKILL.md).
 Use `subagent_type: "runner"` (Agent tool) for dispatches. For same-repo
 Agent dispatches that modify files, pass `isolation: "worktree"`. See
-[`dispatch-options`](../skills/dispatch-options/SKILL.md).
+[`mm-dispatch-options`](../skills/mm-dispatch-options/SKILL.md).
 
 **Background vs foreground:** When a directive is self-contained -- the result
 doesn't feed the next dispatch and you don't need it to answer the user -- fire
@@ -142,7 +142,7 @@ Set `model` and `effort` on each dispatch based on issue labels:
 | `p3`, `docs`, `chore` | `haiku` | `low` |
 
 Track each dispatched task. For spirals, see
-[`spiral-diagnosis`](../skills/spiral-diagnosis/SKILL.md).
+[`mm-spiral-diagnosis`](../skills/mm-spiral-diagnosis/SKILL.md).
 
 Return summary: what landed, what's blocked, what got deferred.
 
@@ -159,12 +159,12 @@ Return summary: what landed, what's blocked, what got deferred.
    to the human, not to another agent.
 7. **File feedback when you see a gap.** If you notice a skill instruction
    that doesn't match how dispatch actually behaves, or a pattern that's missing
-   from the skills library, file via `agent-feedback`. For tool/wrapper issues,
-   use `field-feedback`.
+   from the skills library, file via `mm-agent-feedback`. For tool/wrapper issues,
+   use `mm-field-feedback`.
 8. **Verify install sync before dispatching.** After any batch of merged
    agent-tools PRs, confirm `~/.claude/agents/` and `~/.claude/skills/` match
    the repo before firing runners. See
-   [`install-cadence`](../skills/install-cadence/SKILL.md).
+   [`mm-install-cadence`](../skills/mm-install-cadence/SKILL.md).
 
 ## Default response shape
 

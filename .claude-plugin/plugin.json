@@ -1,6 +1,6 @@
 {
   "name": "agent-tools",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "description": "Dispatcher/runner orchestration agents and operational skills for Claude Code.",
   "author": {
     "name": "Josh Rotenberg"

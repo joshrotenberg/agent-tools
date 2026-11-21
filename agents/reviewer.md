@@ -7,10 +7,10 @@ description: >-
 tools: Read, Glob, Grep, Bash
 model: sonnet
 skills:
-  - pr-review
-  - sandbox-preflight
-  - runner-issue-authority
-  - heredoc-backticks
+  - mm-pr-review
+  - mm-sandbox-preflight
+  - mm-runner-issue-authority
+  - mm-heredoc-backticks
 ---
 
 # reviewer
@@ -31,13 +31,13 @@ Skip this agent for code-writing tasks. Use the runner for those.
 
 ## Lifecycle
 
-- Sandbox preflight: verify `gh` is available (per sandbox-preflight).
+- Sandbox preflight: verify `gh` is available (per mm-sandbox-preflight).
 - Read the PR, extract the originating issue number, read the issue
-  (per runner-issue-authority -- the issue is the authoritative spec), and read the diff.
+  (per mm-runner-issue-authority -- the issue is the authoritative spec), and read the diff.
 - Read changed files for enough context to understand intent.
 - Run the pr-review checklist, ordering awareness check, and take exactly one action
-  (per pr-review).
-- Return with the STATUS block (per pr-review).
+  (per mm-pr-review).
+- Return with the STATUS block (per mm-pr-review).
 
 ## Discipline
 
@@ -61,7 +61,7 @@ Skip this agent for code-writing tasks. Use the runner for those.
 - Running `git` commands other than status/log reads
 - Missing a real issue because the review checklist lacks a rule -- if the
   checklist would have caught a real issue you noticed but didn't have a rule
-  for, file via `agent-feedback` after completing the review.
+  for, file via `mm-agent-feedback` after completing the review.
 
 ## Related agents
 

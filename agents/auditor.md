@@ -7,9 +7,9 @@ description: >-
 tools: Read, Glob, Grep, Bash, WebFetch, WebSearch
 model: sonnet
 skills:
-  - sandbox-preflight
-  - durable-context
-  - audit-protocol
+  - mm-sandbox-preflight
+  - mm-durable-context
+  - mm-audit-protocol
 ---
 
 # auditor
@@ -53,7 +53,7 @@ A well-formed auditor prompt specifies:
 A well-formed rubric has four required sections: "What complete looks like",
 "Priority heuristics", "What to skip", and "Cross-cutting question". A vague
 rubric produces vague, low-value issues. See the
-[`audit-protocol`](../skills/audit-protocol/SKILL.md) skill for the full
+[`mm-audit-protocol`](../skills/mm-audit-protocol/SKILL.md) skill for the full
 rubric template and why each section is required.
 
 ## Execution contract
@@ -61,7 +61,7 @@ rubric template and why each section is required.
 Five phases in order: Orient, Evaluate, Triage, File, Report. The full
 contract -- including the duplicate-check discipline in File and the report
 shape in Report -- is defined in the
-[`audit-protocol`](../skills/audit-protocol/SKILL.md) skill. Follow it
+[`mm-audit-protocol`](../skills/mm-audit-protocol/SKILL.md) skill. Follow it
 exactly; skipping phases (especially the pre-flight duplicate check before
 filing) produces noise.
 
@@ -107,13 +107,13 @@ tracker -- note them so the domain owner can file if appropriate.
 
 ## Related
 
-- [`skills/triage/SKILL.md`](../skills/triage/SKILL.md) -- labels and
+- [`skills/mm-triage/SKILL.md`](../skills/mm-triage/SKILL.md) -- labels and
   prioritizes existing issues; the auditor creates new issues
 - [`reviewer.md`](reviewer.md) -- reviews a specific PR;
   the auditor evaluates the whole codebase against a standard
 - [`runner.md`](runner.md) -- the natural next step after
   an audit produces a backlog; implements the filed issues
-- [`skills/orchestration-patterns/SKILL.md`](../skills/orchestration-patterns/SKILL.md)
+- [`skills/mm-orchestration-patterns/SKILL.md`](../skills/mm-orchestration-patterns/SKILL.md)
   -- "audit + remediate" is the execution shape this agent enables
-- [`skills/audit-remediate-handoff/SKILL.md`](../skills/audit-remediate-handoff/SKILL.md)
+- [`skills/mm-audit-remediate-handoff/SKILL.md`](../skills/mm-audit-remediate-handoff/SKILL.md)
   -- how the dispatcher picks up filed findings and fires per-finding runners

@@ -5,6 +5,11 @@
 # This script costs API credits; run it on a schedule or manually, not on
 # every push. See .github/workflows/token-budget.yml for the scheduled job.
 #
+# Data flow: the script POSTs the full text of every skills/**/SKILL.md and
+# agents/*.md file to api.anthropic.com for token counting. For a private
+# repo this is third-party processing of private content under Anthropic's
+# API terms; do not add secrets or sensitive material to skill/agent files.
+#
 # Thresholds:
 #   Per-skill body:          WARN >= 4000 tokens, ERROR >= 5000 tokens
 #   Per-agent body:          WARN >= 2500 tokens, ERROR >= 3000 tokens

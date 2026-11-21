@@ -1,0 +1,159 @@
+---
+name: mm-release-audit-anchoring
+description: When the task involves release-readiness, release-audit, version analysis, or "is this ready to ship" -- apply before any analysis. Anchor on origin/main (not the working branch tip), surface branch divergence in the first paragraph, and cross-check published versions against external sources. Without this, a stale branch produces false blocking findings.
+---
+
+# Release audit anchoring
+
+A release-readiness audit is only useful if it targets the branch
+that will actually ship. The dangerous failure mode is auditing the
+**working branch tip** -- which may be stale, mid-release-prep, or a
+side branch that predates a version bump -- and reporting its state
+as if it were the release state. The result is a confident audit full
+of false blocking findings, which wastes time and undermines trust in
+every future audit.
+
+## When to apply
+
+Apply this skill when the task framing involves any of: "release
+readiness," "release audit," "is this ready to ship," "next release,"
+"version chaos," or similar release-shaped analysis.
+
+When the task says "audit X for release," the meaningful reference
+point is the **default branch** (typically `main`), not whatever
+branch happens to be checked out. The working tree is a candidate or
+a side branch; the thing that ships is `origin/main` (or the project's
+release branch).
+
+## Three disciplines
+
+### 1. Anchor on origin/main
+
+Before any analysis, establish the baseline and compute divergence:
+
+```bash
+git fetch origin main
+git rev-parse origin/main
+git rev-parse HEAD
+git log --oneline origin/main..HEAD | head -10   # commits ahead
+git log --oneline HEAD..origin/main | head -10   # commits behind
+```
+
+If you're not on `main`, you now know exactly how the working branch
+diverges. Then run the actual analysis **against `origin/main`**, not
+the working tree:
+
+```bash
+git show origin/main:Cargo.toml | grep version
+git show origin/main:CHANGELOG.md | head -30
+```
+
+For other ecosystems, anchor on the equivalent manifest the same way:
+
+```bash
+git show origin/main:mix.exs | grep version
+git show origin/main:pom.xml | grep '<version>'
+git show origin/main:build.gradle | grep version
+```
+
+The working tree may be in a stale or in-progress state; `origin/main`
+is the ground truth for "what ships."
+
+If the project's default branch is not `main` (e.g. `master`,
+`develop`, `release`), substitute it everywhere above. Confirm with
+`git remote show origin | grep 'HEAD branch'` if unsure.
+
+### 2. Surface branch divergence in the first paragraph
+
+Open the audit report with the divergence, before any findings:
+
+```
+Analyzing branch: <branch> (N commits ahead of origin/main, M behind).
+
+The audit below targets origin/main. The working branch state has
+the following divergence: <summary>.
+```
+
+This makes it immediately obvious whether the audit is hitting the
+right baseline. If the divergence is meaningful (the branch is stale,
+contains release-prep commits, or predates a version bump), the user
+can redirect before reading a single finding -- instead of discovering
+at the end that the whole audit targeted the wrong tree.
+
+### 3. Cross-check published versions externally
+
+Never determine the published version from in-tree files alone.
+`Cargo.toml`, `CHANGELOG.md`, and `README.md` are frequently ahead of
+or behind the registry depending on release-plz (or equivalent) state.
+
+Cross-check against an external source of truth:
+
+- Registry latest version:
+  - Rust: `cargo search <crate>`
+  - Python: `pip index versions <pkg>`
+  - Node: `npm view <pkg> versions`
+  - Elixir/Hex: `mix hex.info <package>` or
+    `curl https://hex.pm/api/packages/<package> | jq '.releases[0].version'`
+  - Java/Maven Central:
+
+    ```bash
+    curl "https://search.maven.org/solrsearch/select?q=g:<group>+AND+a:<artifact>&rows=1&wt=json" \
+      | jq '.response.docs[0].latestVersion'
+    ```
+
+  - Kotlin/Gradle: same Maven Central source as Java
+- GitHub releases / tags:
+  `gh release list --limit 5` or
+  `git tag -l --sort=-v:refname | head -5`
+
+Reconcile the in-tree version, the registry version, and the latest
+tag/release. A mismatch is usually release-plz state (in-tree bumped
+ahead of a not-yet-published release), not "version chaos" -- name it
+as such rather than flagging it as a blocking inconsistency.
+
+## Worked example
+
+The #114 failure mode -- a bare dispatch audited a stale docs branch's
+tip and reported in-tree version skew as blocking findings:
+
+```
+Bad:
+
+> "Version chaos: Cargo.toml -> 0.8.7, README -> 0.9, CHANGELOG has
+> 'release v0.9.0' nested under [0.8.7]. The task framing assumes
+> v0.9.0 shipped but nothing in the repo is actually at 0.9.0."
+```
+
+In reality v0.9.0 had shipped; `origin/main` was clean at 0.9.0. The
+analyzed branch was a stale docs branch that predated the release-plz
+bump. With this skill applied:
+
+```
+Good:
+
+> "Analyzing branch: docs/refresh-readme-and-examples (3 commits ahead
+> of origin/main, 0 behind). Note: origin/main is at 0.9.0 (Cargo.toml,
+> README, CHANGELOG aligned). The working branch is a stale docs branch
+> that predates the v0.9.0 release-plz bump; its Cargo.toml at 0.8.7
+> reflects pre-release state.
+>
+> Audit against origin/main: PASS -- ..."
+```
+
+The user immediately sees the audit is hitting the right baseline and
+that the apparent "version chaos" was just a stale side branch.
+
+## Anti-patterns
+
+- Auditing the working branch tip instead of `origin/main` -- produces false blocking findings on stale content.
+- Reporting version skew as "chaos" without cross-checking the registry -- misses release-plz in-tree bumps ahead of publish.
+- Opening the audit with findings rather than branch divergence -- the user can't redirect before reading stale analysis.
+
+## Related
+
+- [`mm-sandbox-preflight`](../mm-sandbox-preflight/SKILL.md) -- the other
+  "the audit ran but produced nothing trustworthy" failure mode
+  (blocked build tools turning a release audit into BLOCKED entries).
+- [`mm-orchestration-prompt-template`](../mm-orchestration-prompt-template/SKILL.md)
+  -- pull this skill into the prompt's discipline section for any
+  release-shaped task.

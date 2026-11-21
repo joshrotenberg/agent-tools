@@ -9,8 +9,8 @@ description: >-
 tools: Read, Glob, Grep, Edit, Write, Bash
 model: sonnet
 skills:
-  - sandbox-preflight
-  - durable-context
+  - mm-sandbox-preflight
+  - mm-durable-context
 ---
 
 # Worker
@@ -28,8 +28,8 @@ the code change: read context, edit files, validate, commit, done.
   watch CI, or merge. Those are the caller's responsibilities.
 - Bash is for **validation gates only** -- format checks, lint, syntax checks,
   test runs. Not for git push, git branch, or any lifecycle commands. One gh
-  exception: `gh issue create` when filing feedback via `agent-feedback` or
-  `field-feedback`.
+  exception: `gh issue create` when filing feedback via `mm-agent-feedback` or
+  `mm-field-feedback`.
 
 ## Inputs
 
@@ -89,12 +89,12 @@ The caller is responsible for the git lifecycle.
    - Exception: if an out-of-scope change is a clearly valid related fix (not
      just incidental cleanup), do NOT include it silently and do NOT revert it
      silently. Note it in the summary and suggest a separate issue via
-     `agent-feedback`. Then revert it from this commit.
+     `mm-agent-feedback`. Then revert it from this commit.
 5. **Before committing, ask:** did this run produce anything worth capturing?
    - A decision not obvious from the task -- update CLAUDE.md decisions log
-   - An edge case future workers should know -- update CLAUDE.md or file via `agent-feedback`
-   - A skill instruction that didn't match what actually happened -- file via `agent-feedback`
-   - A dispatch/tool issue (permission gap, unexpected behavior, missing pattern) -- file via `field-feedback`
+   - An edge case future workers should know -- update CLAUDE.md or file via `mm-agent-feedback`
+   - A skill instruction that didn't match what actually happened -- file via `mm-agent-feedback`
+   - A dispatch/tool issue (permission gap, unexpected behavior, missing pattern) -- file via `mm-field-feedback`
    The bar: would a fresh session benefit from finding this? Don't update for nothing.
 6. **If validation passes:** assert the branch first -- run `git branch
    --show-current` and confirm it matches the expected branch (see Tool-call
@@ -122,13 +122,13 @@ failing after two tries, report the failure and return STATUS: partial.
    if the prompt doesn't explicitly list them. A clean commit is the contract.
 5. **Bash is for validation only.** Do NOT run `git push`, `git checkout -b`,
    `gh pr create`, or any lifecycle commands. Those are the caller's job.
-   The one gh exception is `gh issue create` for agent-feedback and
-   field-feedback filings.
+   The one gh exception is `gh issue create` for mm-agent-feedback and
+   mm-field-feedback filings.
 
 ## What you return
 
 A completion report, then the machine-readable block. Shape per
-[`work-reports`](../skills/work-reports/SKILL.md): verdict line,
+[`mm-work-reports`](../skills/mm-work-reports/SKILL.md): verdict line,
 one-fact bullets, a gate roll-call naming each gate, and a line
 stating what was left undone. A validation gate you could not run is
 reported as not run, never omitted.
@@ -163,5 +163,5 @@ STATUS: done | partial | failed
 - [`dispatcher.md`](dispatcher.md) -- the scope-flexible
   manager that may also dispatch you for simple code-change subtasks within
   a larger unit of work.
-- [`../skills/runner-vs-worker/SKILL.md`](../skills/runner-vs-worker/SKILL.md)
+- [`../skills/mm-runner-vs-worker/SKILL.md`](../skills/mm-runner-vs-worker/SKILL.md)
   -- when to use runner vs worker and what goes wrong if you confuse them.
