@@ -1,0 +1,201 @@
+---
+name: mm-draft-pr-first
+description: Before starting any dispatched or non-trivial work that will become a PR -- open the draft PR first, with the plan as the body. The PR body is the plan, the commit stream is the work, and the PR exists as a visible, resumable work unit from minute zero. Use this whenever the work crosses the "deserve a PR" threshold.
+allowed-tools: Bash(git *) Bash(gh *)
+---
+
+# Draft PR first
+
+When starting work that's substantial enough to deserve a PR --
+dispatched or hand-edited -- **open the draft PR before the
+work, not after.** The PR body holds the plan; the commit stream
+holds the execution; together they are the work itself, not
+artifacts produced at the end.
+
+## When to apply
+
+- Any dispatched work that will become a PR
+- Any non-trivial hand-edit that will become a PR
+- Multi-step refactors where intermediate state matters
+- Anything you want a second party (human or another agent) to be
+  able to see in flight
+
+## Why
+
+- **Visible from minute zero.** `gh pr list --draft` from any
+  shell shows the work-in-flight, with its plan. The user, another
+  agent, or a future you can see what's going on without finding the
+  prompt file.
+- **Resumable.** If the session dies, the PR is still there with
+  the plan, and the branch carries whatever progress made it to
+  commit. Nothing important lives only in conversation context.
+- **Cross-session continuity.** A different agent picking up the
+  work doesn't need handoff -- the PR body IS the handoff.
+- **The substrate for multi-repo orchestration.** A single parent
+  agent can fan tasks out across N repos and see the global state
+  by listing draft PRs across each one. Each repo carries its own
+  `CLAUDE.md`, `skills/`, `.claude/agents/`, so the
+  spawned work inherits full project context without the
+  dispatcher having to know specifics.
+
+## The dispatch flow
+
+For a dispatcher firing on the user's behalf.
+
+**Check the claim first.** Either half means the work is taken, and
+opening a second PR against the same issue wastes the runner:
+
+```bash
+gh issue view <N> --json labels --jq '.labels[].name' | grep status/in-progress
+gh pr list --search "<N>" --state open --json number,title,url
+```
+
+If an open PR already closes the issue, evaluate it against the
+issue's acceptance criteria instead of branching.
+
+```bash
+# 0. Claim the issue before branching. The label and the draft PR are
+#    two halves of one claim; see issue-pr-conventions.
+gh issue edit <N> --add-label status/in-progress
+
+# 1. Branch + empty initial commit so a PR can exist
+git checkout main && git pull --ff-only origin main
+git checkout -b <type>/<short-description>
+git commit --allow-empty -m "chore: start work on #<N>"
+
+# 2. Push and open the draft PR with the plan body
+git push -u origin <branch>
+gh pr create --draft \
+    --title "<conventional commit subject> (closes #<N>)" \
+    --body "$(cat /tmp/task-<N>.md)"
+# (or pass a separately-composed plan body if the prompt body
+# isn't shaped right for the PR.)
+
+# 3. Fire the dispatch against the same branch (the dispatcher owns
+#    the branch lifecycle). Mechanism per dispatch-options:
+#
+#    Agent tool:      Agent(subagent_type: "runner", prompt: <full prompt>)
+#    Bash + claude -p: claude -p --agent runner "$(cat /tmp/task-<N>.md)"
+
+# 4. When the dispatch returns: push the commits it made
+git push        # auto-extends the draft PR
+
+# 5. (optional) Verify the diff is sane before marking ready
+# 6. Mark ready
+gh pr ready <pr-number>
+
+# 7. CI watch + merge on green (merge-on-green is the default)
+sleep 15        # let GitHub register the checks
+gh pr checks <pr-number> --watch --interval 15
+# On exit 0: merge immediately -- this is the default.
+gh pr merge <pr-number> --squash --delete-branch
+# Exception cases -- skip the merge and return "PR #N ready; awaiting
+# manual merge" instead:
+#   - No CI checks configured ("no checks" from gh pr checks)
+#   - Issue has the status/needs-review label
+#   - Dispatcher passed review:manual in constraints
+#   - Change described as "critical" or "delicate" in the issue body
+```
+
+**Capture and reuse the PR number.** Store the number returned by
+`gh pr create` (it outputs a URL; extract the trailing number) and
+pass that same number to every subsequent `gh pr ready`, `gh pr
+checks`, and `gh pr merge` call. Never re-discover the PR to merge
+via `gh pr list` -- in concurrent-runner scenarios, another open PR
+may be returned first and merged by mistake.
+
+The empty initial commit gets squashed away on merge. The plan
+lives in the PR body permanently, which is what makes the work
+observable from anywhere even after the merge.
+
+## The plan body is the other half of the claim
+
+`status/in-progress` says the work is taken. It does not say what
+the work covers, so it cannot tell a second agent whether its own
+task overlaps. That is what the plan body is for, and it is why a
+draft PR opened with an empty body is a half-made claim.
+
+If the work is abandoned without merging, remove
+`status/in-progress` and say why in a comment. Merging clears it
+automatically by closing the issue.
+
+## Plan as PR body, not as `.tasks/<N>.md`
+
+Why not commit the plan into the repo as a file?
+
+- The plan is meta-work, not a deliverable. Committing it pollutes
+  the source tree.
+- Squash-merge would eat the file commit anyway, but then the plan
+  is gone from history.
+- PR body is the natural home: GitHub renders it, search-engines
+  index it, `gh pr view <N>` retrieves it.
+
+If the plan needs to evolve mid-flight (a clarification, a
+constraint change), edit the PR body via `gh pr edit <N> --body
+"$(...)"`. The commit stream is for code; the PR body is for the
+plan.
+
+## Empty initial commit: cost vs benefit
+
+The `git commit --allow-empty` step is the one rough edge -- the
+intermediate state has a no-op commit. Acceptable because:
+
+- Squash-merge collapses everything into one final commit; the
+  empty commit doesn't reach main.
+- The alternative (open PR after first real commit) means the work
+  starts invisible -- the dispatcher can't reference the PR
+  number when firing the dispatch, and there's a window where the
+  work is in flight but unobservable.
+
+If the project's merge strategy is *not* squash-merge, the empty
+commit is more visible. Adjust to "small trivial change as initial
+commit" (e.g. touch CHANGELOG.md or add a placeholder comment) in
+that case.
+
+## Plan body shape
+
+The plan report shape is defined in
+[`mm-work-reports`](../mm-work-reports/SKILL.md): one or two sentences on
+what changes, a labeled block of one-fact bullets, the gates that
+will run, and an explicit `Out of scope` section.
+
+For a dispatched unit the body and the runner prompt are often the
+same text, built from
+[`mm-orchestration-prompt-template`](../mm-orchestration-prompt-template/SKILL.md).
+Where they differ: the PR body is human-facing, the prompt is
+agent-facing. `Out of scope` matters more in the body, because it is
+what tells the next agent where this unit stops.
+
+## When NOT to apply
+
+- Trivial typo fixes that won't see a PR
+- Local experiments / spikes you don't intend to land
+- Pre-0.1 throwaway code where the overhead exceeds the visibility
+  benefit
+
+For any work that crosses the "deserve a PR" threshold, draft-PR-
+first is the default.
+
+## Anti-patterns
+
+- Opening the PR after the work is done -- the plan is no longer visible in flight and unobservable during execution.
+- Writing the plan into task files instead of the PR body -- the plan pollutes the source tree and gets squash-merged away.
+- Leaving a draft PR in draft state indefinitely -- it never gets marked ready and stays invisible to CI and merge gates.
+- Opening the draft PR without labeling the issue
+  `status/in-progress`, or labeling without opening the PR -- either
+  half alone leaves the next agent guessing.
+- Branching without checking for an existing PR that already closes
+  the issue.
+
+## Related
+
+- [`mm-issue-pr-conventions`](../mm-issue-pr-conventions/SKILL.md) -- the
+  claim protocol, naming, and label taxonomy this lifecycle uses.
+- [`mm-work-reports`](../mm-work-reports/SKILL.md) -- the plan report that
+  goes in the body, and the completion report that closes the unit.
+- [`mm-orchestration-prompt-template`](../mm-orchestration-prompt-template/SKILL.md)
+  -- the prompt template the plan body is built from.
+- [`mm-git-branch-pr-workflow`](../mm-git-branch-pr-workflow/SKILL.md) --
+  the broader branch + PR discipline this fits into.
+- [`mm-heredoc-backticks`](../mm-heredoc-backticks/SKILL.md) -- formatting
+  the PR body's markdown without breaking it.

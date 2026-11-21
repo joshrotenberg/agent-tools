@@ -34,7 +34,7 @@ Or copy into `~/.claude/` directly:
 - `name:` frontmatter field must match the skill directory name / agent file
   name exactly
 - Skill names: noun-phrases describing what the skill is about
-  (`spiral-diagnosis`, `sandbox-preflight`, not `diagnoseSpirale`)
+  (`mm-spiral-diagnosis`, `mm-sandbox-preflight`, not `diagnoseSpirale`)
 - Agent names: role nouns (`runner`, `dispatcher`)
 
 ## Key constraints for any edits

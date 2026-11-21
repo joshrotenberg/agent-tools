@@ -89,7 +89,7 @@ graph LR
     Skills -->|better| Work
 ```
 
-The `field-feedback` and `agent-feedback` skills file GitHub issues automatically
+The `mm-field-feedback` and `mm-agent-feedback` skills file GitHub issues automatically
 when agents encounter problems during dispatch. `@dispatcher triage open issues`
 labels and prioritizes them. You then work that queue on your next check-in —
 hand-dispatching the fixes you choose, or, when the backlog warrants it, opting

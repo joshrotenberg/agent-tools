@@ -30,7 +30,7 @@ durable state     -- merged PR + CLAUDE.md updates + closed issues
 The dispatcher's load-bearing decision is the **execution
 shape**: single runner (default), parallel runners, sequential
 runners, chained agents (future), audit + remediate. See
-[`orchestration-patterns`](../skills/orchestration-patterns/SKILL.md).
+[`mm-orchestration-patterns`](../skills/mm-orchestration-patterns/SKILL.md).
 
 ## When to invoke each
 
@@ -88,7 +88,7 @@ The agents are Agent-tool-centric. They run as Agent subagents
 (`isolation: "worktree"` for same-repo file work), and also work
 under `claude -p` or any wrapper that takes an `--agent NAME` flag
 for headless use. See
-[`dispatch-options`](../skills/dispatch-options/SKILL.md) for the
+[`mm-dispatch-options`](../skills/mm-dispatch-options/SKILL.md) for the
 trade-off table.
 
 ## Format

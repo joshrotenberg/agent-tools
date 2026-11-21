@@ -8,16 +8,16 @@ description: >-
 tools: Read, Glob, Grep, Edit, Write, Bash, Agent
 model: sonnet
 skills:
-  - sandbox-preflight
-  - runner-issue-authority
-  - runner-synchronous-lifecycle
-  - draft-pr-first
-  - dispatch-options
-  - orchestration-prompt-template
-  - spiral-diagnosis
-  - durable-context
-  - git-branch-pr-workflow
-  - git-fix-pr-branching
+  - mm-sandbox-preflight
+  - mm-runner-issue-authority
+  - mm-runner-synchronous-lifecycle
+  - mm-draft-pr-first
+  - mm-dispatch-options
+  - mm-orchestration-prompt-template
+  - mm-spiral-diagnosis
+  - mm-durable-context
+  - mm-git-branch-pr-workflow
+  - mm-git-fix-pr-branching
 ---
 
 # Runner
@@ -46,7 +46,7 @@ for it, from "issue exists" to "PR merged."
 Needs `Bash`, `Edit`, `Write`, `Read`, `Glob`, `Grep`, and `Agent`
 (for worker dispatch). Minimum Bash surface: `git:*` and `gh:*`;
 add `cargo:*`, `npm:*`, `go:*` as the project requires. See
-[`sandbox-preflight`](../skills/sandbox-preflight/SKILL.md) --
+[`mm-sandbox-preflight`](../skills/mm-sandbox-preflight/SKILL.md) --
 it auto-heals known-safe tools and aborts loud on others.
 
 ## Inputs you accept
@@ -58,12 +58,12 @@ it auto-heals known-safe tools and aborts loud on others.
 
 The dispatcher may include `constraints:` overrides. The issue body is
 the spec -- `gh issue view N` is always authoritative. See
-[`runner-issue-authority`](../skills/runner-issue-authority/SKILL.md).
+[`mm-runner-issue-authority`](../skills/mm-runner-issue-authority/SKILL.md).
 
 ## Lifecycle
 
-Follow [`draft-pr-first`](../skills/draft-pr-first/SKILL.md) and
-[`orchestration-prompt-template`](../skills/orchestration-prompt-template/SKILL.md).
+Follow [`mm-draft-pr-first`](../skills/mm-draft-pr-first/SKILL.md) and
+[`mm-orchestration-prompt-template`](../skills/mm-orchestration-prompt-template/SKILL.md).
 Load them, follow them. The condensed loop:
 
 0. **Sandbox preflight.** Verify tool availability.
@@ -73,7 +73,7 @@ Load them, follow them. The condensed loop:
 3. **Determine the work type** from the issue title prefix or labels.
 4. **Compose the prompt.** Fill the shape into `/tmp/task-<N>.md`.
 5. **Branch + empty commit + push + draft PR** per
-   [`draft-pr-first`](../skills/draft-pr-first/SKILL.md).
+   [`mm-draft-pr-first`](../skills/mm-draft-pr-first/SKILL.md).
    After opening the draft PR, copy labels from the source issue to the PR:
 
    ```bash
@@ -91,9 +91,9 @@ Load them, follow them. The condensed loop:
    ```
 
    For Agent tool dispatch, use `isolation: "worktree"`. See
-   [`dispatch-options`](../skills/dispatch-options/SKILL.md).
+   [`mm-dispatch-options`](../skills/mm-dispatch-options/SKILL.md).
 7. **On dispatch completion: push + ready.** Push the commits and mark
-   the PR ready per [`draft-pr-first`](../skills/draft-pr-first/SKILL.md).
+   the PR ready per [`mm-draft-pr-first`](../skills/mm-draft-pr-first/SKILL.md).
 
 8. **Pre-merge diff validation + merge.** Before merging, run
    `gh pr diff --name-only $PR` and verify at least one changed file
@@ -101,8 +101,8 @@ Load them, follow them. The condensed loop:
    If the diff is empty or contains only files outside the task scope,
    do NOT merge -- hand back to the dispatcher with a clear explanation
    of the mismatch. Then watch CI and merge on green per
-   [`dispatch-wait-react`](../skills/dispatch-wait-react/SKILL.md)
-   and [`runner-synchronous-lifecycle`](../skills/runner-synchronous-lifecycle/SKILL.md).
+   [`mm-dispatch-wait-react`](../skills/mm-dispatch-wait-react/SKILL.md)
+   and [`mm-runner-synchronous-lifecycle`](../skills/mm-runner-synchronous-lifecycle/SKILL.md).
    Merge on CI green is the default. Exception cases -- mark ready and
    return WITHOUT merging: no CI configured, `needs-review` or
    `no-auto-merge` label on the PR, `review: manual` constraint, or
@@ -112,8 +112,8 @@ Load them, follow them. The condensed loop:
 
    **Before returning:** if you encountered a skill instruction that didn't
    match reality, a dispatch issue, a missing pattern, or anything a future
-   agent would benefit from knowing -- file an issue via `agent-feedback`
-   (skill/agent definition gaps in this repo) or `field-feedback`
+   agent would benefit from knowing -- file an issue via `mm-agent-feedback`
+   (skill/agent definition gaps in this repo) or `mm-field-feedback`
    (dispatch-time observations, tool issues, unexpected behavior). One issue
    per observation. Continue your task; don't wait for it to resolve.
 
@@ -124,7 +124,7 @@ Load them, follow them. The condensed loop:
 - **Sandbox block:** abort loud with `ABORTED at sandbox preflight: ...`.
   Do NOT produce a "run this yourself" artifact.
 - **Dispatched session spirals:** follow
-  [`spiral-diagnosis`](../skills/spiral-diagnosis/SKILL.md).
+  [`mm-spiral-diagnosis`](../skills/mm-spiral-diagnosis/SKILL.md).
   Decide refire-with-harder-prompt vs hand-back.
 - **CI red:** mechanical failures (fmt/lint) → refire. Genuine bugs or
   auth failures → hand back.
@@ -148,7 +148,7 @@ Load them, follow them. The condensed loop:
    change (multiple unrelated concerns, requires "and" in the PR title, or
    phases that could ship independently), file sub-issues and close the parent
    before implementing. Fix out-of-scope issues only if they block CI on YOUR
-   changes; otherwise file a separate issue via agent-feedback.
+   changes; otherwise file a separate issue via mm-agent-feedback.
 4. **CWD is truth.** Operate on files in your working directory.
 5. **Fail loud.** On any lifecycle blocker, surface the exact failure with
    enough context for the dispatcher to re-dispatch cleanly.
@@ -164,7 +164,7 @@ Load them, follow them. The condensed loop:
 
 A completion report, then the machine-readable block. The report is
 for reading; the block is for parsing. Shape per
-[`work-reports`](../skills/work-reports/SKILL.md): verdict line, a
+[`mm-work-reports`](../skills/mm-work-reports/SKILL.md): verdict line, a
 labeled block of one-fact bullets, a gate roll-call naming each gate
 and its result, and a line stating what was left undone.
 
@@ -201,5 +201,5 @@ decorate it; don't omit it; don't move it.
   manager that dispatches to you.
 - [`worker.md`](worker.md) -- the agent you
   dispatch to execute code changes.
-- [`../skills/runner-vs-worker/SKILL.md`](../skills/runner-vs-worker/SKILL.md)
+- [`../skills/mm-runner-vs-worker/SKILL.md`](../skills/mm-runner-vs-worker/SKILL.md)
   -- decision boundary between runner and worker dispatch; failure mode of using runner as worker.
